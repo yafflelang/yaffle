@@ -1,0 +1,16 @@
+{
+  "configurations": [
+    {
+      "name": "Launch TypeScript",
+      "type": "node",
+      "request": "launch",
+      "program": "${workspaceFolder}/src/main.ts",
+      "preLaunchTask": "tsc: build - tsconfig.json",
+      "outFiles": ["${workspaceFolder}/dist/**/*.js"],
+      "sourceMaps": true,
+      "env": {
+        //"NODE_ENV": "development"
+      }
+    }
+  ]
+}
