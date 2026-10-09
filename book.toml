@@ -1,0 +1,10 @@
+[book]
+title = "yaffle"
+description = "Yet Another File-Format Language & Engine"
+language = "en"
+src = "docs"
+
+[build]
+build-dir = "book"
+create-missing = false
+
