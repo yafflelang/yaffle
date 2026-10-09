@@ -1,0 +1,144 @@
+name: CI
+
+on:
+  push:
+    branches: [main, yaffle]
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  checks:
+    name: Lint, typecheck, unit tests, build
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+
+      - run: npm ci
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Formatting
+        run: npm run format:check
+
+      - name: Conformance cases match their generators
+        run: node conformance/scripts/gen-cases.ts --check
+
+      - name: Compiler tests (frontend, language service, CLI)
+        run: >-
+          npx vitest run --project yaffle
+          packages/compiler/test/frontend packages/compiler/test/service packages/compiler/test/cli
+
+      - name: Runtime, language server and VS Code extension tests
+        run: npx vitest run --project @yaffle/runtime --project @yaffle/lsp --project yaffle-vscode
+
+      - name: Conformance runner tests
+        run: >-
+          npx vitest run --project conformance
+          test/runner.test.ts test/units.test.ts test/generated.test.ts
+
+      - name: Build
+        run: npm run build
+
+      - name: Package the VS Code extension
+        run: npm run package -w yaffle-vscode
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: yaffle-vscode
+          path: packages/vscode/dist/yaffle.vsix
+          if-no-files-found: error
+
+  # Every target runs the shared conformance suite in parse and view mode, plus its own backend tests.
+  conformance:
+    name: Conformance (${{ matrix.target }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    strategy:
+      fail-fast: false
+      matrix:
+        target: [ts, rust, python, go, csharp, java, cpp]
+    env:
+      CARGO_TARGET_DIR: ${{ github.workspace }}/../cargo-target
+      YAFFLE_JAVA_TEST_DIR: ${{ github.workspace }}/../java-tests
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+
+      - run: npm ci
+
+      - name: Rust toolchain
+        if: matrix.target == 'rust'
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Cache Rust builds
+        if: matrix.target == 'rust'
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            ${{ github.workspace }}/../cargo-target
+          key: cargo-${{ runner.os }}-${{ hashFiles('packages/runtime-rust/Cargo.toml', 'packages/runtime-rust/src/**') }}
+          restore-keys: cargo-${{ runner.os }}-
+
+      - name: Python
+        if: matrix.target == 'python'
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.14"
+
+      - name: Go
+        if: matrix.target == 'go'
+        uses: actions/setup-go@v5
+        with:
+          go-version: stable
+          cache: false
+
+      - name: .NET
+        if: matrix.target == 'csharp'
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 9.0.x
+
+      - name: Java
+        if: matrix.target == 'java'
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+
+      - name: C++ compiler and libraries
+        if: matrix.target == 'cpp'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y g++-14 libzstd-dev zlib1g-dev
+          echo "CXX=g++-14" >> "$GITHUB_ENV"
+
+      - name: Backend tests
+        run: npx vitest run --project yaffle packages/compiler/test/backends/${{ matrix.target }}
+
+      - name: Conformance (parse and view mode)
+        run: >-
+          node --max-old-space-size=6000 --conditions=development
+          conformance/src/cli.ts --targets ${{ matrix.target }}
