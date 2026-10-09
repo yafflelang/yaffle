@@ -1,4 +1,7 @@
-# yaffle
+<p align="center">
+  <img src="assets/yaffle.svg" alt="yaffle logo" height="170">
+</p>
+<h1 align="center">yaffle</h1>
 
 **Y**et **A**nother **F**ile-**F**ormat **L**anguage & **E**ngine: a language for binary file
 formats, and a compiler that generates readers and writers for TypeScript, Rust, Python, Go, C#,

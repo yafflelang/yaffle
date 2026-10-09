@@ -1,0 +1,23 @@
+.light,
+.rust,
+html:not(.js) {
+  --links: #3d8a16;
+  --sidebar-active: #3d8a16;
+  --sidebar-header-border-color: #67b528;
+  --inline-code-color: #2b5f12;
+  --quote-bg: #f1f8ea;
+  --quote-border: #d6eac4;
+  --searchresults-li-bg: #edf6e4;
+  --search-mark-bg: #c9e6ae;
+  --footnote-highlight: #67b528;
+}
+
+.coal,
+.navy,
+.ayu {
+  --links: #7cc63f;
+  --sidebar-active: #7cc63f;
+  --sidebar-header-border-color: #67b528;
+  --search-mark-bg: #4a7f22;
+  --footnote-highlight: #67b528;
+}

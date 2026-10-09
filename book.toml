@@ -8,3 +8,8 @@ src = "docs"
 build-dir = "book"
 create-missing = false
 
+[output.html]
+theme = "docs/theme"
+additional-css = ["docs/theme/accent.css"]
+default-theme = "light"
+preferred-dark-theme = "navy"
