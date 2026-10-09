@@ -1,22 +1,29 @@
 {
-  "name": "minibin2",
-  "version": "1.0.0",
-  "description": "",
-  "main": "dist/main.js",
+  "name": "yaffle-monorepo",
+  "version": "0.1.0",
+  "private": true,
+  "description": "yaffle: Yet Another File-Format Language & Engine",
   "type": "module",
+  "workspaces": [
+    "packages/runtime",
+    "packages/compiler",
+    "packages/lsp",
+    "packages/vscode",
+    "conformance"
+  ],
   "scripts": {
-    "build": "tsc",
-    "clean": "rimraf dist",
-    "prebuild": "npm run clean",
-    "prepack": "npm run lint:fix && npm run format && npm run build",
-    "lint": "eslint src",
-    "lint:fix": "eslint src --fix",
-    "format": "prettier -w -l src",
-    "format:check": "prettier -c src",
+    "build": "npm run build --workspaces --if-present",
+    "test": "vitest run --passWithNoTests",
+    "test:watch": "vitest",
+    "typecheck": "npm run typecheck --workspaces --if-present",
+    "lint": "eslint packages conformance",
+    "lint:fix": "eslint packages conformance --fix",
+    "format": "prettier -w -l packages conformance docs",
+    "format:check": "prettier -c packages conformance",
     "prepare": "husky"
   },
   "lint-staged": {
-    "*.{js,ts,svelte}": [
+    "*.{js,ts}": [
       "prettier -w -l",
       "eslint --fix"
     ]
@@ -26,13 +33,14 @@
     "tabWidth": 2,
     "singleQuote": false,
     "trailingComma": "none",
-    "printWidth": 80,
+    "printWidth": 100,
     "semi": true,
     "arrowParens": "avoid"
   },
   "author": "Noah",
   "license": "ISC",
   "devDependencies": {
+    "@eslint/js": "^10.0.1",
     "@types/node": "^26.6.4",
     "eslint": "^10.12.0",
     "globals": "^17.13.0",
@@ -41,6 +49,7 @@
     "prettier": "^3.9.9",
     "rimraf": "^6.1.3",
     "typescript": "^6.0.3",
-    "typescript-eslint": "^8.71.0"
+    "typescript-eslint": "^8.71.0",
+    "vitest": "^5.0.3"
   }
 }
