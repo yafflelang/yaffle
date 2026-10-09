@@ -511,13 +511,3 @@ struct Overlay {
 | 1. Value transforms  | `as expr`, `= expr`, enums, `type X = T as …`                   | yaffle expressions, `extern fn` |
 | 2. Byte transforms   | `@via(codec)`, `extern codec`, `async`, `@ranged`, `@streaming` | host                            |
 | 3. Custom primitives | `extern type X(args) : T` with `size`/`read`/`write`            | host                            |
-
-## 5. Open questions
-
-- **Display and documentation attributes:** `/** doc */`, `@format(hex)`, colours.
-- **Regex-sized fields,** where the regex decides how many bytes to read.
-- **Constraints on generic type parameters.**
-- **`@split` policies** beyond `fit`.
-- **Unknown gap fill:** gaps between placed regions are rebuilt byte-exact from plain values only
-  when they were zero.
-- **String interpolation,** if ever added, uses `{x}` (not `${x}`) to avoid clashing with `$`.
