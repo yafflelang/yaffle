@@ -1,0 +1,41 @@
+{
+  "name": "@yaffle/lsp",
+  "version": "0.1.0",
+  "description": "yaffle language server",
+  "type": "module",
+  "exports": {
+    ".": {
+      "development": "./src/index.ts",
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./protocol": {
+      "development": "./src/protocol.ts",
+      "types": "./dist/protocol.d.ts",
+      "default": "./dist/protocol.js"
+    }
+  },
+  "bin": {
+    "yaffle-lsp": "./dist/main.js"
+  },
+  "files": [
+    "dist",
+    "src"
+  ],
+  "scripts": {
+    "build": "tsc -p .",
+    "typecheck": "tsc -p . --noEmit && tsc -p test",
+    "test": "vitest run",
+    "start": "node --conditions=development src/main.ts --stdio"
+  },
+  "dependencies": {
+    "vscode-languageserver": "^10.1.2",
+    "vscode-languageserver-textdocument": "^1.0.15",
+    "yaffle": "0.1.0"
+  },
+  "license": "ISC",
+  "devDependencies": {
+    "vscode-jsonrpc": "^9.0.3",
+    "vscode-languageserver-protocol": "^3.18.4"
+  }
+}
