@@ -1,0 +1,75 @@
+{
+  "sources": ["schema.yfl"],
+  "targets": {
+    "ts": {
+      "out": "../../.out/gen/bytetransforms/ts",
+      "externs": {
+        "xor": "../../externs/ts/xor.ts",
+        "xorpos": "../../externs/ts/xorpos.ts",
+        "rle": "../../externs/ts/rle.ts",
+        "rlez": "../../externs/ts/rlez.ts",
+        "axor": "../../externs/ts/axor.ts"
+      }
+    },
+    "rust": {
+      "out": "../../.out/gen/bytetransforms/rust",
+      "externs": {
+        "xor": "../../externs/rust/xor.rs#XOR",
+        "xorpos": "../../externs/rust/xorpos.rs#XORPOS",
+        "rle": "../../externs/rust/rle.rs#RLE",
+        "rlez": "../../externs/rust/rlez.rs#RLEZ",
+        "axor": "../../externs/rust/axor.rs#AXOR"
+      }
+    },
+    "python": {
+      "out": "../../.out/gen/bytetransforms/python",
+      "externs": {
+        "xor": "../../externs/python/xor.py",
+        "xorpos": "../../externs/python/xorpos.py",
+        "rle": "../../externs/python/rle.py",
+        "rlez": "../../externs/python/rlez.py",
+        "axor": "../../externs/python/axor.py"
+      }
+    },
+    "go": {
+      "out": "../../.out/gen/bytetransforms/go",
+      "externs": {
+        "xor": "../../externs/go/xor.go",
+        "xorpos": "../../externs/go/xorpos.go",
+        "rle": "../../externs/go/rle.go",
+        "rlez": "../../externs/go/rlez.go",
+        "axor": "../../externs/go/axor.go"
+      }
+    },
+    "csharp": {
+      "out": "../../.out/gen/bytetransforms/csharp",
+      "externs": {
+        "xor": "../../externs/csharp/xor.cs",
+        "xorpos": "../../externs/csharp/xorpos.cs",
+        "rle": "../../externs/csharp/rle.cs",
+        "rlez": "../../externs/csharp/rlez.cs",
+        "axor": "../../externs/csharp/axor.cs"
+      }
+    },
+    "java": {
+      "out": "../../.out/gen/bytetransforms/java",
+      "externs": {
+        "xor": "../../externs/java/xor.java#XOR",
+        "xorpos": "../../externs/java/xorpos.java#XORPOS",
+        "rle": "../../externs/java/rle.java#RLE",
+        "rlez": "../../externs/java/rlez.java#RLEZ",
+        "axor": "../../externs/java/axor.java#AXOR"
+      }
+    },
+    "cpp": {
+      "out": "../../.out/gen/bytetransforms/cpp",
+      "externs": {
+        "xor": "../../externs/cpp/xor.hpp",
+        "xorpos": "../../externs/cpp/xorpos.hpp",
+        "rle": "../../externs/cpp/rle.hpp",
+        "rlez": "../../externs/cpp/rlez.hpp",
+        "axor": "../../externs/cpp/axor.hpp"
+      }
+    }
+  }
+}

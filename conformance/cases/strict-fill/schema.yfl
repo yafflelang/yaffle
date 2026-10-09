@@ -1,0 +1,52 @@
+// The strict fill shorthand: `@padUntil(n, strict)` (also on @align, @padBefore,
+// @padAfter and @alignEnd) checks that padding's fill on read, without `@strict` on the whole
+// field, block or struct. Other padding stays unchecked.
+
+export struct PadStrict {
+  u8 a @padUntil(4, strict)
+  u8 b
+}
+
+export struct FillStrict {
+  u8 a @padUntil(4, 0xff, strict)
+  u8 b
+}
+
+export struct AlignStrict {
+  u8 a
+  u8 b @align(4, strict)
+}
+
+export struct BeforeAfter {
+  u8 a @padBefore(2, strict) @padAfter(1, 0xcc, strict)
+}
+
+// Only the strict padding is checked: the @padAfter(2) after it accepts anything.
+export struct OnlyThisPadding {
+  u8 a @padUntil(2, strict) @padAfter(2)
+  u8 b
+}
+
+// A struct-level layer and a block layer.
+struct EndStrict @alignEnd(4, strict) {
+  u8 a
+}
+
+export struct UsesEndStrict {
+  EndStrict e
+  u8        b
+}
+
+export struct BlockStrict {
+  @padUntil(4, strict) {
+    u8 a
+    u8 b
+  }
+  u8 c
+}
+
+// With a fill function.
+export struct FnStrict {
+  u8 a
+  u8 b @align(4, i => 0xa0 + i, strict)
+}

@@ -1,0 +1,102 @@
+// Conditionals: if/else blocks (fields flatten into the parent, untaken branches are omitted from
+// JSON), `if` without else (optional fields), switch on strings and integers with default, a
+// switch without a match (CHECK), and unions (first variant that reads wins, UNION if none does).
+
+export struct IfElse {
+  u8 version
+  if (version >= 3) { u32 extra } else { u16 legacy }
+  u8 tail
+}
+
+export struct IfOnly {
+  u8 flag
+  if (flag != 0) { u16 opt }
+  u8 end
+}
+
+export struct BoolCond {
+  bool hasX
+  if (hasX) {
+    u32 x
+    u8  y
+  }
+}
+
+export struct NestedIf {
+  u8 a
+  if (a > 0) {
+    u8 b
+    if (b > 0) { u8 c } else { u16 d }
+  } else {
+    u32 e
+  }
+}
+
+// A condition on a later-derived count: n is used in the condition, so it stays an input.
+export struct CondCount {
+  u8 n
+  if (n > 0) { u8 items[n] }
+}
+
+export struct SwitchStr {
+  char tag[4]
+  switch (tag) {
+    case "ARCV": u32 n
+    case "CHNK": u16 m
+    default:     u8  body[2]
+  }
+  u8 after
+}
+
+export struct SwitchInt {
+  u8 kind
+  switch (kind) {
+    case 1:    u8  a
+    case 2, 3: u16 b
+    case 4:    { u8 c  u8 d }
+    default:   u32 z
+  }
+}
+
+export struct SwitchNoDefault {
+  u8 k
+  switch (k) {
+    case 1: u8  a
+    case 2: u16 b
+  }
+}
+
+struct A { u8 tag = 1  u8 v }
+struct B { u8 tag = 2  u16 w }
+struct C { u8 tag  u8 x }
+
+union AB { A  B }
+union Fallback { A  B  C }
+union FirstWins { C  A }
+
+export struct U { AB x  u8 after }
+export struct UF { Fallback x }
+export struct UFirst { FirstWins x }
+export struct UList { u8 n  AB items[n] }
+
+// A variant that fails part-way through (EOF) falls through to the next one.
+struct Long { u8 tag = 9  u32 big }
+struct Short { u8 tag = 9  u8 small }
+union LongOrShort { Long  Short }
+export struct ULS { LongOrShort x }
+
+// Switch on an enum, and a condition on a nested struct's field.
+enum Shape : u8 { Circle = 1, Square = 2 }
+export struct SwitchEnum {
+  Shape s
+  switch (s) {
+    case Shape.Circle: u16 radius
+    case Shape.Square: { u16 w  u16 h }
+  }
+}
+
+struct Flags { u8 bits }
+export struct NestedCond {
+  Flags f
+  if ((f.bits & 1) != 0) { u32 extra }
+}

@@ -1,0 +1,343 @@
+{
+  "description": "Constants of every kind, `in` with sets/ranges/literals, `in /regex/`, `where`.",
+  "generatedBy": "conformance/scripts/areas/constraints.ts",
+  "cases": [
+    {
+      "name": "constant matches",
+      "root": "Magic",
+      "bytes": "2a00 07",
+      "json": { "magic": 42, "v": 7 }
+    },
+    {
+      "name": "constant mismatch",
+      "root": "Magic",
+      "bytes": "2b00 07",
+      "error": { "phase": "parse", "code": "CHECK", "path": ["magic"] }
+    },
+    {
+      "name": "constant written automatically",
+      "root": "Magic",
+      "input": { "v": 7 },
+      "bytes": "2a00 07"
+    },
+    {
+      "name": "constant ignores a given value",
+      "root": "Magic",
+      "input": { "magic": 1, "v": 7 },
+      "bytes": "2a00 07"
+    },
+    {
+      "name": "string constant",
+      "root": "Tag",
+      "bytes": "4152435601",
+      "json": { "tag": "ARCV", "v": 1 }
+    },
+    {
+      "name": "string constant mismatch",
+      "root": "Tag",
+      "bytes": "5041434201",
+      "error": { "phase": "parse", "code": "CHECK", "path": ["tag"] }
+    },
+    {
+      "name": "string constant written",
+      "root": "Tag",
+      "input": { "v": 2 },
+      "bytes": "4152435602"
+    },
+    { "name": "byte constant", "root": "Sig", "bytes": "89504e47", "json": { "sig": "89504e47" } },
+    {
+      "name": "byte constant mismatch",
+      "root": "Sig",
+      "bytes": "89504e48",
+      "error": { "phase": "parse", "code": "CHECK", "path": ["sig"] }
+    },
+    { "name": "byte constant written", "root": "Sig", "input": {}, "bytes": "89504e47" },
+    {
+      "name": "negative constants",
+      "root": "NegConst",
+      "bytes": "fbfffe7960",
+      "json": { "a": -5, "b": -100000 }
+    },
+    {
+      "name": "negative constant mismatch",
+      "root": "NegConst",
+      "bytes": "05fffe7960",
+      "error": { "phase": "parse", "code": "CHECK", "path": ["a"] }
+    },
+    {
+      "name": "negative constants written",
+      "root": "NegConst",
+      "input": {},
+      "bytes": "fbfffe7960"
+    },
+    { "name": "float constant", "root": "FloatConst", "bytes": "0000803f", "json": { "one": 1 } },
+    {
+      "name": "float constant mismatch",
+      "root": "FloatConst",
+      "bytes": "0000003f",
+      "error": { "phase": "parse", "code": "CHECK", "path": ["one"] }
+    },
+    { "name": "float constant written", "root": "FloatConst", "input": {}, "bytes": "0000803f" },
+    { "name": "bool constant", "root": "BoolConst", "bytes": "01", "json": { "on": true } },
+    {
+      "name": "bool constant mismatch",
+      "root": "BoolConst",
+      "bytes": "00",
+      "error": { "phase": "parse", "code": "CHECK", "path": ["on"] }
+    },
+    { "name": "bool constant written", "root": "BoolConst", "input": {}, "bytes": "01" },
+    { "name": "in literal II", "root": "InSet", "bytes": "4949", "json": { "order": "II" } },
+    { "name": "in literal MM", "root": "InSet", "bytes": "4d4d", "json": { "order": "MM" } },
+    {
+      "name": "in literal rejects",
+      "root": "InSet",
+      "bytes": "494d",
+      "error": { "phase": "parse", "code": "CHECK", "path": ["order"] }
+    },
+    { "name": "in literal write", "root": "InSet", "input": { "order": "MM" }, "bytes": "4d4d" },
+    {
+      "name": "in literal write rejects",
+      "root": "InSet",
+      "input": { "order": "XX" },
+      "error": { "phase": "serialize", "code": "CHECK", "path": ["order"] }
+    },
+    { "name": "in set value", "root": "InRange", "bytes": "02000000", "json": { "version": 2 } },
+    {
+      "name": "in range low end",
+      "root": "InRange",
+      "bytes": "05000000",
+      "json": { "version": 5 }
+    },
+    {
+      "name": "in range high end",
+      "root": "InRange",
+      "bytes": "09000000",
+      "json": { "version": 9 }
+    },
+    {
+      "name": "in gap between items",
+      "root": "InRange",
+      "bytes": "03000000",
+      "error": { "phase": "parse", "code": "CHECK", "path": ["version"] }
+    },
+    {
+      "name": "in above the range",
+      "root": "InRange",
+      "bytes": "0a000000",
+      "error": { "phase": "parse", "code": "CHECK", "path": ["version"] }
+    },
+    {
+      "name": "in zero",
+      "root": "InRange",
+      "bytes": "00000000",
+      "error": { "phase": "parse", "code": "CHECK", "path": ["version"] }
+    },
+    {
+      "name": "in write rejects",
+      "root": "InRange",
+      "input": { "version": 4 },
+      "error": { "phase": "serialize", "code": "CHECK", "path": ["version"] }
+    },
+    {
+      "name": "in write accepts",
+      "root": "InRange",
+      "input": { "version": 7 },
+      "bytes": "07000000"
+    },
+    { "name": "in negative range", "root": "InNeg", "bytes": "fd", "json": { "v": -3 } },
+    { "name": "in negative range bound", "root": "InNeg", "bytes": "fb", "json": { "v": -5 } },
+    { "name": "in single value after range", "root": "InNeg", "bytes": "0a", "json": { "v": 10 } },
+    {
+      "name": "in negative outside",
+      "root": "InNeg",
+      "bytes": "00",
+      "error": { "phase": "parse", "code": "CHECK", "path": ["v"] }
+    },
+    {
+      "name": "in negative below",
+      "root": "InNeg",
+      "bytes": "fa",
+      "error": { "phase": "parse", "code": "CHECK", "path": ["v"] }
+    },
+    {
+      "name": "in u64 max",
+      "root": "InU64",
+      "bytes": "ffffffffffffffff",
+      "json": { "v": "18446744073709551615" }
+    },
+    {
+      "name": "in u64 rejects",
+      "root": "InU64",
+      "bytes": "feffffffffffffff",
+      "error": { "phase": "parse", "code": "CHECK", "path": ["v"] }
+    },
+    {
+      "name": "regex one digit",
+      "root": "Regex",
+      "bytes": "76312e3200",
+      "json": { "ver": "v1.2" }
+    },
+    {
+      "name": "regex two digits",
+      "root": "Regex",
+      "bytes": "76392e313000",
+      "json": { "ver": "v9.10" }
+    },
+    {
+      "name": "regex must match the whole string",
+      "root": "Regex",
+      "bytes": "76312e32333400",
+      "error": { "phase": "parse", "code": "CHECK", "path": ["ver"] }
+    },
+    {
+      "name": "regex prefix mismatch",
+      "root": "Regex",
+      "bytes": "78312e3200",
+      "error": { "phase": "parse", "code": "CHECK", "path": ["ver"] }
+    },
+    {
+      "name": "regex is not a substring search",
+      "root": "Regex",
+      "bytes": "6176312e3200",
+      "error": { "phase": "parse", "code": "CHECK", "path": ["ver"] }
+    },
+    {
+      "name": "regex empty",
+      "root": "Regex",
+      "bytes": "00",
+      "error": { "phase": "parse", "code": "CHECK", "path": ["ver"] }
+    },
+    {
+      "name": "regex write rejects",
+      "root": "Regex",
+      "input": { "ver": "1.2" },
+      "error": { "phase": "serialize", "code": "CHECK", "path": ["ver"] }
+    },
+    {
+      "name": "regex write accepts",
+      "root": "Regex",
+      "input": { "ver": "v0.1" },
+      "bytes": "76302e3100"
+    },
+    {
+      "name": "regex class on a fixed string",
+      "root": "RegexClass",
+      "bytes": "416239",
+      "json": { "code": "Ab9" }
+    },
+    {
+      "name": "regex class with padding",
+      "root": "RegexClass",
+      "bytes": "515f00",
+      "json": { "code": "Q_" }
+    },
+    {
+      "name": "regex class lowercase start",
+      "root": "RegexClass",
+      "bytes": "616239",
+      "error": { "phase": "parse", "code": "CHECK", "path": ["code"] }
+    },
+    {
+      "name": "regex alternation",
+      "root": "RegexAlt",
+      "bytes": "646f677300",
+      "json": { "word": "dogs" }
+    },
+    {
+      "name": "regex alternation optional",
+      "root": "RegexAlt",
+      "bytes": "63617400",
+      "json": { "word": "cat" }
+    },
+    {
+      "name": "regex alternation rejects",
+      "root": "RegexAlt",
+      "bytes": "636f7700",
+      "error": { "phase": "parse", "code": "CHECK", "path": ["word"] }
+    },
+    {
+      "name": "regex alternation does not match a longer string",
+      "root": "RegexAlt",
+      "bytes": "636174737300",
+      "error": { "phase": "parse", "code": "CHECK", "path": ["word"] }
+    },
+    { "name": "where holds", "root": "Where", "bytes": "08000000", "json": { "size": 8 } },
+    { "name": "where zero", "root": "Where", "bytes": "00000000", "json": { "size": 0 } },
+    {
+      "name": "where fails",
+      "root": "Where",
+      "bytes": "06000000",
+      "error": { "phase": "parse", "code": "CHECK", "path": ["size"] }
+    },
+    {
+      "name": "where write rejects",
+      "root": "Where",
+      "input": { "size": 6 },
+      "error": { "phase": "serialize", "code": "CHECK", "path": ["size"] }
+    },
+    {
+      "name": "where write accepts",
+      "root": "Where",
+      "input": { "size": 12 },
+      "bytes": "0c000000"
+    },
+    {
+      "name": "where uses an earlier field",
+      "root": "WhereDep",
+      "bytes": "03 05",
+      "json": { "lo": 3, "hi": 5 }
+    },
+    { "name": "where equal", "root": "WhereDep", "bytes": "03 03", "json": { "lo": 3, "hi": 3 } },
+    {
+      "name": "where uses an earlier field and fails",
+      "root": "WhereDep",
+      "bytes": "05 03",
+      "error": { "phase": "parse", "code": "CHECK", "path": ["hi"] }
+    },
+    {
+      "name": "where write uses another field",
+      "root": "WhereDep",
+      "input": { "lo": 9, "hi": 1 },
+      "error": { "phase": "serialize", "code": "CHECK", "path": ["hi"] }
+    },
+    { "name": "where on a string", "root": "WhereStr", "bytes": "7800", "json": { "name": "x" } },
+    {
+      "name": "where on an empty string",
+      "root": "WhereStr",
+      "bytes": "00",
+      "error": { "phase": "parse", "code": "CHECK", "path": ["name"] }
+    },
+    { "name": "where with &&", "root": "WhereAnd", "bytes": "8001", "json": { "v": 384 } },
+    {
+      "name": "where with && fails low",
+      "root": "WhereAnd",
+      "bytes": "ff00",
+      "error": { "phase": "parse", "code": "CHECK", "path": ["v"] }
+    },
+    {
+      "name": "where with && fails high",
+      "root": "WhereAnd",
+      "bytes": "0002",
+      "error": { "phase": "parse", "code": "CHECK", "path": ["v"] }
+    },
+    { "name": "in and where both hold", "root": "Both", "bytes": "40", "json": { "v": 64 } },
+    {
+      "name": "in holds but where fails",
+      "root": "Both",
+      "bytes": "41",
+      "error": { "phase": "parse", "code": "CHECK", "path": ["v"] }
+    },
+    {
+      "name": "where holds but in fails",
+      "root": "Both",
+      "bytes": "c8",
+      "error": { "phase": "parse", "code": "CHECK", "path": ["v"] }
+    },
+    {
+      "name": "in and where on write",
+      "root": "Both",
+      "input": { "v": 0 },
+      "error": { "phase": "serialize", "code": "CHECK", "path": ["v"] }
+    }
+  ]
+}

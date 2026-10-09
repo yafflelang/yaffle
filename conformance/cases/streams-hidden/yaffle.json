@@ -1,0 +1,54 @@
+{
+  "sources": ["schema.yfl"],
+  "targets": {
+    "ts": {
+      "out": "../../.out/gen/streams-hidden/ts",
+      "externs": {
+        "xor": "../../externs/ts/xor.ts",
+        "rle": "../../externs/ts/rle.ts"
+      }
+    },
+    "rust": {
+      "out": "../../.out/gen/streams-hidden/rust",
+      "externs": {
+        "xor": "../../externs/rust/xor.rs#XOR",
+        "rle": "../../externs/rust/rle.rs#RLE"
+      }
+    },
+    "python": {
+      "out": "../../.out/gen/streams-hidden/python",
+      "externs": {
+        "xor": "../../externs/python/xor.py",
+        "rle": "../../externs/python/rle.py"
+      }
+    },
+    "go": {
+      "out": "../../.out/gen/streams-hidden/go",
+      "externs": {
+        "xor": "../../externs/go/xor.go",
+        "rle": "../../externs/go/rle.go"
+      }
+    },
+    "csharp": {
+      "out": "../../.out/gen/streams-hidden/csharp",
+      "externs": {
+        "xor": "../../externs/csharp/xor.cs",
+        "rle": "../../externs/csharp/rle.cs"
+      }
+    },
+    "java": {
+      "out": "../../.out/gen/streams-hidden/java",
+      "externs": {
+        "xor": "../../externs/java/xor.java#XOR",
+        "rle": "../../externs/java/rle.java#RLE"
+      }
+    },
+    "cpp": {
+      "out": "../../.out/gen/streams-hidden/cpp",
+      "externs": {
+        "xor": "../../externs/cpp/xor.hpp",
+        "rle": "../../externs/cpp/rle.hpp"
+      }
+    }
+  }
+}

@@ -1,0 +1,245 @@
+{
+  "description": "Per-element layout groups `arr[*] { … }`: order per element, claims, leftovers, alignment inheritance, `this`, nesting, per-volume groups, null and empty targets.",
+  "generatedBy": "conformance/scripts/areas/layout-groups.ts",
+  "cases": [
+    {
+      "name": "group: for each item c then b, a's are leftovers",
+      "root": "Group",
+      "bytes": "02 0b0807 0c0a09 c0b0c1b1a0a1",
+      "json": {
+        "n": 2,
+        "items": [
+          { "a": { "v": 160 }, "b": { "v": 176 }, "c": { "v": 192 } },
+          { "a": { "v": 161 }, "b": { "v": 177 }, "c": { "v": 193 } }
+        ]
+      }
+    },
+    {
+      "name": "group on write",
+      "root": "Group",
+      "input": {
+        "items": [
+          { "a": { "v": 160 }, "b": { "v": 176 }, "c": { "v": 192 } },
+          { "a": { "v": 161 }, "b": { "v": 177 }, "c": { "v": 193 } }
+        ]
+      },
+      "bytes": "02 0b0807 0c0a09 c0b0c1b1a0a1"
+    },
+    {
+      "name": "group, one element",
+      "root": "Group",
+      "input": { "items": [{ "a": { "v": 1 }, "b": { "v": 2 }, "c": { "v": 3 } }] },
+      "bytes": "01 060504 030201"
+    },
+    {
+      "name": "group, no elements",
+      "root": "Group",
+      "bytes": "00",
+      "json": { "n": 0, "items": [] }
+    },
+    {
+      "name": "other orders read too",
+      "root": "Group",
+      "roundtrip": false,
+      "bytes": "02 070809 0a0b0c a0b0c0a1b1c1",
+      "json": {
+        "n": 2,
+        "items": [
+          { "a": { "v": 160 }, "b": { "v": 176 }, "c": { "v": 192 } },
+          { "a": { "v": 161 }, "b": { "v": 177 }, "c": { "v": 193 } }
+        ]
+      }
+    },
+    {
+      "name": "pull-out item before a group",
+      "root": "PullThenGroup",
+      "bytes": "02 07090a 080b0c a0a1b0c0b1c1",
+      "json": {
+        "n": 2,
+        "items": [
+          { "a": { "v": 160 }, "b": { "v": 176 }, "c": { "v": 192 } },
+          { "a": { "v": 161 }, "b": { "v": 177 }, "c": { "v": 193 } }
+        ]
+      }
+    },
+    {
+      "name": "pull-out item before a group on write",
+      "root": "PullThenGroup",
+      "input": {
+        "items": [
+          { "a": { "v": 160 }, "b": { "v": 176 }, "c": { "v": 192 } },
+          { "a": { "v": 161 }, "b": { "v": 177 }, "c": { "v": 193 } }
+        ]
+      },
+      "bytes": "02 07090a 080b0c a0a1b0c0b1c1"
+    },
+    {
+      "name": "group layers apply to nested items without their own",
+      "root": "GroupAlign",
+      "bytes": "02 0c0a08 141210 00 c0 00 b0 00 a0 000000 c1 00 b1 00 a1",
+      "json": {
+        "n": 2,
+        "items": [
+          { "a": { "v": 160 }, "b": { "v": 176 }, "c": { "v": 192 } },
+          { "a": { "v": 161 }, "b": { "v": 177 }, "c": { "v": 193 } }
+        ]
+      }
+    },
+    {
+      "name": "group alignment on write",
+      "root": "GroupAlign",
+      "input": {
+        "items": [
+          { "a": { "v": 160 }, "b": { "v": 176 }, "c": { "v": 192 } },
+          { "a": { "v": 161 }, "b": { "v": 177 }, "c": { "v": 193 } }
+        ]
+      },
+      "bytes": "02 0c0a08 141210 00 c0 00 b0 00 a0 000000 c1 00 b1 00 a1"
+    },
+    {
+      "name": "this in a group places the element",
+      "root": "NodesThis",
+      "bytes": "02 0307 0605 20 10 0a09 21 11",
+      "json": {
+        "n": 2,
+        "nodes": [
+          { "x": { "v": 16 }, "y": { "v": 32 } },
+          { "x": { "v": 17 }, "y": { "v": 33 } }
+        ]
+      }
+    },
+    {
+      "name": "this in a group on write",
+      "root": "NodesThis",
+      "input": {
+        "nodes": [
+          { "x": { "v": 16 }, "y": { "v": 32 } },
+          { "x": { "v": 17 }, "y": { "v": 33 } }
+        ]
+      },
+      "bytes": "02 0307 0605 20 10 0a09 21 11"
+    },
+    {
+      "name": "without this, each element comes first; unnamed targets are leftovers",
+      "root": "NodesLeftover",
+      "bytes": "02 0306 0905 20 0a08 21 10 11",
+      "json": {
+        "n": 2,
+        "nodes": [
+          { "x": { "v": 16 }, "y": { "v": 32 } },
+          { "x": { "v": 17 }, "y": { "v": 33 } }
+        ]
+      }
+    },
+    {
+      "name": "elements first, leftovers after the group, on write",
+      "root": "NodesLeftover",
+      "input": {
+        "nodes": [
+          { "x": { "v": 16 }, "y": { "v": 32 } },
+          { "x": { "v": 17 }, "y": { "v": 33 } }
+        ]
+      },
+      "bytes": "02 0306 0905 20 0a08 21 10 11"
+    },
+    {
+      "name": "nested groups",
+      "root": "Nested",
+      "bytes": "02 01 0a09 02 0c0b 0e0d 20 10 21 11 22 12",
+      "json": {
+        "n": 2,
+        "outers": [
+          { "m": 1, "inner": [{ "x": { "v": 16 }, "y": { "v": 32 } }] },
+          {
+            "m": 2,
+            "inner": [
+              { "x": { "v": 17 }, "y": { "v": 33 } },
+              { "x": { "v": 18 }, "y": { "v": 34 } }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "nested groups on write",
+      "root": "Nested",
+      "input": {
+        "outers": [
+          { "inner": [{ "x": { "v": 16 }, "y": { "v": 32 } }] },
+          {
+            "inner": [
+              { "x": { "v": 17 }, "y": { "v": 33 } },
+              { "x": { "v": 18 }, "y": { "v": 34 } }
+            ]
+          }
+        ]
+      },
+      "bytes": "02 01 0a09 02 0c0b 0e0d 20 10 21 11 22 12"
+    },
+    {
+      "name": "per volume: its points, then its pieces",
+      "root": "Volumes",
+      "bytes": "02 02 010908 020c0a 70 50 7172 5152",
+      "json": {
+        "n": 2,
+        "volsOfs": 2,
+        "vols": [
+          {
+            "np": 1,
+            "piecesOfs": 9,
+            "pointsOfs": 8,
+            "pieces": [{ "v": 80 }],
+            "points": [{ "v": 112 }]
+          },
+          {
+            "np": 2,
+            "piecesOfs": 12,
+            "pointsOfs": 10,
+            "pieces": [{ "v": 81 }, { "v": 82 }],
+            "points": [{ "v": 113 }, { "v": 114 }]
+          }
+        ]
+      }
+    },
+    {
+      "name": "per volume groups on write",
+      "root": "Volumes",
+      "input": {
+        "vols": [
+          { "pieces": [{ "v": 80 }], "points": [{ "v": 112 }] },
+          { "pieces": [{ "v": 81 }, { "v": 82 }], "points": [{ "v": 113 }, { "v": 114 }] }
+        ]
+      },
+      "bytes": "02 02 010908 020c0a 70 50 7172 5152"
+    },
+    {
+      "name": "empty targets in a group",
+      "root": "Volumes",
+      "input": { "vols": [{ "pieces": [], "points": [] }] },
+      "bytes": "01 02 000505"
+    },
+    {
+      "name": "null targets in a group add no alignment",
+      "root": "Nullable",
+      "bytes": "02 0600 0008 00 31 00 42",
+      "json": {
+        "n": 2,
+        "opts": [
+          { "p": { "v": 49 }, "q": null },
+          { "p": null, "q": { "v": 66 } }
+        ]
+      }
+    },
+    {
+      "name": "null targets in a group on write",
+      "root": "Nullable",
+      "input": {
+        "opts": [
+          { "p": { "v": 49 }, "q": null },
+          { "p": null, "q": { "v": 66 } }
+        ]
+      },
+      "bytes": "02 0600 0008 00 31 00 42"
+    }
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "name": "@yaffle/conformance",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "vitest run",
+    "typecheck": "tsc -p . --noEmit"
+  },
+  "dependencies": {
+    "yaffle": "0.1.0",
+    "@yaffle/runtime": "0.1.0"
+  }
+}

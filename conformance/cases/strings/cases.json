@@ -1,0 +1,430 @@
+{
+  "description": "Fixed char[n], str/str16/str32, char16/char32 arrays, length-prefixed text, utf8/latin1/ascii.",
+  "generatedBy": "conformance/scripts/areas/strings.ts",
+  "cases": [
+    {
+      "name": "fixed short text is NUL padded",
+      "root": "Fixed",
+      "bytes": "68656c6c6f000000",
+      "json": { "name": "hello" }
+    },
+    {
+      "name": "fixed full length has no terminator",
+      "root": "Fixed",
+      "bytes": "6162636465666768",
+      "json": { "name": "abcdefgh" }
+    },
+    { "name": "fixed empty", "root": "Fixed", "bytes": "0000000000000000", "json": { "name": "" } },
+    {
+      "name": "fixed drops data after the NUL",
+      "root": "Fixed",
+      "roundtrip": false,
+      "bytes": "61620078797a0000",
+      "json": { "name": "ab" }
+    },
+    {
+      "name": "fixed writes NUL padding",
+      "root": "Fixed",
+      "input": { "name": "ab" },
+      "bytes": "6162000000000000"
+    },
+    {
+      "name": "fixed utf8 counts bytes",
+      "root": "Fixed",
+      "bytes": "68c3a96c6c6f0000",
+      "json": { "name": "héllo" }
+    },
+    {
+      "name": "fixed emoji",
+      "root": "Fixed",
+      "bytes": "f09f988000000000",
+      "json": { "name": "😀" }
+    },
+    {
+      "name": "fixed exactly full with multibyte",
+      "root": "Fixed",
+      "bytes": "c3a9c3a9c3a9c3a9",
+      "json": { "name": "éééé" }
+    },
+    {
+      "name": "fixed invalid utf8",
+      "root": "Fixed",
+      "bytes": "c328000000000000",
+      "error": { "phase": "parse", "code": "CHECK", "path": ["name"] }
+    },
+    {
+      "name": "fixed truncated utf8 sequence at the end",
+      "root": "Fixed",
+      "bytes": "61626364656667c3",
+      "error": { "phase": "parse", "code": "CHECK", "path": ["name"] }
+    },
+    {
+      "name": "fixed eof",
+      "root": "Fixed",
+      "bytes": "61626364",
+      "error": { "phase": "parse", "code": "EOF", "path": ["name"] }
+    },
+    {
+      "name": "fixed too long",
+      "root": "Fixed",
+      "input": { "name": "abcdefghi" },
+      "error": { "phase": "serialize", "code": "INPUT", "path": ["name"] }
+    },
+    {
+      "name": "fixed too long in bytes, not characters",
+      "root": "Fixed",
+      "input": { "name": "ééééé" },
+      "error": { "phase": "serialize", "code": "INPUT", "path": ["name"] }
+    },
+    {
+      "name": "fixed with an embedded NUL can't be written",
+      "root": "Fixed",
+      "input": { "name": "a\u0000b" },
+      "error": { "phase": "serialize", "code": "INPUT", "path": ["name"] }
+    },
+    {
+      "name": "fixed then byte",
+      "root": "FixedThenByte",
+      "bytes": "5041430007",
+      "json": { "tag": "PAC", "after": 7 }
+    },
+    { "name": "str hello", "root": "Cstr", "bytes": "68656c6c6f00", "json": { "s": "hello" } },
+    { "name": "str empty", "root": "Cstr", "bytes": "00", "json": { "s": "" } },
+    { "name": "str utf8", "root": "Cstr", "bytes": "e697a5e69cac00", "json": { "s": "日本" } },
+    {
+      "name": "str missing terminator",
+      "root": "Cstr",
+      "bytes": "616263",
+      "error": { "phase": "parse", "code": "EOF", "path": ["s"] }
+    },
+    {
+      "name": "str invalid utf8",
+      "root": "Cstr",
+      "bytes": "ff00",
+      "error": { "phase": "parse", "code": "CHECK", "path": ["s"] }
+    },
+    {
+      "name": "str overlong utf8 encoding is invalid",
+      "root": "Cstr",
+      "bytes": "c0af00",
+      "error": { "phase": "parse", "code": "CHECK", "path": ["s"] }
+    },
+    {
+      "name": "str pair",
+      "root": "CstrPair",
+      "bytes": "610062630009",
+      "json": { "a": "a", "b": "bc", "after": 9 }
+    },
+    {
+      "name": "str with an embedded NUL can't be written",
+      "root": "Cstr",
+      "input": { "s": "a\u0000b" },
+      "error": { "phase": "serialize", "code": "INPUT", "path": ["s"] }
+    },
+    {
+      "name": "str writes the terminator",
+      "root": "Cstr",
+      "input": { "s": "xy" },
+      "bytes": "787900"
+    },
+    { "name": "str16 le", "root": "Wide", "bytes": "480069000000", "json": { "s": "Hi" } },
+    { "name": "str16 empty", "root": "Wide", "bytes": "0000", "json": { "s": "" } },
+    {
+      "name": "str16 surrogate pair",
+      "root": "Wide",
+      "bytes": "3dd800de0000",
+      "json": { "s": "😀" }
+    },
+    {
+      "name": "str16 follows root be",
+      "root": "Wide",
+      "args": { "endian": "be" },
+      "bytes": "004800690000",
+      "json": { "s": "Hi" }
+    },
+    { "name": "str16 be block", "root": "WideBe", "bytes": "004800690000", "json": { "s": "Hi" } },
+    {
+      "name": "str16 unpaired surrogate",
+      "root": "Wide",
+      "bytes": "00d80000",
+      "error": { "phase": "parse", "code": "CHECK", "path": ["s"] }
+    },
+    {
+      "name": "str16 lone low surrogate",
+      "root": "Wide",
+      "bytes": "00dc41000000",
+      "error": { "phase": "parse", "code": "CHECK", "path": ["s"] }
+    },
+    {
+      "name": "str16 missing terminator",
+      "root": "Wide",
+      "bytes": "61006200",
+      "error": { "phase": "parse", "code": "EOF", "path": ["s"] }
+    },
+    {
+      "name": "str16 odd trailing byte",
+      "root": "Wide",
+      "bytes": "610000",
+      "error": { "phase": "parse", "code": "EOF", "path": ["s"] }
+    },
+    {
+      "name": "str16 writes le",
+      "root": "Wide",
+      "input": { "s": "é😀" },
+      "bytes": "e9003dd800de0000"
+    },
+    {
+      "name": "str32 le",
+      "root": "Wider",
+      "bytes": "4100000000f6010000000000",
+      "json": { "s": "A😀" }
+    },
+    { "name": "str32 empty", "root": "Wider", "bytes": "00000000", "json": { "s": "" } },
+    {
+      "name": "str32 be attribute",
+      "root": "WiderBe",
+      "bytes": "0000004100000000",
+      "json": { "s": "A" }
+    },
+    {
+      "name": "str32 code point too large",
+      "root": "Wider",
+      "bytes": "0000110000000000",
+      "error": { "phase": "parse", "code": "CHECK", "path": ["s"] }
+    },
+    {
+      "name": "str32 surrogate code point",
+      "root": "Wider",
+      "bytes": "00d8000000000000",
+      "error": { "phase": "parse", "code": "CHECK", "path": ["s"] }
+    },
+    {
+      "name": "str32 writes code points",
+      "root": "Wider",
+      "input": { "s": "😀b" },
+      "bytes": "00f601006200000000000000"
+    },
+    {
+      "name": "char16 fixed padded",
+      "root": "Fixed16",
+      "bytes": "6100620000000000",
+      "json": { "name": "ab" }
+    },
+    {
+      "name": "char16 fixed full",
+      "root": "Fixed16",
+      "bytes": "6100620063006400",
+      "json": { "name": "abcd" }
+    },
+    {
+      "name": "char16 fixed surrogate pair uses two units",
+      "root": "Fixed16",
+      "bytes": "3dd800de00000000",
+      "json": { "name": "😀" }
+    },
+    {
+      "name": "char16 fixed too long",
+      "root": "Fixed16",
+      "input": { "name": "abcde" },
+      "error": { "phase": "serialize", "code": "INPUT", "path": ["name"] }
+    },
+    {
+      "name": "char16 fixed too long in units",
+      "root": "Fixed16",
+      "input": { "name": "😀😀a" },
+      "error": { "phase": "serialize", "code": "INPUT", "path": ["name"] }
+    },
+    {
+      "name": "char32 fixed",
+      "root": "Fixed32",
+      "bytes": "00f6010000000000",
+      "json": { "name": "😀" }
+    },
+    {
+      "name": "prefixed ascii",
+      "root": "Prefixed",
+      "bytes": "0568656c6c6f",
+      "json": { "len": 5, "text": "hello" }
+    },
+    {
+      "name": "prefixed counts utf8 bytes",
+      "root": "Prefixed",
+      "bytes": "0668c3a96c6c6f",
+      "json": { "len": 6, "text": "héllo" }
+    },
+    {
+      "name": "prefixed empty",
+      "root": "Prefixed",
+      "bytes": "00",
+      "json": { "len": 0, "text": "" }
+    },
+    {
+      "name": "prefixed derives the length",
+      "root": "Prefixed",
+      "input": { "text": "héllo" },
+      "bytes": "0668c3a96c6c6f"
+    },
+    { "name": "prefixed derives zero", "root": "Prefixed", "input": { "text": "" }, "bytes": "00" },
+    {
+      "name": "prefixed stops at a NUL",
+      "root": "Prefixed",
+      "roundtrip": false,
+      "bytes": "0461006263",
+      "json": { "len": 4, "text": "a" }
+    },
+    {
+      "name": "prefixed length overflows u8",
+      "root": "Prefixed",
+      "input": {
+        "text": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+      },
+      "error": { "phase": "serialize", "code": "RANGE", "path": ["len"] }
+    },
+    {
+      "name": "prefixed 255 bytes fits",
+      "root": "Prefixed",
+      "input": {
+        "text": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+      },
+      "bytes": "ff787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878"
+    },
+    {
+      "name": "prefixed eof",
+      "root": "Prefixed",
+      "bytes": "056869",
+      "error": { "phase": "parse", "code": "EOF", "path": ["text"] }
+    },
+    {
+      "name": "prefixed16 counts utf16 units",
+      "root": "Prefixed16",
+      "bytes": "02003dd800de",
+      "json": { "n": 2, "text": "😀" }
+    },
+    {
+      "name": "prefixed16 derives units",
+      "root": "Prefixed16",
+      "input": { "text": "a😀" },
+      "bytes": "030061003dd800de"
+    },
+    {
+      "name": "prefixed32 counts code points",
+      "root": "Prefixed32",
+      "bytes": "0100f60100",
+      "json": { "n": 1, "text": "😀" }
+    },
+    {
+      "name": "prefixed32 derives code points",
+      "root": "Prefixed32",
+      "input": { "text": "ab😀" },
+      "bytes": "03610000006200000000f60100"
+    },
+    {
+      "name": "length minus one",
+      "root": "PrefixedPlusOne",
+      "bytes": "0461626300",
+      "json": { "lenWithNul": 4, "text": "abc", "nul": 0 }
+    },
+    {
+      "name": "length minus one empty",
+      "root": "PrefixedPlusOne",
+      "bytes": "0100",
+      "json": { "lenWithNul": 1, "text": "", "nul": 0 }
+    },
+    {
+      "name": "length minus one derives",
+      "root": "PrefixedPlusOne",
+      "input": { "text": "hey" },
+      "bytes": "0468657900"
+    },
+    {
+      "name": "latin1 maps bytes to code points",
+      "root": "Latin1",
+      "bytes": "636166e9",
+      "json": { "name": "café" }
+    },
+    { "name": "latin1 0xff", "root": "Latin1", "bytes": "ff000000", "json": { "name": "ÿ" } },
+    { "name": "latin1 padded", "root": "Latin1", "bytes": "61620000", "json": { "name": "ab" } },
+    {
+      "name": "latin1 writes one byte per character",
+      "root": "Latin1",
+      "input": { "name": "née" },
+      "bytes": "6ee96500"
+    },
+    {
+      "name": "latin1 can't write the euro sign",
+      "root": "Latin1",
+      "input": { "name": "€" },
+      "error": { "phase": "serialize", "code": "INPUT", "path": ["name"] }
+    },
+    { "name": "latin1 cstr", "root": "Latin1Cstr", "bytes": "e900", "json": { "s": "é" } },
+    { "name": "ascii", "root": "Ascii", "bytes": "41524356", "json": { "tag": "ARCV" } },
+    {
+      "name": "ascii rejects 0x80",
+      "root": "Ascii",
+      "bytes": "50418043",
+      "error": { "phase": "parse", "code": "CHECK", "path": ["tag"] }
+    },
+    {
+      "name": "ascii can't write é",
+      "root": "Ascii",
+      "input": { "tag": "é" },
+      "error": { "phase": "serialize", "code": "INPUT", "path": ["tag"] }
+    },
+    { "name": "ascii cstr", "root": "AsciiCstr", "bytes": "6f6b00", "json": { "s": "ok" } },
+    {
+      "name": "ascii cstr rejects 0xc3",
+      "root": "AsciiCstr",
+      "bytes": "c3a900",
+      "error": { "phase": "parse", "code": "CHECK", "path": ["s"] }
+    },
+    {
+      "name": "utf8 bytes are not latin1",
+      "root": "Cstr",
+      "bytes": "c3a900",
+      "json": { "s": "é" }
+    },
+    {
+      "name": "hex of utf8 matches",
+      "root": "Fixed",
+      "bytes": "e282ac0000000000",
+      "json": { "name": "€" }
+    },
+    {
+      "name": "string list until empty",
+      "root": "List",
+      "bytes": "610062630000",
+      "json": { "names": ["a", "bc"] }
+    },
+    { "name": "string list empty", "root": "List", "bytes": "00", "json": { "names": [] } },
+    {
+      "name": "string list missing terminator",
+      "root": "List",
+      "bytes": "6100",
+      "error": { "phase": "parse", "code": "EOF", "path": ["names", 1] }
+    },
+    {
+      "name": "string list writes the empty terminator",
+      "root": "List",
+      "input": { "names": ["x"] },
+      "bytes": "780000"
+    },
+    {
+      "name": "string list can't contain the terminator",
+      "root": "List",
+      "input": { "names": ["x", "", "y"] },
+      "error": { "phase": "serialize", "code": "INPUT", "path": ["names", 1] }
+    },
+    {
+      "name": "counted string list",
+      "root": "CountedList",
+      "bytes": "027800797a00",
+      "json": { "n": 2, "names": ["x", "yz"] }
+    },
+    {
+      "name": "counted string list derives n",
+      "root": "CountedList",
+      "input": { "names": ["p", "", "q"] },
+      "bytes": "037000007100"
+    }
+  ]
+}

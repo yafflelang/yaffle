@@ -1,0 +1,234 @@
+{
+  "description": "Write formulas: sizeof, offsetof, crc32, adler32, encode, min/max, extern fn, later fields, chosen reverses.",
+  "generatedBy": "conformance/scripts/areas/formulas.ts",
+  "cases": [
+    {
+      "name": "sizeof a struct",
+      "root": "Sized",
+      "bytes": "040000000200aabb",
+      "json": { "size": 4, "body": { "a": 2, "b": "aabb" } }
+    },
+    {
+      "name": "sizeof derived on write",
+      "root": "Sized",
+      "input": { "body": { "b": "010203" } },
+      "bytes": "050000000300010203"
+    },
+    {
+      "name": "sizeof is not checked on read",
+      "root": "Sized",
+      "roundtrip": false,
+      "bytes": "090000000200aabb",
+      "json": { "size": 9, "body": { "a": 2, "b": "aabb" } }
+    },
+    {
+      "name": "sizeof an empty body",
+      "root": "Sized",
+      "input": { "body": { "b": "" } },
+      "bytes": "020000000000"
+    },
+    {
+      "name": "sizeof an array",
+      "root": "SizedArray",
+      "bytes": "0c00010000000200000003000000",
+      "json": { "n": 12, "items": [1, 2, 3] }
+    },
+    {
+      "name": "sizeof an array derived",
+      "root": "SizedArray",
+      "input": { "items": [4, 5, 6] },
+      "bytes": "0c00040000000500000006000000"
+    },
+    {
+      "name": "crc32 of bytes",
+      "root": "Crc",
+      "bytes": "11cd82ed61626364",
+      "json": { "crc": 3984772369, "data": "61626364" }
+    },
+    {
+      "name": "crc32 computed on write",
+      "root": "Crc",
+      "input": { "data": "00000000" },
+      "bytes": "1cdf442100000000"
+    },
+    {
+      "name": "crc32 is not checked on read",
+      "root": "Crc",
+      "roundtrip": false,
+      "bytes": "0000000061626364",
+      "json": { "crc": 0, "data": "61626364" }
+    },
+    {
+      "name": "crc32 of a struct is over its bytes",
+      "root": "CrcStruct",
+      "input": { "body": { "b": "aabb" } },
+      "bytes": "f02916830200aabb"
+    },
+    {
+      "name": "crc32 of a struct",
+      "root": "CrcStruct",
+      "bytes": "f02916830200aabb",
+      "json": { "crc": 2199267824, "body": { "a": 2, "b": "aabb" } }
+    },
+    {
+      "name": "adler32 after the data",
+      "root": "Adler",
+      "input": { "data": "010203" },
+      "bytes": "01020307000d00"
+    },
+    {
+      "name": "adler32",
+      "root": "Adler",
+      "bytes": "61626327014d02",
+      "json": { "data": "616263", "check": 38600999 }
+    },
+    {
+      "name": "offsetof a later field",
+      "root": "Ofs",
+      "bytes": "04 aabbcc dd",
+      "json": { "ofs": 4, "a": "aabbcc", "b": 221 }
+    },
+    {
+      "name": "offsetof derived",
+      "root": "Ofs",
+      "input": { "a": "000000", "b": 1 },
+      "bytes": "04 000000 01"
+    },
+    {
+      "name": "extern fn sum8",
+      "root": "Sum",
+      "bytes": "0a01020304",
+      "json": { "s": 10, "data": "01020304" }
+    },
+    {
+      "name": "extern fn sum8 wraps",
+      "root": "Sum",
+      "input": { "data": "ffff0200" },
+      "bytes": "00ffff0200"
+    },
+    {
+      "name": "extern fn over encode(struct)",
+      "root": "SumEncoded",
+      "input": { "body": { "b": "cc" } },
+      "bytes": "0100cccd"
+    },
+    {
+      "name": "extern fn over encode(struct) parse",
+      "root": "SumEncoded",
+      "bytes": "0100cccd",
+      "json": { "body": { "a": 1, "b": "cc" }, "s": 205 }
+    },
+    {
+      "name": "chosen reverse",
+      "root": "Flags",
+      "bytes": "100000000102",
+      "json": { "n": 16, "flags": "0102" }
+    },
+    {
+      "name": "chosen reverse on write",
+      "root": "Flags",
+      "input": { "flags": "ff" },
+      "bytes": "08000000ff"
+    },
+    {
+      "name": "chosen reverse empty",
+      "root": "Flags",
+      "input": { "flags": "" },
+      "bytes": "00000000"
+    },
+    {
+      "name": "chosen reverse is lossy for other values",
+      "root": "Flags",
+      "roundtrip": false,
+      "bytes": "0a0000000102",
+      "json": { "n": 10, "flags": "0102" }
+    },
+    { "name": "constant expression", "root": "ConstExpr", "bytes": "07000000", "json": { "x": 7 } },
+    {
+      "name": "constant expression is checked like a constant",
+      "root": "ConstExpr",
+      "bytes": "08000000",
+      "error": { "phase": "parse", "code": "CHECK", "path": ["x"] }
+    },
+    {
+      "name": "constant expression written",
+      "root": "ConstExpr",
+      "input": {},
+      "bytes": "07000000"
+    },
+    {
+      "name": "formula over later fields",
+      "root": "Later",
+      "bytes": "05 02 03",
+      "json": { "total": 5, "a": 2, "b": 3 }
+    },
+    {
+      "name": "formula over later fields on write",
+      "root": "Later",
+      "input": { "a": 10, "b": 20 },
+      "bytes": "1e 0a 14"
+    },
+    {
+      "name": "formula result out of range",
+      "root": "Later",
+      "input": { "a": 200, "b": 100 },
+      "error": { "phase": "serialize", "code": "RANGE", "path": ["total"] }
+    },
+    {
+      "name": "min and max",
+      "root": "MinMax",
+      "bytes": "05 03 03 05",
+      "json": { "a": 5, "b": 3, "lo": 3, "hi": 5 }
+    },
+    {
+      "name": "min and max on write",
+      "root": "MinMax",
+      "input": { "a": 1, "b": 9 },
+      "bytes": "01 09 01 09"
+    },
+    {
+      "name": "constant length",
+      "root": "ConstLen",
+      "bytes": "03 010203",
+      "json": { "n": 3, "data": "010203" }
+    },
+    {
+      "name": "constant length mismatch on read",
+      "root": "ConstLen",
+      "bytes": "02 0102",
+      "error": { "phase": "parse", "code": "CHECK", "path": ["n"] }
+    },
+    {
+      "name": "constant length on write",
+      "root": "ConstLen",
+      "input": { "data": "aabbcc" },
+      "bytes": "03 aabbcc"
+    },
+    {
+      "name": "constant length contradicts the array",
+      "root": "ConstLen",
+      "input": { "data": "01" },
+      "error": { "phase": "serialize", "code": "DERIVE", "path": ["data"] }
+    },
+    {
+      "name": "bitwise",
+      "root": "Bitwise",
+      "bytes": "34 12 3412 cb 26",
+      "json": { "lo": 52, "hi": 18, "packed": 4660, "inv": 203, "x": 38 }
+    },
+    {
+      "name": "bitwise on write",
+      "root": "Bitwise",
+      "input": { "lo": 255, "hi": 0 },
+      "bytes": "ff 00 ff00 00 ff"
+    },
+    { "name": "conditional formula low", "root": "Cond", "input": { "v": 5 }, "bytes": "05 01" },
+    { "name": "conditional formula high", "root": "Cond", "input": { "v": 20 }, "bytes": "14 02" },
+    {
+      "name": "conditional formula parse",
+      "root": "Cond",
+      "bytes": "14 02",
+      "json": { "v": 20, "kind": 2 }
+    }
+  ]
+}

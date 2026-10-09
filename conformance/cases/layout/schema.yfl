@@ -1,0 +1,155 @@
+// Where pointer and `at` targets go on write: the default pre-order, `layout { … }` items, `this`,
+// pulling targets out of inner structs, item alignment, leftovers, @ref into a pool, and a
+// miniature container format that combines all of them.
+
+struct Leaf { u8 v }
+
+// Reordering a struct's own targets.
+struct Mid { Leaf *a : u8  Leaf *b : u8  layout { b, a } }
+export struct Reorder { Mid *m : u8 }
+
+// `this` between and after the targets.
+struct M2 { Leaf *a : u8  Leaf *b : u8  layout { b, this, a } }
+export struct ThisMiddle { M2 *m : u8 }
+
+struct M3 { Leaf *a : u8  Leaf *b : u8  layout { a, b, this } }
+export struct ThisLast { M3 *m : u8 }
+
+// Leftovers follow in default order.
+struct Three { Leaf *a : u8  Leaf *b : u8  Leaf *c : u8  layout { c } }
+export struct Leftovers { Three *t : u8 }
+
+// Pulling targets out of inner structs, overriding their layouts.
+export struct Pull {
+  Mid *m1 : u8
+  Mid *m2 : u8
+  layout { m1.b, m2.b, m1, m2 }
+}
+
+export struct PullEach {
+  u8   n
+  Mid *ms[n] : u8
+  layout { ms[*].a, ms }
+}
+
+// Item alignment, inherited by nested items unless they set their own.
+export struct ItemAlign {
+  Leaf *a : u8
+  Leaf *b : u8
+  layout { a @align(4), b @align(4) }
+}
+
+struct Two { Leaf *x : u8  Leaf *y : u8  layout { x, y @align(2) } }
+export struct ItemAlignNested {
+  Two *t : u8
+  layout { t @align(4) }
+}
+
+// A linear `at` target placed by a layout item still honours its constraint.
+export struct ConstraintInLayout {
+  Leaf *a : u8
+  u8    sector
+  u8    data[2] at sector * 4
+  layout { data, a }
+}
+
+// Pulling out two levels deep.
+struct Deep { Leaf *x : u8 }
+struct Mid2 { Deep *d : u8  Leaf *l : u8 }
+export struct TwoLevels {
+  Mid2 *m : u8
+  layout { m.d.x, m }
+}
+
+// An aligned `this`.
+struct T3 { Leaf *a : u8  layout { a, this @align(4) } }
+export struct ThisAligned { T3 *t : u8 }
+
+// An item whose pointer is null places nothing, so its alignment adds no padding.
+struct Opt { Leaf *a : u8 @nullable  Leaf *b : u8  layout { a @align(4), b } }
+export struct NullItem { Opt *o : u8 }
+
+// `[*]` over an inline array of structs.
+struct Pair2 { Leaf *x : u8  Leaf *y : u8 }
+export struct InlineEach {
+  Pair2 ps[2]
+  layout { ps[*].y, ps[*] }
+}
+
+// @ref to an inline field.
+struct Hdr { u16 a  u16 b }
+export struct RefField { Hdr h  Hdr *again : u8 @ref }
+
+// Inline records with targets pulled out per field (the container pattern).
+struct Rec { Leaf *x : u8 @nullable  Leaf *y : u8 @nullable }
+export struct Records {
+  u8  n
+  u8  recsOfs
+  Rec recs[n] at recsOfs
+  layout {
+    recs[*].y @align(2)
+    recs[*]
+    recs
+  }
+}
+
+// @ref: point at an equal value that's already placed (the string pool).
+struct Named { str *name : u8 @ref }
+export struct RefPool {
+  str   pool[until ""]
+  u8    n
+  Named items[n]
+}
+
+// A miniature container format: header, string pool, records with model/curves/motions, record
+// pointers (@ref into the records) and a set index, laid out in a deliberate order.
+struct MiniModel { u8 size  u8 data[size] }
+
+struct MiniCurve {
+  u8 n
+  u8 pointsOfs
+  u8 points[n] at pointsOfs
+}
+
+struct MiniCurves {
+  MiniCurve *x : u8
+  MiniCurve *y : u8
+  u8         a
+  layout { x.points, y.points, x, y, this }
+}
+
+struct MiniMotion {
+  str *name : u8 @ref
+  u8   v
+}
+
+struct MiniRecord {
+  MiniModel  *model  : u8 @nullable
+  MiniCurves *curves : u8 @nullable
+  u8          nMotions
+  u8          motionsOfs
+  MiniMotion  motions[nMotions] at motionsOfs
+  layout { curves, motions }
+}
+
+export struct MiniContainer @alignEnd(0x10) {
+  @padUntil(0x10) {
+    char magic[4] = "CHNK"
+    u8   r
+    u8   s
+    u8   recordsOfs
+    u8   indexOfs
+    u8   recPtrsOfs
+  }
+  str          pool[until ""]
+  MiniRecord   records[r] at recordsOfs
+  u8           index[s] at indexOfs
+  MiniRecord  *recPtrs[r] : u8 at recPtrsOfs @ref
+  layout {
+    records[*].model @align(8)
+    records[*]       @align(2)
+    records          @align(4)
+    recPtrs
+    index
+  }
+}

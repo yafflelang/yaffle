@@ -1,0 +1,180 @@
+{
+  "description": "`as`/`=` transforms: inferred integer/float reverses, lookups, extern fn reverses, one-way, normalization.",
+  "generatedBy": "conformance/scripts/areas/transforms.ts",
+  "cases": [
+    { "name": "angle quarter turn", "root": "Angle", "bytes": "0040", "json": { "angle": 90 } },
+    {
+      "name": "angle smallest step",
+      "root": "Angle",
+      "bytes": "0100",
+      "json": { "angle": 0.0054931640625 }
+    },
+    { "name": "angle zero", "root": "Angle", "bytes": "0000", "json": { "angle": 0 } },
+    {
+      "name": "angle max",
+      "root": "Angle",
+      "bytes": "ffff",
+      "json": { "angle": 359.9945068359375 }
+    },
+    {
+      "name": "angle inferred reverse",
+      "root": "Angle",
+      "input": { "angle": 180 },
+      "bytes": "0080"
+    },
+    {
+      "name": "angle inferred reverse of the max",
+      "root": "Angle",
+      "input": { "angle": 359.9945068359375 },
+      "bytes": "ffff"
+    },
+    {
+      "name": "angle out of range",
+      "root": "Angle",
+      "input": { "angle": 400 },
+      "error": { "phase": "serialize", "code": "RANGE", "path": ["angle"] }
+    },
+    { "name": "offset transform", "root": "Offset", "bytes": "05", "json": { "v": 105 } },
+    { "name": "offset reverse", "root": "Offset", "input": { "v": 150 }, "bytes": "32" },
+    {
+      "name": "offset reverse below the raw range",
+      "root": "Offset",
+      "input": { "v": 99 },
+      "error": { "phase": "serialize", "code": "RANGE", "path": ["v"] }
+    },
+    {
+      "name": "offset reverse above the raw range",
+      "root": "Offset",
+      "input": { "v": 356 },
+      "error": { "phase": "serialize", "code": "RANGE", "path": ["v"] }
+    },
+    { "name": "affine transform", "root": "Affine", "bytes": "03", "json": { "v": 8 } },
+    { "name": "affine reverse", "root": "Affine", "input": { "v": 8 }, "bytes": "03" },
+    {
+      "name": "affine value that doesn't round trip",
+      "root": "Affine",
+      "input": { "v": 7 },
+      "error": { "phase": "serialize", "code": "INPUT", "path": ["v"] }
+    },
+    {
+      "name": "affine reverse negative",
+      "root": "Affine",
+      "input": { "v": 0 },
+      "error": { "phase": "serialize", "code": "RANGE", "path": ["v"] }
+    },
+    { "name": "fixed point positive", "root": "Fixed", "bytes": "8001", "json": { "x": 1.5 } },
+    { "name": "fixed point negative", "root": "Fixed", "bytes": "00ff", "json": { "x": -1 } },
+    { "name": "fixed point reverse", "root": "Fixed", "input": { "x": -0.5 }, "bytes": "80ff" },
+    {
+      "name": "fixed point reverse max",
+      "root": "Fixed",
+      "input": { "x": 127.99609375 },
+      "bytes": "ff7f"
+    },
+    {
+      "name": "lookup by index",
+      "root": "Names",
+      "bytes": "037a65726f006f6e650074776f0002",
+      "json": { "n": 3, "names": ["zero", "one", "two"], "pick": "two" }
+    },
+    {
+      "name": "lookup reverse is indexOf",
+      "root": "Names",
+      "input": { "names": ["zero", "one", "two"], "pick": "one" },
+      "bytes": "037a65726f006f6e650074776f0001"
+    },
+    {
+      "name": "lookup reverse takes the first match",
+      "root": "Names",
+      "input": { "names": ["a", "a"], "pick": "a" },
+      "bytes": "026100610000"
+    },
+    {
+      "name": "lookup reverse of a missing value",
+      "root": "Names",
+      "input": { "names": ["zero"], "pick": "four" },
+      "error": { "phase": "serialize", "code": "INPUT", "path": ["pick"] }
+    },
+    {
+      "name": "lookup index out of range",
+      "root": "Names",
+      "bytes": "037a65726f006f6e650074776f0005",
+      "error": { "phase": "parse", "code": "RANGE", "path": ["pick"] }
+    },
+    {
+      "name": "explicit reverse via extern fn",
+      "root": "Explicit",
+      "bytes": "3412",
+      "json": { "v": 13330 }
+    },
+    {
+      "name": "explicit reverse on write",
+      "root": "Explicit",
+      "input": { "v": 13330 },
+      "bytes": "3412"
+    },
+    { "name": "explicit reverse zero", "root": "Explicit", "input": { "v": 255 }, "bytes": "00ff" },
+    {
+      "name": "one-way transform JSON is the raw value",
+      "root": "OneWay",
+      "bytes": "2a",
+      "json": { "v": 42 }
+    },
+    {
+      "name": "one-way transform input is the raw value",
+      "root": "OneWay",
+      "input": { "v": 42 },
+      "bytes": "2a"
+    },
+    {
+      "name": "one-way bool JSON is raw (false)",
+      "root": "OneWayBool",
+      "bytes": "00",
+      "json": { "b": 0 }
+    },
+    {
+      "name": "one-way bool JSON is raw (true)",
+      "root": "OneWayBool",
+      "bytes": "05",
+      "json": { "b": 5 }
+    },
+    {
+      "name": "one-way bool input is raw",
+      "root": "OneWayBool",
+      "input": { "b": 5 },
+      "bytes": "05"
+    },
+    {
+      "name": "normalize keeps an already normal value",
+      "root": "Normalize",
+      "bytes": "81",
+      "json": { "flags": 129 }
+    },
+    {
+      "name": "normalize reads the raw value",
+      "root": "Normalize",
+      "roundtrip": false,
+      "bytes": "01",
+      "json": { "flags": 1 }
+    },
+    { "name": "normalize on write", "root": "Normalize", "input": { "flags": 1 }, "bytes": "81" },
+    {
+      "name": "transformed elements",
+      "root": "DegList",
+      "bytes": "02 0a14",
+      "json": { "n": 2, "vals": [20, 40] }
+    },
+    {
+      "name": "transformed elements reverse",
+      "root": "DegList",
+      "input": { "vals": [4, 6] },
+      "bytes": "02 0203"
+    },
+    {
+      "name": "transformed element that doesn't round trip",
+      "root": "DegList",
+      "input": { "vals": [3] },
+      "error": { "phase": "serialize", "code": "INPUT", "path": ["vals", 0] }
+    }
+  ]
+}

@@ -1,0 +1,59 @@
+// Byte transforms: @via with codec arguments, layered @size (decoded size inside, on-disk size
+// outside, both derived), @streaming codecs that find their own end, async codecs, chains of
+// codecs, @ranged position-dependent codecs, codec failures, and codec reuse on rebuilds.
+
+extern codec xor(u8 key) @ranged
+extern codec xorpos(u8 key) @ranged
+extern codec rle
+extern codec rlez @streaming
+extern async codec axor(u8 key)
+
+struct Body {
+  u8  a
+  u16 b
+}
+
+// Without an outer @size, a non-streaming codec takes the rest of the region.
+export struct XorRest { Body body @via(xor(0x5a)) }
+
+// The codec's argument comes from an earlier field.
+export struct XorKey { u8 key  u8 n  Body body @via(xor(key)) @size(n) }
+
+// Decoded size inside, on-disk size outside: both derived.
+export struct Rle {
+  u8   expSize
+  u8   compSize
+  Body body @size(expSize) @via(rle) @size(compSize)
+  u8   after
+}
+
+// Bytes through a codec.
+export struct RleBytes { u8 n  u8 data[] @via(rle) @size(n)  u8 after }
+
+// A streaming codec finds its own end: no outer size needed.
+export struct Stream { u8 data[] @via(rlez)  u8 after }
+export struct StreamSized { u8 exp  u8 data[] @size(exp) @via(rlez)  u8 after }
+
+// Async codec: the whole schema becomes async.
+export struct Async { u8 n  Body body @via(axor(0x11)) @size(n) }
+
+// Chains: the codec nearest the field applies first on write (last on read).
+export struct Chain { u8 n  Body body @via(rle) @via(xor(0x55)) @size(n) }
+export struct ChainSizes {
+  u8   exp
+  u8   mid
+  u8   disk
+  u8   data[] @size(exp) @via(rle) @size(mid) @via(xor(0xff)) @size(disk)
+}
+
+// Position-dependent ranged codec.
+export struct Pos { u8 data[4] @via(xorpos(0x10)) }
+
+// Per-element codecs through a type alias.
+type EncBody = Body @via(xor(0x0f)) @size(3)
+export struct Elements { u8 n  EncBody items[n] }
+
+// Struct-level layers apply wherever the struct is used. For struct and block attributes the one
+// just before `{` is innermost: here the codec, then the 2-byte window on disk.
+struct Hidden @size(2) @via(xor(0xaa)) { u16 v }
+export struct UsesHidden { Hidden h  u8 after }

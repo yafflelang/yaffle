@@ -1,0 +1,47 @@
+{
+  "sources": ["schema.yfl"],
+  "targets": {
+    "ts": {
+      "out": "../../.out/gen/slices-write/ts",
+      "externs": {
+        "xor": "../../externs/ts/xor.ts"
+      }
+    },
+    "rust": {
+      "out": "../../.out/gen/slices-write/rust",
+      "externs": {
+        "xor": "../../externs/rust/xor.rs#XOR"
+      }
+    },
+    "python": {
+      "out": "../../.out/gen/slices-write/python",
+      "externs": {
+        "xor": "../../externs/python/xor.py"
+      }
+    },
+    "go": {
+      "out": "../../.out/gen/slices-write/go",
+      "externs": {
+        "xor": "../../externs/go/xor.go"
+      }
+    },
+    "csharp": {
+      "out": "../../.out/gen/slices-write/csharp",
+      "externs": {
+        "xor": "../../externs/csharp/xor.cs"
+      }
+    },
+    "java": {
+      "out": "../../.out/gen/slices-write/java",
+      "externs": {
+        "xor": "../../externs/java/xor.java#XOR"
+      }
+    },
+    "cpp": {
+      "out": "../../.out/gen/slices-write/cpp",
+      "externs": {
+        "xor": "../../externs/cpp/xor.hpp"
+      }
+    }
+  }
+}

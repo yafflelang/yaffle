@@ -1,0 +1,330 @@
+{
+  "description": "if/else, if without else, nested ifs, switch (strings, integers, multi-value cases, default), unions.",
+  "generatedBy": "conformance/scripts/areas/conditionals.ts",
+  "cases": [
+    {
+      "name": "if taken",
+      "root": "IfElse",
+      "bytes": "03 01000000 09",
+      "json": { "version": 3, "extra": 1, "tail": 9 }
+    },
+    {
+      "name": "else taken",
+      "root": "IfElse",
+      "bytes": "02 0500 09",
+      "json": { "version": 2, "legacy": 5, "tail": 9 }
+    },
+    {
+      "name": "if branch on write",
+      "root": "IfElse",
+      "input": { "version": 4, "extra": 7, "tail": 1 },
+      "bytes": "04 07000000 01"
+    },
+    {
+      "name": "fields of the untaken branch are ignored",
+      "root": "IfElse",
+      "input": { "version": 1, "legacy": 2, "extra": 99, "tail": 1 },
+      "bytes": "01 0200 01"
+    },
+    {
+      "name": "missing field of the taken branch",
+      "root": "IfElse",
+      "input": { "version": 4, "tail": 1 },
+      "error": { "phase": "serialize", "code": "INPUT", "path": ["extra"] }
+    },
+    {
+      "name": "eof inside a branch",
+      "root": "IfElse",
+      "bytes": "03 0100",
+      "error": { "phase": "parse", "code": "EOF", "path": ["extra"] }
+    },
+    {
+      "name": "if without else not taken",
+      "root": "IfOnly",
+      "bytes": "00 07",
+      "json": { "flag": 0, "end": 7 }
+    },
+    {
+      "name": "if without else taken",
+      "root": "IfOnly",
+      "bytes": "01 3412 07",
+      "json": { "flag": 1, "opt": 4660, "end": 7 }
+    },
+    {
+      "name": "if without else omitted on write",
+      "root": "IfOnly",
+      "input": { "flag": 0, "end": 7 },
+      "bytes": "00 07"
+    },
+    {
+      "name": "if without else on write",
+      "root": "IfOnly",
+      "input": { "flag": 2, "opt": 1, "end": 7 },
+      "bytes": "02 0100 07"
+    },
+    {
+      "name": "bool condition taken",
+      "root": "BoolCond",
+      "bytes": "01 05000000 06",
+      "json": { "hasX": true, "x": 5, "y": 6 }
+    },
+    {
+      "name": "bool condition not taken",
+      "root": "BoolCond",
+      "bytes": "00",
+      "json": { "hasX": false }
+    },
+    {
+      "name": "nested if: inner if",
+      "root": "NestedIf",
+      "bytes": "01 01 07",
+      "json": { "a": 1, "b": 1, "c": 7 }
+    },
+    {
+      "name": "nested if: inner else",
+      "root": "NestedIf",
+      "bytes": "01 00 0200",
+      "json": { "a": 1, "b": 0, "d": 2 }
+    },
+    {
+      "name": "nested if: outer else",
+      "root": "NestedIf",
+      "bytes": "00 04000000",
+      "json": { "a": 0, "e": 4 }
+    },
+    {
+      "name": "nested if on write",
+      "root": "NestedIf",
+      "input": { "a": 5, "b": 0, "d": 3 },
+      "bytes": "05 00 0300"
+    },
+    {
+      "name": "condition on a count",
+      "root": "CondCount",
+      "bytes": "02 aabb",
+      "json": { "n": 2, "items": "aabb" }
+    },
+    {
+      "name": "condition on a count, not taken",
+      "root": "CondCount",
+      "bytes": "00",
+      "json": { "n": 0 }
+    },
+    {
+      "name": "a count used in a condition stays an input",
+      "root": "CondCount",
+      "input": { "n": 2, "items": "aabb" },
+      "bytes": "02 aabb"
+    },
+    {
+      "name": "a count used in a condition is checked",
+      "root": "CondCount",
+      "input": { "n": 2, "items": "aa" },
+      "error": { "phase": "serialize", "code": "DERIVE" }
+    },
+    {
+      "name": "switch on a string",
+      "root": "SwitchStr",
+      "bytes": "4152435605000000ff",
+      "json": { "tag": "ARCV", "n": 5, "after": 255 }
+    },
+    {
+      "name": "switch second case",
+      "root": "SwitchStr",
+      "bytes": "43484e4b0700ff",
+      "json": { "tag": "CHNK", "m": 7, "after": 255 }
+    },
+    {
+      "name": "switch default",
+      "root": "SwitchStr",
+      "bytes": "585858580102ff",
+      "json": { "tag": "XXXX", "body": "0102", "after": 255 }
+    },
+    {
+      "name": "switch on write",
+      "root": "SwitchStr",
+      "input": { "tag": "CHNK", "m": 1, "after": 0 },
+      "bytes": "43484e4b010000"
+    },
+    {
+      "name": "switch default on write",
+      "root": "SwitchStr",
+      "input": { "tag": "ABCD", "body": "ffee", "after": 0 },
+      "bytes": "41424344ffee00"
+    },
+    {
+      "name": "switch on an integer",
+      "root": "SwitchInt",
+      "bytes": "01 aa",
+      "json": { "kind": 1, "a": 170 }
+    },
+    {
+      "name": "switch case with two values (first)",
+      "root": "SwitchInt",
+      "bytes": "02 3412",
+      "json": { "kind": 2, "b": 4660 }
+    },
+    {
+      "name": "switch case with two values (second)",
+      "root": "SwitchInt",
+      "bytes": "03 3412",
+      "json": { "kind": 3, "b": 4660 }
+    },
+    {
+      "name": "switch case with a block",
+      "root": "SwitchInt",
+      "bytes": "04 0102",
+      "json": { "kind": 4, "c": 1, "d": 2 }
+    },
+    {
+      "name": "switch integer default",
+      "root": "SwitchInt",
+      "bytes": "09 04030201",
+      "json": { "kind": 9, "z": 16909060 }
+    },
+    {
+      "name": "switch block case on write",
+      "root": "SwitchInt",
+      "input": { "kind": 4, "c": 9, "d": 8 },
+      "bytes": "04 0908"
+    },
+    {
+      "name": "switch without default, matched",
+      "root": "SwitchNoDefault",
+      "bytes": "02 0100",
+      "json": { "k": 2, "b": 1 }
+    },
+    {
+      "name": "switch without a match",
+      "root": "SwitchNoDefault",
+      "bytes": "03",
+      "error": { "phase": "parse", "code": "CHECK" }
+    },
+    {
+      "name": "switch without a match on write",
+      "root": "SwitchNoDefault",
+      "input": { "k": 3 },
+      "error": { "phase": "serialize", "code": "CHECK" }
+    },
+    {
+      "name": "union first variant",
+      "root": "U",
+      "bytes": "01 05 ff",
+      "json": { "x": { "type": "A", "value": { "tag": 1, "v": 5 } }, "after": 255 }
+    },
+    {
+      "name": "union second variant",
+      "root": "U",
+      "bytes": "02 0100 ff",
+      "json": { "x": { "type": "B", "value": { "tag": 2, "w": 1 } }, "after": 255 }
+    },
+    {
+      "name": "union no variant matches",
+      "root": "U",
+      "bytes": "03 0000 ff",
+      "error": { "phase": "parse", "code": "UNION", "path": ["x"] }
+    },
+    {
+      "name": "union write",
+      "root": "U",
+      "input": { "x": { "type": "B", "value": { "w": 2 } }, "after": 1 },
+      "bytes": "02 0200 01"
+    },
+    {
+      "name": "union write first variant",
+      "root": "U",
+      "input": { "x": { "type": "A", "value": { "v": 9 } }, "after": 1 },
+      "bytes": "01 09 01"
+    },
+    {
+      "name": "union write unknown variant",
+      "root": "U",
+      "input": { "x": { "type": "Z", "value": {} }, "after": 1 },
+      "error": { "phase": "serialize", "code": "INPUT", "path": ["x"] }
+    },
+    {
+      "name": "union fallback variant",
+      "root": "UF",
+      "bytes": "05 07",
+      "json": { "x": { "type": "C", "value": { "tag": 5, "x": 7 } } }
+    },
+    {
+      "name": "union fallback picks the first match",
+      "root": "UF",
+      "bytes": "01 05",
+      "json": { "x": { "type": "A", "value": { "tag": 1, "v": 5 } } }
+    },
+    {
+      "name": "union order decides",
+      "root": "UFirst",
+      "bytes": "01 05",
+      "json": { "x": { "type": "C", "value": { "tag": 1, "x": 5 } } }
+    },
+    {
+      "name": "array of unions",
+      "root": "UList",
+      "bytes": "02 0105 020100",
+      "json": {
+        "n": 2,
+        "items": [
+          { "type": "A", "value": { "tag": 1, "v": 5 } },
+          { "type": "B", "value": { "tag": 2, "w": 1 } }
+        ]
+      }
+    },
+    {
+      "name": "array of unions on write",
+      "root": "UList",
+      "input": { "items": [{ "type": "B", "value": { "w": 3 } }] },
+      "bytes": "01 020300"
+    },
+    {
+      "name": "union variant failing with EOF falls through",
+      "root": "ULS",
+      "bytes": "09 2a",
+      "json": { "x": { "type": "Short", "value": { "tag": 9, "small": 42 } } }
+    },
+    {
+      "name": "union variant that fits wins",
+      "root": "ULS",
+      "bytes": "09 01000000",
+      "json": { "x": { "type": "Long", "value": { "tag": 9, "big": 1 } } }
+    },
+    {
+      "name": "switch on an enum",
+      "root": "SwitchEnum",
+      "bytes": "01 0500",
+      "json": { "s": "Circle", "radius": 5 }
+    },
+    {
+      "name": "switch on an enum, block case",
+      "root": "SwitchEnum",
+      "bytes": "02 0300 0400",
+      "json": { "s": "Square", "w": 3, "h": 4 }
+    },
+    {
+      "name": "switch on an enum with an unknown value",
+      "root": "SwitchEnum",
+      "bytes": "03 0000",
+      "error": { "phase": "parse", "code": "CHECK", "path": ["s"] }
+    },
+    {
+      "name": "switch on an enum on write",
+      "root": "SwitchEnum",
+      "input": { "s": "Square", "w": 1, "h": 2 },
+      "bytes": "02 0100 0200"
+    },
+    {
+      "name": "condition on a nested field, taken",
+      "root": "NestedCond",
+      "bytes": "01 05000000",
+      "json": { "f": { "bits": 1 }, "extra": 5 }
+    },
+    {
+      "name": "condition on a nested field, not taken",
+      "root": "NestedCond",
+      "bytes": "02",
+      "json": { "f": { "bits": 2 } }
+    }
+  ]
+}

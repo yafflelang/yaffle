@@ -1,0 +1,54 @@
+{
+  "description": "@hidden carriers of virtual streams: out of the JSON, derived on write from the `from` field.",
+  "generatedBy": "conformance/scripts/areas/streams-hidden.ts",
+  "cases": [
+    {
+      "name": "from a hidden field",
+      "root": "FromFieldHidden",
+      "bytes": "0421202220",
+      "json": { "n": 4, "inner": { "a": 1, "b": 2 } }
+    },
+    {
+      "name": "from a hidden field on write",
+      "root": "FromFieldHidden",
+      "input": { "inner": { "a": 0, "b": 65535 } },
+      "bytes": "042020dfdf"
+    },
+    {
+      "name": "hidden fragments",
+      "root": "MiniFragHidden",
+      "bytes": "0105040361026200050401630464",
+      "json": { "version": 1, "content": "61616162626364646464" }
+    },
+    {
+      "name": "hidden fragments split where each piece fits",
+      "root": "MiniFragHidden",
+      "input": { "content": "61616162626364646464" },
+      "bytes": "0105040361026200050401630464"
+    },
+    {
+      "name": "three hidden fragments",
+      "root": "MiniFragHidden",
+      "bytes": "010204016101620003060163016401650306016601670168",
+      "json": { "version": 1, "content": "6162636465666768" }
+    },
+    {
+      "name": "three hidden fragments on write",
+      "root": "MiniFragHidden",
+      "input": { "content": "6162636465666768" },
+      "bytes": "010204016101620003060163016401650306016601670168"
+    },
+    {
+      "name": "no content, no hidden fragments",
+      "root": "MiniFragHidden",
+      "input": { "content": "" },
+      "bytes": "01"
+    },
+    {
+      "name": "no hidden fragments",
+      "root": "MiniFragHidden",
+      "bytes": "01",
+      "json": { "version": 1, "content": "" }
+    }
+  ]
+}

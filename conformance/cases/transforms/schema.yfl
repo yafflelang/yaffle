@@ -1,0 +1,37 @@
+// Value transforms: `as` (read) and `=` (write) with `it`, inferred reverses, explicit reverses,
+// one-way transforms, and write-only normalization.
+
+extern fn swap16(u16 v) -> u16
+
+// Inferred float reverse: round(it * 65536 / 360.0).
+export struct Angle { u16 angle as it * 360.0 / 65536 }
+
+// Inferred integer reverse: it - 100.
+export struct Offset { u8 v as it + 100 }
+
+// Inferred reverse with divisibility: it / 2 - 1.
+export struct Affine { u8 v as (it + 1) * 2 }
+
+// Signed fixed point.
+export struct Fixed { i16 x as it / 256.0 }
+
+// Lookup in an earlier array: reverse is names.indexOf(it).
+export struct Names {
+  u8  n
+  str names[n]
+  u8  pick as names[it]
+}
+
+// Explicit reverse through an extern fn.
+export struct Explicit { u16 v as swap16(it) = swap16(it) }
+
+// One-way: no reverse, so the input type keeps the raw u8.
+export struct OneWay { u8 v as it % 10 }
+export struct OneWayBool { u8 b as it != 0 }
+
+// Write-only normalization: the value is the raw value; the writer stores it | 0x80.
+export struct Normalize { u8 flags = it | 0x80 }
+
+// Transforms on array elements via a type alias.
+type Deg = u8 as it * 2
+export struct DegList { u8 n  Deg vals[n] }

@@ -1,0 +1,95 @@
+// Derived arrays: `map`, `filter`, `indicesWhere`, `sortedBy` (with lambdas
+// `x => expr`), `unique` and `concat`, in write formulas (the array leaves the input and its count
+// is derived from its length as usual) and in checks (`where it == sortedBy(it, k => k.name)`).
+// Arrays, strings and bytes compare by value; `x != null` tests a @nullable pointer.
+
+struct M { u8 x }
+
+struct Rec {
+  M *model : u8 @nullable
+  u8 flags
+}
+
+// A set index: the records that have a model.
+export struct Index {
+  u8  r
+  u8  s
+  Rec records[r]
+  u8  index[s] = indicesWhere(records, r => r.model != null)
+}
+
+// The same rule as a check instead of a formula.
+export struct IndexChecked {
+  u8  r
+  u8  s
+  Rec records[r]
+  u8  index[s] where it == indicesWhere(records, r => r.model != null)
+}
+
+struct Key {
+  u8   len
+  char name[len]
+}
+
+// A sorted key table: the keys in name order, stated as a check.
+export struct Sorted {
+  u8  n
+  Key keys[n] where it == sortedBy(it, k => k.name)
+}
+
+struct Item {
+  u8 id
+  u8 kind
+}
+
+export struct Derived {
+  u8   n
+  Item items[n]
+  u8   nIds
+  u8   ids[nIds] = map(items, x => x.id)
+  u8   nKinds
+  u8   kinds[nKinds] = unique(map(items, x => x.kind))
+  u8   nBig
+  u8   big[nBig] = filter(ids, v => v > 10)
+  u8   nAll
+  u8   all[nAll] = concat(ids, kinds)
+  u8   nByKind
+  u8   byKind[nByKind] = map(sortedBy(items, x => x.kind), x => x.id)
+}
+
+// Arrays of structs, wider elements, and `== null`.
+export struct Structs {
+  u8   n
+  Item items[n]
+  u8   nOdd
+  Item odd[nOdd] = filter(items, x => x.id % 2 == 1)
+  u8   nPos
+  u16  positions[nPos] = indicesWhere(items, x => x.kind == 0)
+}
+
+export struct Empties {
+  u8  r
+  Rec records[r]
+  u8  nEmpty
+  u8  empty[nEmpty] = indicesWhere(records, x => x.model == null)
+}
+
+// Sorting by bytes (lexicographic) and by a computed number, descending.
+struct Blob {
+  u8 len
+  u8 data[len]
+}
+
+export struct Sorts {
+  u8   n
+  Blob blobs[n] where it == sortedBy(it, b => b.data)
+  u8   m
+  u8   desc[m] where it == sortedBy(it, v => 0 - v)
+}
+
+// A derived element that doesn't fit its type.
+export struct Overflow {
+  u8 n
+  u8 xs[n]
+  u8 doubled[n] = map(xs, v => v * 2)
+}

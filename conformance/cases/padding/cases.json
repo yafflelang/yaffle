@@ -1,0 +1,406 @@
+{
+  "description": "@padBefore/@padAfter/@align/@padUntil/@alignEnd/@size, fill bytes and functions, @strict, attribute order.",
+  "generatedBy": "conformance/scripts/areas/padding.ts",
+  "cases": [
+    {
+      "name": "pad before",
+      "root": "PadBefore",
+      "bytes": "0100000002000000",
+      "json": { "a": 1, "b": 2 }
+    },
+    {
+      "name": "pad before skips without checking",
+      "root": "PadBefore",
+      "roundtrip": false,
+      "bytes": "01ffffff02000000",
+      "json": { "a": 1, "b": 2 }
+    },
+    {
+      "name": "pad before writes zeros",
+      "root": "PadBefore",
+      "input": { "a": 1, "b": 2 },
+      "bytes": "0100000002000000"
+    },
+    {
+      "name": "pad after with a fill byte",
+      "root": "PadAfter",
+      "bytes": "07000000cccccccc09",
+      "json": { "b": 7, "c": 9 }
+    },
+    {
+      "name": "pad after fill not checked",
+      "root": "PadAfter",
+      "roundtrip": false,
+      "bytes": "070000000000000009",
+      "json": { "b": 7, "c": 9 }
+    },
+    {
+      "name": "pad after writes the fill",
+      "root": "PadAfter",
+      "input": { "b": 7, "c": 9 },
+      "bytes": "07000000cccccccc09"
+    },
+    {
+      "name": "pad after past the end",
+      "root": "PadAfter",
+      "bytes": "07000000cccc",
+      "error": { "phase": "parse", "code": "EOF", "path": ["b"] }
+    },
+    {
+      "name": "align",
+      "root": "Align",
+      "bytes": "010000000000000001020304",
+      "json": { "x": 1, "data": "01020304" }
+    },
+    {
+      "name": "align writes zero padding",
+      "root": "Align",
+      "input": { "x": 1, "data": "aabbccdd" },
+      "bytes": "0100000000000000aabbccdd"
+    },
+    {
+      "name": "align past the end",
+      "root": "Align",
+      "bytes": "01000000",
+      "error": { "phase": "parse", "code": "EOF", "path": ["data"] }
+    },
+    {
+      "name": "align already aligned",
+      "root": "AlignNoop",
+      "bytes": "050000000102",
+      "json": { "x": 5, "y": "0102" }
+    },
+    {
+      "name": "align fill function",
+      "root": "AlignFn",
+      "bytes": "01a0a1a2a3a4a5a60102",
+      "json": { "x": 1, "tail": "0102" }
+    },
+    {
+      "name": "align fill function on write",
+      "root": "AlignFn",
+      "input": { "x": 9, "tail": "ffff" },
+      "bytes": "09a0a1a2a3a4a5a6ffff"
+    },
+    {
+      "name": "align fill function not checked",
+      "root": "AlignFn",
+      "roundtrip": false,
+      "bytes": "01000000000000000102",
+      "json": { "x": 1, "tail": "0102" }
+    },
+    {
+      "name": "align fill function checked in strict mode",
+      "root": "AlignFn",
+      "strict": true,
+      "bytes": "01000000000000000102",
+      "error": { "phase": "parse", "code": "CHECK", "path": ["tail"] }
+    },
+    {
+      "name": "align fill function accepted in strict mode",
+      "root": "AlignFn",
+      "strict": true,
+      "bytes": "01a0a1a2a3a4a5a60102",
+      "json": { "x": 1, "tail": "0102" }
+    },
+    {
+      "name": "align several fields",
+      "root": "AlignBig",
+      "bytes": "010000000000000002000000000000000300000004000000",
+      "json": { "a": 1, "b": "2", "c": 3, "d": 4 }
+    },
+    {
+      "name": "pad until",
+      "root": "PadUntil",
+      "bytes": "68656c6c6f00ffff07",
+      "json": { "name": "hello", "after": 7 }
+    },
+    {
+      "name": "pad until writes the fill",
+      "root": "PadUntil",
+      "input": { "name": "hi", "after": 1 },
+      "bytes": "686900ffffffffff01"
+    },
+    {
+      "name": "pad until exactly full",
+      "root": "PadUntil",
+      "input": { "name": "1234567", "after": 1 },
+      "bytes": "313233343536370001"
+    },
+    {
+      "name": "pad until content too large",
+      "root": "PadUntil",
+      "bytes": "68656c6c6f68656c6c6f0001",
+      "error": { "phase": "parse", "code": "CHECK", "path": ["name"] }
+    },
+    {
+      "name": "pad until content too large on write",
+      "root": "PadUntil",
+      "input": { "name": "12345678", "after": 1 },
+      "error": { "phase": "serialize", "code": "INPUT", "path": ["name"] }
+    },
+    {
+      "name": "pad until exact size",
+      "root": "PadUntilExact",
+      "bytes": "4142434401",
+      "json": { "tag": "ABCD", "after": 1 }
+    },
+    {
+      "name": "pad until a struct",
+      "root": "PadUntilStruct",
+      "bytes": "01020000000003",
+      "json": { "s": { "a": 1, "b": 2 }, "after": 3 }
+    },
+    {
+      "name": "pad until a struct on write",
+      "root": "PadUntilStruct",
+      "input": { "s": { "a": 1, "b": 2 }, "after": 3 },
+      "bytes": "01020000000003"
+    },
+    {
+      "name": "struct-level pad until",
+      "root": "UsesHeader",
+      "bytes": "5445535405000000000000000000000001",
+      "json": { "h": { "tag": "TEST", "n": 5 }, "after": 1 }
+    },
+    {
+      "name": "struct-level pad until on write",
+      "root": "UsesHeader",
+      "input": { "h": { "n": 5 }, "after": 1 },
+      "bytes": "5445535405000000000000000000000001"
+    },
+    {
+      "name": "struct-level align end",
+      "root": "UsesTail",
+      "bytes": "010203040000000005",
+      "json": { "pre": 1, "s": { "a": 2, "b": "0304" }, "post": 5 }
+    },
+    {
+      "name": "struct-level align end on write",
+      "root": "UsesTail",
+      "input": { "pre": 1, "s": { "a": 2, "b": "0304" }, "post": 5 },
+      "bytes": "010203040000000005"
+    },
+    {
+      "name": "align counts from the nearest base",
+      "root": "Based",
+      "bytes": "090100000002",
+      "json": { "pre": 9, "s": { "a": 1, "b": 2 } }
+    },
+    {
+      "name": "align counts from the nearest base on write",
+      "root": "Based",
+      "input": { "pre": 9, "s": { "a": 1, "b": 2 } },
+      "bytes": "090100000002"
+    },
+    {
+      "name": "dynamic pad count",
+      "root": "PadExpr",
+      "bytes": "0300000007",
+      "json": { "n": 3, "v": 7 }
+    },
+    {
+      "name": "dynamic pad count zero",
+      "root": "PadExpr",
+      "bytes": "0007",
+      "json": { "n": 0, "v": 7 }
+    },
+    {
+      "name": "dynamic pad count is an input",
+      "root": "PadExpr",
+      "input": { "n": 2, "v": 7 },
+      "bytes": "02000007"
+    },
+    {
+      "name": "size window with padding",
+      "root": "SizeLayer",
+      "bytes": "0102000003",
+      "json": { "data": "0102", "after": 3 }
+    },
+    {
+      "name": "size window writes padding",
+      "root": "SizeLayer",
+      "input": { "data": "0102", "after": 3 },
+      "bytes": "0102000003"
+    },
+    {
+      "name": "size window padding not checked",
+      "root": "SizeLayer",
+      "roundtrip": false,
+      "bytes": "0102ffff03",
+      "json": { "data": "0102", "after": 3 }
+    },
+    {
+      "name": "size window padding checked in strict mode",
+      "root": "SizeLayer",
+      "strict": true,
+      "bytes": "0102ff0003",
+      "error": { "phase": "parse", "code": "CHECK", "path": ["data"] }
+    },
+    {
+      "name": "size window bounds a rest array",
+      "root": "SizeRest",
+      "bytes": "03aabbcc01",
+      "json": { "n": 3, "data": "aabbcc", "after": 1 }
+    },
+    {
+      "name": "size of a rest array is derived",
+      "root": "SizeRest",
+      "input": { "data": "0102", "after": 9 },
+      "bytes": "02010209"
+    },
+    {
+      "name": "size window past the end",
+      "root": "SizeRest",
+      "bytes": "05aabb",
+      "error": { "phase": "parse", "code": "EOF", "path": ["data"] }
+    },
+    {
+      "name": "strict padding zero",
+      "root": "StrictPad",
+      "bytes": "01000002",
+      "json": { "a": 1, "b": 2 }
+    },
+    {
+      "name": "strict padding nonzero",
+      "root": "StrictPad",
+      "bytes": "01010002",
+      "error": { "phase": "parse", "code": "CHECK", "path": ["a"] }
+    },
+    {
+      "name": "strict struct fill",
+      "root": "StrictStruct",
+      "bytes": "01eeee02",
+      "json": { "a": 1, "b": 2 }
+    },
+    {
+      "name": "strict struct wrong fill",
+      "root": "StrictStruct",
+      "bytes": "01000002",
+      "error": { "phase": "parse", "code": "CHECK", "path": ["a"] }
+    },
+    {
+      "name": "strict fill function",
+      "root": "StrictFn",
+      "bytes": "0101020302",
+      "json": { "x": 1, "y": 2 }
+    },
+    {
+      "name": "strict fill function mismatch",
+      "root": "StrictFn",
+      "bytes": "0101030302",
+      "error": { "phase": "parse", "code": "CHECK", "path": ["y"] }
+    },
+    {
+      "name": "strict fill function on write",
+      "root": "StrictFn",
+      "input": { "x": 1, "y": 2 },
+      "bytes": "0101020302"
+    },
+    {
+      "name": "lax padding not checked",
+      "root": "LaxPad",
+      "roundtrip": false,
+      "bytes": "01ffff02",
+      "json": { "a": 1, "b": 2 }
+    },
+    {
+      "name": "lax padding checked in strict mode",
+      "root": "LaxPad",
+      "strict": true,
+      "bytes": "01ffff02",
+      "error": { "phase": "parse", "code": "CHECK", "path": ["a"] }
+    },
+    {
+      "name": "lax padding zero in strict mode",
+      "root": "LaxPad",
+      "strict": true,
+      "bytes": "01000002",
+      "json": { "a": 1, "b": 2 }
+    },
+    {
+      "name": "attribute order: align then pad",
+      "root": "Order1",
+      "bytes": "01000000000302",
+      "json": { "a": 1, "v": 515 }
+    },
+    {
+      "name": "attribute order: align then pad on write",
+      "root": "Order1",
+      "input": { "a": 1, "v": 2 },
+      "bytes": "01000000000200"
+    },
+    {
+      "name": "attribute order: pad then align",
+      "root": "Order2",
+      "bytes": "010000000302",
+      "json": { "a": 1, "v": 515 }
+    },
+    {
+      "name": "attribute order: pad then align on write",
+      "root": "Order2",
+      "input": { "a": 1, "v": 2 },
+      "bytes": "010000000200"
+    },
+    {
+      "name": "attribute order: pad after then align end",
+      "root": "Order3",
+      "bytes": "0100000002",
+      "json": { "a": 1, "b": 2 }
+    },
+    {
+      "name": "continued attribute lines",
+      "root": "Continued",
+      "bytes": "01000000000000000200000000000000000003",
+      "json": { "a": 1, "b": "2", "c": 3 }
+    },
+    {
+      "name": "continued attribute lines on write",
+      "root": "Continued",
+      "input": { "a": 1, "b": "2", "c": 3 },
+      "bytes": "01000000000000000200000000000000000003"
+    },
+    {
+      "name": "align an array's start",
+      "root": "AlignArray",
+      "bytes": "0100000001020304",
+      "json": {
+        "a": 1,
+        "pts": [
+          { "x": 1, "y": 2 },
+          { "x": 3, "y": 4 }
+        ]
+      }
+    },
+    {
+      "name": "align an array's start on write",
+      "root": "AlignArray",
+      "input": {
+        "a": 9,
+        "pts": [
+          { "x": 5, "y": 6 },
+          { "x": 7, "y": 8 }
+        ]
+      },
+      "bytes": "0900000005060708"
+    },
+    {
+      "name": "fixed-count array with the wrong length",
+      "root": "AlignArray",
+      "input": { "a": 9, "pts": [{ "x": 5, "y": 6 }] },
+      "error": { "phase": "serialize", "code": "DERIVE", "path": ["pts"] }
+    },
+    {
+      "name": "struct-level align end pads every element",
+      "root": "PaddedElements",
+      "bytes": "0a0000000b0000000c000000ff",
+      "json": { "es": [{ "v": 10 }, { "v": 11 }, { "v": 12 }], "after": 255 }
+    },
+    {
+      "name": "struct-level align end pads every element on write",
+      "root": "PaddedElements",
+      "input": { "es": [{ "v": 1 }, { "v": 2 }, { "v": 3 }], "after": 4 },
+      "bytes": "01000000020000000300000004"
+    }
+  ]
+}

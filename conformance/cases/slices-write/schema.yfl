@@ -1,0 +1,66 @@
+// Writable stream slices: a bytes field read only through `from` slices is
+// assembled from them on write (zero-filled elsewhere) and leaves the input. Overlapping slices
+// must write the same bytes, otherwise it's DERIVE.
+
+extern codec xor(u8 key) @ranged
+
+struct Header {
+  u16 a
+  u16 b
+}
+
+struct Footer {
+  u32 x
+}
+
+// raw is hidden and fully covered by its slices.
+export struct Overlay {
+  u8     raw[8] @hidden
+  Header hdr  from raw[0..4]
+  Footer foot from raw[4..8]
+}
+
+// Covered by its slices (the last one open-ended), so raw is derived although it is visible.
+export struct Visible {
+  u8     raw[8]
+  Header hdr  from raw[0..4]
+  Footer foot from raw[4..]
+}
+
+// Gaps are zero-filled (raw is hidden, so that's accepted).
+export struct Gaps {
+  u8     raw[8] @hidden
+  Header hdr from raw[2..6]
+}
+
+// A `[]` field in an @size window: its length is the largest slice end.
+export struct Sized {
+  u8     n
+  u8     raw[] @size(n)
+  Header hdr  from raw[0..4]
+  u8     tail[] from raw[4..]
+}
+
+// Overlapping slices: tail repeats the last two bytes of second.
+export struct Overlap {
+  u8     raw[8]
+  Header first  from raw[0..4]
+  Header second from raw[4..8]
+  u8     tail[] from raw[6..]
+}
+
+// Slices of a codec's decoded content: raw is assembled, then encoded.
+export struct Coded {
+  u8     n
+  u8     raw[] @via(xor(0x5a)) @size(n)
+  Header hdr  from raw[0..4]
+  Footer foot from raw[4..8]
+}
+
+// Slice bounds from an earlier field (an input).
+export struct Bounded {
+  u8 h
+  u8 raw[6] @hidden
+  u8 head[] from raw[0..h]
+  u8 body[] from raw[h..6]
+}

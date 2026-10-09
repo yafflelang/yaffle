@@ -1,0 +1,237 @@
+{
+  "description": "Virtual fields: bit concatenation, mixed radix (with `in` ranges), linear forms, nested shifts, parts in bits units, `?=` defaults, a virtual length, a signed top part, checks, and array elements; range, read-back and input errors.",
+  "generatedBy": "conformance/scripts/areas/virtual.ts",
+  "cases": [
+    {
+      "name": "bit concatenation",
+      "root": "Split",
+      "bytes": "01 02000000",
+      "json": { "sizeHigh": 1, "sizeLow": 2, "size": 4294967298 }
+    },
+    {
+      "name": "bit concatenation on write",
+      "root": "Split",
+      "input": { "size": 78187493530 },
+      "bytes": "12 9a785634"
+    },
+    { "name": "zero", "root": "Split", "input": { "size": 0 }, "bytes": "00 00000000" },
+    {
+      "name": "the largest u40",
+      "root": "Split",
+      "input": { "size": 1099511627775 },
+      "bytes": "ff ffffffff"
+    },
+    {
+      "name": "parts in the input are ignored",
+      "root": "Split",
+      "input": { "sizeHigh": 9, "sizeLow": 9, "size": 5 },
+      "bytes": "00 05000000"
+    },
+    {
+      "name": "a value beyond the virtual type",
+      "root": "Split",
+      "input": { "size": 1099511627776 },
+      "error": { "phase": "serialize", "code": "RANGE" }
+    },
+    {
+      "name": "the virtual value is required",
+      "root": "Split",
+      "input": {},
+      "error": { "phase": "serialize", "code": "INPUT", "path": ["size"] }
+    },
+    {
+      "name": "mixed radix",
+      "root": "Decimal",
+      "bytes": "0c 22 05",
+      "json": { "hi": 12, "mid": 34, "lo": 5, "v": 12345 }
+    },
+    {
+      "name": "mixed radix on write",
+      "root": "Decimal",
+      "input": { "v": 12345 },
+      "bytes": "0c 22 05"
+    },
+    {
+      "name": "mixed radix: small values",
+      "root": "Decimal",
+      "input": { "v": 7 },
+      "bytes": "00 00 07"
+    },
+    {
+      "name": "mixed radix: the top part overflows",
+      "root": "Decimal",
+      "input": { "v": 999999 },
+      "error": { "phase": "serialize", "code": "RANGE" }
+    },
+    {
+      "name": "a part's own check still applies on read",
+      "root": "Decimal",
+      "bytes": "01 64 00",
+      "error": { "phase": "parse", "code": "CHECK", "path": ["mid"] }
+    },
+    { "name": "linear", "root": "Linear", "bytes": "0300", "json": { "n": 3, "bytes": 8 } },
+    { "name": "linear on write", "root": "Linear", "input": { "bytes": 8 }, "bytes": "0300" },
+    {
+      "name": "linear: a value that doesn't read back",
+      "root": "Linear",
+      "input": { "bytes": 6 },
+      "error": { "phase": "serialize", "code": "DERIVE" }
+    },
+    {
+      "name": "linear: a read value beyond the virtual type",
+      "root": "Linear",
+      "bytes": "0000",
+      "error": { "phase": "parse", "code": "RANGE", "path": ["bytes"] }
+    },
+    {
+      "name": "nested shifts",
+      "root": "Nested",
+      "bytes": "01 02 03",
+      "json": { "a": 1, "b": 2, "c": 3, "v": 66051 }
+    },
+    {
+      "name": "nested shifts on write",
+      "root": "Nested",
+      "input": { "v": 658188 },
+      "bytes": "0a 0b 0c"
+    },
+    {
+      "name": "nested shifts: the top part overflows",
+      "root": "Nested",
+      "input": { "v": 16777216 },
+      "error": { "phase": "serialize", "code": "RANGE" }
+    },
+    {
+      "name": "a part in a bits unit",
+      "root": "Bits",
+      "bytes": "45a3 12",
+      "json": { "lo": 837, "tag": 10, "hi": 18, "v": 74565 }
+    },
+    {
+      "name": "a part in a bits unit on write",
+      "root": "Bits",
+      "input": { "tag": 10, "v": 74565 },
+      "bytes": "45a3 12"
+    },
+    {
+      "name": "the bits unit's other fields stay inputs",
+      "root": "Bits",
+      "input": { "v": 74565 },
+      "error": { "phase": "serialize", "code": "INPUT", "path": ["tag"] }
+    },
+    {
+      "name": "default: read",
+      "root": "Default",
+      "bytes": "abcd",
+      "json": { "hi": 171, "lo": 205, "v": 43981 }
+    },
+    {
+      "name": "default when the input leaves it out",
+      "root": "Default",
+      "input": {},
+      "bytes": "1234"
+    },
+    {
+      "name": "a given value wins over the default",
+      "root": "Default",
+      "input": { "v": 258 },
+      "bytes": "0102"
+    },
+    {
+      "name": "a virtual length",
+      "root": "Used",
+      "bytes": "0003 aabbcc",
+      "json": { "hi": 0, "lo": 3, "n": 3, "data": "aabbcc" }
+    },
+    {
+      "name": "a virtual length on write",
+      "root": "Used",
+      "input": { "n": 2, "data": "aabb" },
+      "bytes": "0002 aabb"
+    },
+    {
+      "name": "a virtual length that disagrees with the data",
+      "root": "Used",
+      "input": { "n": 3, "data": "aa" },
+      "error": { "phase": "serialize", "code": "DERIVE" }
+    },
+    {
+      "name": "a virtual length past the end",
+      "root": "Used",
+      "bytes": "0003 aa",
+      "error": { "phase": "parse", "code": "EOF", "path": ["data"] }
+    },
+    {
+      "name": "signed top part: -1",
+      "root": "Signed",
+      "bytes": "ff ffffffff",
+      "json": { "hi": -1, "lo": 4294967295, "v": "-1" }
+    },
+    {
+      "name": "signed top part: positive",
+      "root": "Signed",
+      "bytes": "7f 00000000",
+      "json": { "hi": 127, "lo": 0, "v": "545460846592" }
+    },
+    {
+      "name": "signed top part on write",
+      "root": "Signed",
+      "input": { "v": "-4294967296" },
+      "bytes": "ff 00000000"
+    },
+    {
+      "name": "signed top part: -2",
+      "root": "Signed",
+      "input": { "v": "-2" },
+      "bytes": "ff feffffff"
+    },
+    {
+      "name": "signed top part overflows",
+      "root": "Signed",
+      "input": { "v": "549755813888" },
+      "error": { "phase": "serialize", "code": "RANGE" }
+    },
+    {
+      "name": "check on a virtual value",
+      "root": "Checked",
+      "bytes": "0002",
+      "json": { "hi": 0, "lo": 2, "v": 2 }
+    },
+    {
+      "name": "check on a virtual value fails on read",
+      "root": "Checked",
+      "bytes": "0003",
+      "error": { "phase": "parse", "code": "CHECK", "path": ["v"] }
+    },
+    {
+      "name": "check on a virtual value fails on write",
+      "root": "Checked",
+      "input": { "v": 3 },
+      "error": { "phase": "serialize", "code": "CHECK", "path": ["v"] }
+    },
+    {
+      "name": "check on a virtual value passes on write",
+      "root": "Checked",
+      "input": { "v": 4 },
+      "bytes": "0004"
+    },
+    {
+      "name": "virtual fields in array elements",
+      "root": "Vols",
+      "bytes": "02 01 02000000 00 ffffffff",
+      "json": {
+        "n": 2,
+        "vols": [
+          { "sizeHigh": 1, "sizeLow": 2, "size": 4294967298 },
+          { "sizeHigh": 0, "sizeLow": 4294967295, "size": 4294967295 }
+        ]
+      }
+    },
+    {
+      "name": "virtual fields in array elements on write",
+      "root": "Vols",
+      "input": { "vols": [{ "size": 5 }, { "size": 4294967296 }] },
+      "bytes": "02 00 05000000 01 00000000"
+    }
+  ]
+}

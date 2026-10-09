@@ -1,0 +1,165 @@
+{
+  "description": "Closed and @open enums, signed and u64 storage, endianness, arrays, enums in conditions and `in`.",
+  "generatedBy": "conformance/scripts/areas/enums.ts",
+  "cases": [
+    { "name": "closed enum first member", "root": "E", "bytes": "0000", "json": { "kind": "Sys" } },
+    {
+      "name": "closed enum second member",
+      "root": "E",
+      "bytes": "0100",
+      "json": { "kind": "Vram" }
+    },
+    { "name": "closed enum hex value", "root": "E", "bytes": "1000", "json": { "kind": "Other" } },
+    {
+      "name": "closed enum unknown value",
+      "root": "E",
+      "bytes": "0200",
+      "error": { "phase": "parse", "code": "CHECK", "path": ["kind"] }
+    },
+    {
+      "name": "closed enum write by name",
+      "root": "E",
+      "input": { "kind": "Vram" },
+      "bytes": "0100"
+    },
+    {
+      "name": "closed enum write unknown name",
+      "root": "E",
+      "input": { "kind": "Nope" },
+      "error": { "phase": "serialize", "code": "INPUT", "path": ["kind"] }
+    },
+    {
+      "name": "closed enum write a number",
+      "root": "E",
+      "input": { "kind": 1 },
+      "error": { "phase": "serialize", "code": "INPUT", "path": ["kind"] }
+    },
+    {
+      "name": "enum follows endianness",
+      "root": "EBe",
+      "bytes": "0010",
+      "json": { "kind": "Other" }
+    },
+    {
+      "name": "enum follows root be",
+      "root": "E",
+      "args": { "endian": "be" },
+      "bytes": "0001",
+      "json": { "kind": "Vram" }
+    },
+    { "name": "enum writes be", "root": "EBe", "input": { "kind": "Vram" }, "bytes": "0001" },
+    { "name": "open enum member", "root": "O", "bytes": "01", "json": { "o": "A" } },
+    { "name": "open enum unknown passes through", "root": "O", "bytes": "03", "json": { "o": 3 } },
+    { "name": "open enum zero is unknown", "root": "O", "bytes": "00", "json": { "o": 0 } },
+    { "name": "open enum write a member", "root": "O", "input": { "o": "B" }, "bytes": "02" },
+    { "name": "open enum write a number", "root": "O", "input": { "o": 7 }, "bytes": "07" },
+    {
+      "name": "open enum write a member's number",
+      "root": "O",
+      "input": { "o": 2 },
+      "bytes": "02"
+    },
+    {
+      "name": "open enum number out of range",
+      "root": "O",
+      "input": { "o": 256 },
+      "error": { "phase": "serialize", "code": "RANGE", "path": ["o"] }
+    },
+    {
+      "name": "open enum unknown name",
+      "root": "O",
+      "input": { "o": "C" },
+      "error": { "phase": "serialize", "code": "INPUT", "path": ["o"] }
+    },
+    { "name": "signed enum negative", "root": "S", "bytes": "ff", "json": { "s": "Neg" } },
+    { "name": "signed enum positive", "root": "S", "bytes": "01", "json": { "s": "Pos" } },
+    {
+      "name": "signed enum unknown",
+      "root": "S",
+      "bytes": "fe",
+      "error": { "phase": "parse", "code": "CHECK", "path": ["s"] }
+    },
+    { "name": "signed enum write", "root": "S", "input": { "s": "Neg" }, "bytes": "ff" },
+    {
+      "name": "u64 enum member",
+      "root": "B64",
+      "bytes": "ffffffffffffffff",
+      "json": { "b": "Huge" }
+    },
+    {
+      "name": "u64 open enum unknown is a decimal string",
+      "root": "B64",
+      "bytes": "0500000000000000",
+      "json": { "b": "5" }
+    },
+    {
+      "name": "u64 open enum write a member",
+      "root": "B64",
+      "input": { "b": "One" },
+      "bytes": "0100000000000000"
+    },
+    {
+      "name": "u64 open enum write a number",
+      "root": "B64",
+      "input": { "b": "18446744073709551614" },
+      "bytes": "feffffffffffffff"
+    },
+    { "name": "sparse values", "root": "Sp", "bytes": "00000100", "json": { "s": "First" } },
+    { "name": "sparse max", "root": "Sp", "bytes": "ffffff7f", "json": { "s": "Second" } },
+    {
+      "name": "sparse unknown",
+      "root": "Sp",
+      "bytes": "00000000",
+      "error": { "phase": "parse", "code": "CHECK", "path": ["s"] }
+    },
+    {
+      "name": "array of enums",
+      "root": "Many",
+      "bytes": "03 0000 0100 1000",
+      "json": { "n": 3, "kinds": ["Sys", "Vram", "Other"] }
+    },
+    {
+      "name": "array of enums unknown element",
+      "root": "Many",
+      "bytes": "02 0000 0500",
+      "error": { "phase": "parse", "code": "CHECK", "path": ["kinds", 1] }
+    },
+    {
+      "name": "array of enums write",
+      "root": "Many",
+      "input": { "kinds": ["Other", "Sys"] },
+      "bytes": "02 1000 0000"
+    },
+    {
+      "name": "enum in a condition: taken",
+      "root": "Cond",
+      "bytes": "0100 00100000",
+      "json": { "kind": "Vram", "vramSize": 4096 }
+    },
+    {
+      "name": "enum in a condition: not taken",
+      "root": "Cond",
+      "bytes": "0000",
+      "json": { "kind": "Sys" }
+    },
+    {
+      "name": "enum in a condition write",
+      "root": "Cond",
+      "input": { "kind": "Vram", "vramSize": 5 },
+      "bytes": "0100 05000000"
+    },
+    { "name": "enum with in", "root": "InEnum", "bytes": "0100", "json": { "kind": "Vram" } },
+    {
+      "name": "enum with in rejects a member",
+      "root": "InEnum",
+      "bytes": "1000",
+      "error": { "phase": "parse", "code": "CHECK", "path": ["kind"] }
+    },
+    {
+      "name": "enum with in rejects on write",
+      "root": "InEnum",
+      "input": { "kind": "Other" },
+      "error": { "phase": "serialize", "code": "CHECK", "path": ["kind"] }
+    }
+  ]
+}

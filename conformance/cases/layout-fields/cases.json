@@ -1,0 +1,79 @@
+{
+  "description": "Layout items that read fields: `layout { data @align(align) }`, expressions over fields, item order with field-driven alignment, and pulled-out paths aligned by the container's fields; an alignment of 0 is a RANGE error.",
+  "generatedBy": "conformance/scripts/areas/layout-fields.ts",
+  "cases": [
+    {
+      "name": "aligned to the entry's own field",
+      "root": "AlignByField",
+      "bytes": "04 02 04 00 aabb",
+      "json": { "align": 4, "size": 2, "offset": 4, "data": "aabb" }
+    },
+    {
+      "name": "align 8 on write",
+      "root": "AlignByField",
+      "input": { "align": 8, "data": "cc" },
+      "bytes": "08 01 08 0000000000 cc"
+    },
+    {
+      "name": "align 1 adds no padding",
+      "root": "AlignByField",
+      "input": { "align": 1, "data": "ddeeff" },
+      "bytes": "01 03 03 ddeeff"
+    },
+    {
+      "name": "a stored offset that doesn't follow the field is realigned on write",
+      "root": "AlignByField",
+      "input": { "align": 4, "data": "aabb" },
+      "bytes": "04 02 04 00 aabb"
+    },
+    {
+      "name": "reads follow the stored offset, whatever the field says",
+      "root": "AlignByField",
+      "roundtrip": false,
+      "bytes": "04 02 03 aabb",
+      "json": { "align": 4, "size": 2, "offset": 3, "data": "aabb" }
+    },
+    {
+      "name": "an alignment of 0 is out of range",
+      "root": "AlignByField",
+      "input": { "align": 0, "data": "aa" },
+      "error": { "phase": "serialize", "code": "RANGE" }
+    },
+    {
+      "name": "an expression over a field, and item order",
+      "root": "TwoTargets",
+      "bytes": "03 01 0a 02 08 000000 2233 11",
+      "json": { "shift": 3, "n1": 1, "o1": 10, "n2": 2, "o2": 8, "a": "11", "b": "2233" }
+    },
+    {
+      "name": "shift 3 on write",
+      "root": "TwoTargets",
+      "input": { "shift": 3, "a": "11", "b": "2233" },
+      "bytes": "03 01 0a 02 08 000000 2233 11"
+    },
+    {
+      "name": "shift 0: b unaligned, a still aligned to 2",
+      "root": "TwoTargets",
+      "input": { "shift": 0, "a": "11", "b": "2233" },
+      "bytes": "00 01 08 02 05 2233 00 11"
+    },
+    {
+      "name": "a pulled-out path aligned by the container's field",
+      "root": "Records",
+      "input": { "recs": [{ "body": "aa" }, { "body": "bbcc" }] },
+      "bytes": "02 01 08 02 0c 000000 aa 000000 bbcc"
+    },
+    {
+      "name": "pulled-out bodies read back",
+      "root": "Records",
+      "bytes": "02 01 08 02 0c 000000 aa 000000 bbcc",
+      "json": {
+        "count": 2,
+        "recs": [
+          { "n": 1, "ofs": 8, "body": "aa" },
+          { "n": 2, "ofs": 12, "body": "bbcc" }
+        ]
+      }
+    }
+  ]
+}

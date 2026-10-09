@@ -1,0 +1,341 @@
+{
+  "description": "Derived arrays: indicesWhere (a set index), map, filter, unique, concat and sortedBy in formulas (counts derived from them), a check stating the rule, sorted keys by code point, bytes and computed keys, arrays of structs and u16, x == null, and range errors.",
+  "generatedBy": "conformance/scripts/areas/derived-arrays.ts",
+  "cases": [
+    {
+      "name": "indicesWhere: the records with a model",
+      "root": "Index",
+      "bytes": "03 02 0a01 0000 0b02 0002 07 09",
+      "json": {
+        "r": 3,
+        "s": 2,
+        "records": [
+          { "model": { "x": 7 }, "flags": 1 },
+          { "model": null, "flags": 0 },
+          { "model": { "x": 9 }, "flags": 2 }
+        ],
+        "index": "0002"
+      }
+    },
+    {
+      "name": "indicesWhere on write",
+      "root": "Index",
+      "input": {
+        "records": [
+          { "model": { "x": 7 }, "flags": 1 },
+          { "model": null, "flags": 0 },
+          { "model": { "x": 9 }, "flags": 2 }
+        ]
+      },
+      "bytes": "03 02 0a01 0000 0b02 0002 07 09"
+    },
+    {
+      "name": "a stale index in the input is ignored",
+      "root": "Index",
+      "input": {
+        "records": [
+          { "model": { "x": 7 }, "flags": 1 },
+          { "model": null, "flags": 0 },
+          { "model": { "x": 9 }, "flags": 2 }
+        ],
+        "index": "01"
+      },
+      "bytes": "03 02 0a01 0000 0b02 0002 07 09"
+    },
+    {
+      "name": "formulas aren't checked on read",
+      "root": "Index",
+      "roundtrip": false,
+      "bytes": "03 02 0a01 0000 0b02 0001 07 09",
+      "json": {
+        "r": 3,
+        "s": 2,
+        "records": [
+          { "model": { "x": 7 }, "flags": 1 },
+          { "model": null, "flags": 0 },
+          { "model": { "x": 9 }, "flags": 2 }
+        ],
+        "index": "0001"
+      }
+    },
+    {
+      "name": "indicesWhere of nothing",
+      "root": "Index",
+      "input": { "records": [] },
+      "bytes": "00 00"
+    },
+    {
+      "name": "indicesWhere matching nothing",
+      "root": "Index",
+      "input": {
+        "records": [
+          { "model": null, "flags": 0 },
+          { "model": null, "flags": 5 }
+        ]
+      },
+      "bytes": "02 00 0000 0005"
+    },
+    {
+      "name": "a check stating the rule",
+      "root": "IndexChecked",
+      "bytes": "03 02 0a01 0000 0b02 0002 07 09",
+      "json": {
+        "r": 3,
+        "s": 2,
+        "records": [
+          { "model": { "x": 7 }, "flags": 1 },
+          { "model": null, "flags": 0 },
+          { "model": { "x": 9 }, "flags": 2 }
+        ],
+        "index": "0002"
+      }
+    },
+    {
+      "name": "a check stating the rule fails on read",
+      "root": "IndexChecked",
+      "bytes": "03 02 0a01 0000 0b02 0001 07 09",
+      "error": { "phase": "parse", "code": "CHECK", "path": ["index"] }
+    },
+    {
+      "name": "a check stating the rule fails on write",
+      "root": "IndexChecked",
+      "input": {
+        "records": [
+          { "model": { "x": 7 }, "flags": 1 },
+          { "model": null, "flags": 0 },
+          { "model": { "x": 9 }, "flags": 2 }
+        ],
+        "index": "0001"
+      },
+      "error": { "phase": "serialize", "code": "CHECK", "path": ["index"] }
+    },
+    {
+      "name": "a check stating the rule passes on write",
+      "root": "IndexChecked",
+      "input": {
+        "records": [
+          { "model": { "x": 7 }, "flags": 1 },
+          { "model": null, "flags": 0 },
+          { "model": { "x": 9 }, "flags": 2 }
+        ],
+        "index": "0002"
+      },
+      "bytes": "03 02 0a01 0000 0b02 0002 07 09"
+    },
+    {
+      "name": "sorted keys",
+      "root": "Sorted",
+      "bytes": "02 0161 026263",
+      "json": {
+        "n": 2,
+        "keys": [
+          { "len": 1, "name": "a" },
+          { "len": 2, "name": "bc" }
+        ]
+      }
+    },
+    {
+      "name": "upper case sorts first (code points)",
+      "root": "Sorted",
+      "bytes": "02 0142 0161",
+      "json": {
+        "n": 2,
+        "keys": [
+          { "len": 1, "name": "B" },
+          { "len": 1, "name": "a" }
+        ]
+      }
+    },
+    {
+      "name": "equal keys are sorted",
+      "root": "Sorted",
+      "bytes": "02 0161 0161",
+      "json": {
+        "n": 2,
+        "keys": [
+          { "len": 1, "name": "a" },
+          { "len": 1, "name": "a" }
+        ]
+      }
+    },
+    {
+      "name": "code point order, not UTF-16 order",
+      "root": "Sorted",
+      "bytes": "02 03efbfbf 04f09f9880",
+      "json": {
+        "n": 2,
+        "keys": [
+          { "len": 3, "name": "￿" },
+          { "len": 4, "name": "😀" }
+        ]
+      }
+    },
+    {
+      "name": "unsorted keys fail the check",
+      "root": "Sorted",
+      "bytes": "02 0162 0161",
+      "error": { "phase": "parse", "code": "CHECK", "path": ["keys"] }
+    },
+    {
+      "name": "code point order: reversed",
+      "root": "Sorted",
+      "bytes": "02 04f09f9880 03efbfbf",
+      "error": { "phase": "parse", "code": "CHECK", "path": ["keys"] }
+    },
+    {
+      "name": "unsorted keys fail on write",
+      "root": "Sorted",
+      "input": { "keys": [{ "name": "b" }, { "name": "a" }] },
+      "error": { "phase": "serialize", "code": "CHECK", "path": ["keys"] }
+    },
+    {
+      "name": "sorted keys on write",
+      "root": "Sorted",
+      "input": { "keys": [{ "name": "a" }, { "name": "b" }] },
+      "bytes": "02 0161 0162"
+    },
+    {
+      "name": "map, unique, filter, concat and sortedBy",
+      "root": "Derived",
+      "bytes": "03 0501 1400 0c01  03 05140c  02 0100  02 140c  05 05140c0100  03 14050c",
+      "json": {
+        "n": 3,
+        "items": [
+          { "id": 5, "kind": 1 },
+          { "id": 20, "kind": 0 },
+          { "id": 12, "kind": 1 }
+        ],
+        "nIds": 3,
+        "ids": "05140c",
+        "nKinds": 2,
+        "kinds": "0100",
+        "nBig": 2,
+        "big": "140c",
+        "nAll": 5,
+        "all": "05140c0100",
+        "nByKind": 3,
+        "byKind": "14050c"
+      }
+    },
+    {
+      "name": "derived arrays on write",
+      "root": "Derived",
+      "input": {
+        "items": [
+          { "id": 5, "kind": 1 },
+          { "id": 20, "kind": 0 },
+          { "id": 12, "kind": 1 }
+        ]
+      },
+      "bytes": "03 0501 1400 0c01  03 05140c  02 0100  02 140c  05 05140c0100  03 14050c"
+    },
+    {
+      "name": "derived arrays of nothing",
+      "root": "Derived",
+      "input": { "items": [] },
+      "bytes": "00 00 00 00 00 00"
+    },
+    {
+      "name": "a derived array of structs and of u16",
+      "root": "Structs",
+      "bytes": "03 0100 0200 0301  02 0100 0301  02 0000 0100",
+      "json": {
+        "n": 3,
+        "items": [
+          { "id": 1, "kind": 0 },
+          { "id": 2, "kind": 0 },
+          { "id": 3, "kind": 1 }
+        ],
+        "nOdd": 2,
+        "odd": [
+          { "id": 1, "kind": 0 },
+          { "id": 3, "kind": 1 }
+        ],
+        "nPos": 2,
+        "positions": [0, 1]
+      }
+    },
+    {
+      "name": "a derived array of structs on write",
+      "root": "Structs",
+      "input": {
+        "items": [
+          { "id": 1, "kind": 0 },
+          { "id": 2, "kind": 0 },
+          { "id": 3, "kind": 1 }
+        ]
+      },
+      "bytes": "03 0100 0200 0301  02 0100 0301  02 0000 0100"
+    },
+    {
+      "name": "x == null",
+      "root": "Empties",
+      "bytes": "02 0700 0000 01 01 01",
+      "json": {
+        "r": 2,
+        "records": [
+          { "model": { "x": 1 }, "flags": 0 },
+          { "model": null, "flags": 0 }
+        ],
+        "nEmpty": 1,
+        "empty": "01"
+      }
+    },
+    {
+      "name": "x == null on write",
+      "root": "Empties",
+      "input": {
+        "records": [
+          { "model": { "x": 1 }, "flags": 0 },
+          { "model": null, "flags": 0 }
+        ]
+      },
+      "bytes": "02 0700 0000 01 01 01"
+    },
+    {
+      "name": "sorted by bytes and by a computed key",
+      "root": "Sorts",
+      "bytes": "03 0101 020100 0102  04 09050501",
+      "json": {
+        "n": 3,
+        "blobs": [
+          { "len": 1, "data": "01" },
+          { "len": 2, "data": "0100" },
+          { "len": 1, "data": "02" }
+        ],
+        "m": 4,
+        "desc": "09050501"
+      }
+    },
+    {
+      "name": "bytes out of order",
+      "root": "Sorts",
+      "bytes": "02 0102 0101  00",
+      "error": { "phase": "parse", "code": "CHECK", "path": ["blobs"] }
+    },
+    {
+      "name": "not descending",
+      "root": "Sorts",
+      "bytes": "00  02 0109",
+      "error": { "phase": "parse", "code": "CHECK", "path": ["desc"] }
+    },
+    {
+      "name": "a derived u8 array",
+      "root": "Overflow",
+      "bytes": "02 0102 0204",
+      "json": { "n": 2, "xs": "0102", "doubled": "0204" }
+    },
+    {
+      "name": "a derived u8 array on write",
+      "root": "Overflow",
+      "input": { "xs": "0102" },
+      "bytes": "02 0102 0204"
+    },
+    {
+      "name": "a derived element out of range",
+      "root": "Overflow",
+      "input": { "xs": "01c8" },
+      "error": { "phase": "serialize", "code": "RANGE" }
+    }
+  ]
+}

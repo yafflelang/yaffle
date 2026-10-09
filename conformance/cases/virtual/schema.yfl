@@ -1,0 +1,83 @@
+// Virtual fields: `virtual T name = expr` takes no bytes. Reading evaluates the
+// expression over earlier fields; writing takes the value from the input and derives the parts
+// (they leave the input). Reading back must give the input value, otherwise it's DERIVE.
+
+// Bit concatenation: a 40-bit size stored as a high byte and a low u32.
+export struct Split {
+  u8  sizeHigh
+  u32 sizeLow
+  virtual u40 size = (sizeHigh << 32) | sizeLow
+}
+
+// Mixed radix: the parts' ranges come from their types and `in` checks.
+export struct Decimal {
+  u8 hi
+  u8 mid in (0..99)
+  u8 lo in (0..9)
+  virtual u32 v = hi * 1000 + mid * 10 + lo
+}
+
+// Linear: n = bytes / 4 + 1 (only multiples of 4 read back).
+export struct Linear {
+  u16 n
+  virtual u32 bytes = (n - 1) * 4
+}
+
+// Nested shifts: three bytes, big end first.
+export struct Nested {
+  u8 a
+  u8 b
+  u8 c
+  virtual u32 v = ((a << 8) | b) << 8 | c
+}
+
+// Parts in a bits unit; `tag` stays an input.
+export struct Bits {
+  bits u16 {
+    u16 lo  : 12
+    u8  tag : 4
+  }
+  u8 hi
+  virtual u32 v = (hi << 12) | lo
+}
+
+// A default when the input leaves the virtual field out.
+export struct Default {
+  u8 hi
+  u8 lo
+  virtual u16 v = (hi << 8) | lo ?= 0x1234
+}
+
+// A virtual field used by later fields: its value is the length on read, checked on write.
+export struct Used {
+  u8 hi
+  u8 lo
+  virtual u16 n = (hi << 8) | lo
+  u8 data[n]
+}
+
+// A signed top part.
+export struct Signed {
+  i8  hi
+  u32 lo
+  virtual i64 v = (hi << 32) | lo
+}
+
+// Checks apply to the virtual value, on read and on write.
+export struct Checked {
+  u8 hi
+  u8 lo
+  virtual u16 v = (hi << 8) | lo where it % 2 == 0
+}
+
+// Inside an array element.
+struct Vol {
+  u8  sizeHigh
+  u32 sizeLow
+  virtual u40 size = (sizeHigh << 32) | sizeLow
+}
+
+export struct Vols {
+  u8  n
+  Vol vols[n]
+}

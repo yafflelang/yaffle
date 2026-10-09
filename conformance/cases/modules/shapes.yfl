@@ -1,0 +1,11 @@
+// Imported as a namespace by schema.yfl. Forms a type cycle with cycle.yfl.
+import { Back } from "./cycle.yfl"
+
+export struct Rect { u8 w  u8 h }
+
+export enum Color : u8 { Red = 1, Green = 2 }
+
+export struct Forward {
+  u8    v
+  Back *back : u8 @nullable
+}

@@ -1,0 +1,497 @@
+{
+  "description": "Owned/@relative/@nullable pointers, pointer arrays, $ref sharing, cycles, `at`, linear and fixed placements, overlaps, @base.",
+  "generatedBy": "conformance/scripts/areas/pointers.ts",
+  "cases": [
+    {
+      "name": "owned pointer",
+      "root": "Owned",
+      "bytes": "0400000001000200",
+      "json": { "p": { "x": 1, "y": 2 } }
+    },
+    {
+      "name": "owned pointer target placed after the inline bytes",
+      "root": "Owned",
+      "input": { "p": { "x": 7, "y": 8 } },
+      "bytes": "0400000007000800"
+    },
+    {
+      "name": "owned pointer to a later offset",
+      "root": "Owned",
+      "roundtrip": false,
+      "bytes": "080000000000000001000200",
+      "json": { "p": { "x": 1, "y": 2 } }
+    },
+    {
+      "name": "non-nullable zero offset points at the base",
+      "root": "Owned",
+      "roundtrip": false,
+      "bytes": "00000000",
+      "json": { "p": { "x": 0, "y": 0 } }
+    },
+    {
+      "name": "owned pointer past the end",
+      "root": "Owned",
+      "bytes": "10000000",
+      "error": { "phase": "parse", "code": "EOF" }
+    },
+    {
+      "name": "two pointers",
+      "root": "TwoPtrs",
+      "bytes": "080000000c0000000100020003000400",
+      "json": { "a": { "x": 1, "y": 2 }, "b": { "x": 3, "y": 4 } }
+    },
+    {
+      "name": "shared target becomes a $ref",
+      "root": "TwoPtrs",
+      "bytes": "080000000800000001000200",
+      "json": { "a": { "x": 1, "y": 2 }, "b": { "$ref": "/a" } }
+    },
+    {
+      "name": "$ref writes the target once",
+      "root": "TwoPtrs",
+      "input": { "a": { "x": 5, "y": 6 }, "b": { "$ref": "/a" } },
+      "bytes": "080000000800000005000600"
+    },
+    {
+      "name": "equal values without $ref are separate targets",
+      "root": "TwoPtrs",
+      "input": { "a": { "x": 5, "y": 6 }, "b": { "x": 5, "y": 6 } },
+      "bytes": "080000000c0000000500060005000600"
+    },
+    {
+      "name": "targets in reverse order",
+      "root": "TwoPtrs",
+      "roundtrip": false,
+      "bytes": "0c000000080000000300040001000200",
+      "json": { "a": { "x": 1, "y": 2 }, "b": { "x": 3, "y": 4 } }
+    },
+    {
+      "name": "dangling $ref",
+      "root": "TwoPtrs",
+      "input": { "a": { "x": 1, "y": 2 }, "b": { "$ref": "/nope" } },
+      "error": { "phase": "serialize", "code": "INPUT", "path": ["b"] }
+    },
+    {
+      "name": "relative pointer",
+      "root": "Rel",
+      "bytes": "00020001000200",
+      "json": { "pad": 0, "p": { "x": 1, "y": 2 } }
+    },
+    {
+      "name": "relative pointer on write",
+      "root": "Rel",
+      "input": { "pad": 9, "p": { "x": 1, "y": 2 } },
+      "bytes": "09020001000200"
+    },
+    {
+      "name": "relative pointer backwards",
+      "root": "Rel",
+      "roundtrip": false,
+      "bytes": "05ffff07",
+      "json": { "pad": 5, "p": { "x": 65285, "y": 2047 } }
+    },
+    { "name": "nullable null", "root": "Nullable", "bytes": "00000000", "json": { "p": null } },
+    {
+      "name": "nullable set",
+      "root": "Nullable",
+      "bytes": "0400000001000200",
+      "json": { "p": { "x": 1, "y": 2 } }
+    },
+    {
+      "name": "nullable writes null",
+      "root": "Nullable",
+      "input": { "p": null },
+      "bytes": "00000000"
+    },
+    {
+      "name": "nullable with a custom null",
+      "root": "NullableFF",
+      "bytes": "ffffffff",
+      "json": { "p": null }
+    },
+    {
+      "name": "custom null makes zero a real offset",
+      "root": "NullableFF",
+      "roundtrip": false,
+      "bytes": "00000000",
+      "json": { "p": { "x": 0, "y": 0 } }
+    },
+    {
+      "name": "custom null on write",
+      "root": "NullableFF",
+      "input": { "p": null },
+      "bytes": "ffffffff"
+    },
+    {
+      "name": "custom null set",
+      "root": "NullableFF",
+      "input": { "p": { "x": 3, "y": 4 } },
+      "bytes": "0400000003000400"
+    },
+    {
+      "name": "array of pointers",
+      "root": "PtrArray",
+      "bytes": "02090000000d0000000100020003000400",
+      "json": {
+        "n": 2,
+        "pts": [
+          { "x": 1, "y": 2 },
+          { "x": 3, "y": 4 }
+        ]
+      }
+    },
+    {
+      "name": "array of pointers with a shared element",
+      "root": "PtrArray",
+      "bytes": "030d000000110000000d0000000100020003000400",
+      "json": { "n": 3, "pts": [{ "x": 1, "y": 2 }, { "x": 3, "y": 4 }, { "$ref": "/pts/0" }] }
+    },
+    {
+      "name": "array of pointers on write",
+      "root": "PtrArray",
+      "input": { "pts": [{ "x": 1, "y": 1 }] },
+      "bytes": "010500000001000100"
+    },
+    {
+      "name": "array of pointers empty",
+      "root": "PtrArray",
+      "input": { "pts": [] },
+      "bytes": "00"
+    },
+    {
+      "name": "pointer to a primitive",
+      "root": "PtrToPrim",
+      "bytes": "0178563412",
+      "json": { "v": 305419896 }
+    },
+    {
+      "name": "pointer to a string",
+      "root": "PtrToStr",
+      "bytes": "030007686900",
+      "json": { "s": "hi", "after": 7 }
+    },
+    {
+      "name": "pointer to a string on write",
+      "root": "PtrToStr",
+      "input": { "s": "abc", "after": 1 },
+      "bytes": "03000161626300"
+    },
+    {
+      "name": "pointer storage follows endianness",
+      "root": "PtrBe",
+      "bytes": "0000000400010002",
+      "json": { "p": { "x": 1, "y": 2 } }
+    },
+    {
+      "name": "linked list",
+      "root": "List",
+      "bytes": "01 0a03 0b00",
+      "json": { "first": { "v": 10, "next": { "v": 11, "next": null } } }
+    },
+    {
+      "name": "linked list of three",
+      "root": "List",
+      "bytes": "01 0a03 0b05 0c00",
+      "json": { "first": { "v": 10, "next": { "v": 11, "next": { "v": 12, "next": null } } } }
+    },
+    {
+      "name": "linked list on write is pre-order",
+      "root": "List",
+      "input": { "first": { "v": 1, "next": { "v": 2, "next": null } } },
+      "bytes": "01 0103 0200"
+    },
+    {
+      "name": "self cycle",
+      "root": "List",
+      "bytes": "01 0a01",
+      "json": { "first": { "v": 10, "next": { "$ref": "/first" } } }
+    },
+    {
+      "name": "two-node cycle",
+      "root": "List",
+      "bytes": "01 0a03 0b01",
+      "json": { "first": { "v": 10, "next": { "v": 11, "next": { "$ref": "/first" } } } }
+    },
+    {
+      "name": "cycle on write",
+      "root": "List",
+      "input": { "first": { "v": 4, "next": { "v": 5, "next": { "$ref": "/first" } } } },
+      "bytes": "01 0403 0501"
+    },
+    {
+      "name": "pre-order layout",
+      "root": "PreOrder",
+      "bytes": "03070c01000200080300040005000600",
+      "json": { "p": { "x": 1, "y": 2 }, "b": { "q": { "x": 3, "y": 4 } }, "r": { "x": 5, "y": 6 } }
+    },
+    {
+      "name": "pre-order layout on write",
+      "root": "PreOrder",
+      "input": {
+        "p": { "x": 1, "y": 2 },
+        "b": { "q": { "x": 3, "y": 4 } },
+        "r": { "x": 5, "y": 6 }
+      },
+      "bytes": "03070c01000200080300040005000600"
+    },
+    {
+      "name": "at",
+      "root": "At",
+      "bytes": "0400000001000200",
+      "json": { "ofs": 4, "p": { "x": 1, "y": 2 } }
+    },
+    {
+      "name": "at derives the offset",
+      "root": "At",
+      "input": { "p": { "x": 1, "y": 2 } },
+      "bytes": "0400000001000200"
+    },
+    {
+      "name": "at a later offset",
+      "root": "At",
+      "roundtrip": false,
+      "bytes": "080000000000000001000200",
+      "json": { "ofs": 8, "p": { "x": 1, "y": 2 } }
+    },
+    {
+      "name": "at past the end",
+      "root": "At",
+      "bytes": "0600000001000200",
+      "error": { "phase": "parse", "code": "EOF", "path": ["p", "y"] }
+    },
+    {
+      "name": "at an array",
+      "root": "AtArray",
+      "bytes": "02050000000100020003000400",
+      "json": {
+        "n": 2,
+        "ofs": 5,
+        "items": [
+          { "x": 1, "y": 2 },
+          { "x": 3, "y": 4 }
+        ]
+      }
+    },
+    {
+      "name": "at an empty array points at the current position",
+      "root": "AtArray",
+      "bytes": "0005000000",
+      "json": { "n": 0, "ofs": 5, "items": [] }
+    },
+    {
+      "name": "at an empty array on write",
+      "root": "AtArray",
+      "input": { "items": [] },
+      "bytes": "0005000000"
+    },
+    {
+      "name": "at bytes",
+      "root": "AtBytes",
+      "bytes": "03000400aabbcc",
+      "json": { "len": 3, "ofs": 4, "data": "aabbcc" }
+    },
+    {
+      "name": "linear at",
+      "root": "Linear",
+      "bytes": "010000000000000001020304",
+      "json": { "sector": 1, "data": "01020304" }
+    },
+    {
+      "name": "linear at honours the constraint",
+      "root": "Linear",
+      "input": { "data": "aabbccdd" },
+      "bytes": "0100000000000000aabbccdd"
+    },
+    {
+      "name": "linear at a later sector",
+      "root": "Linear",
+      "roundtrip": false,
+      "bytes": "0200000000000000000000000000000001020304",
+      "json": { "sector": 2, "data": "01020304" }
+    },
+    {
+      "name": "linear at with a remainder",
+      "root": "LinearRem",
+      "bytes": "02000000aabb",
+      "json": { "n": 2, "slot": 0, "data": "aabb" }
+    },
+    {
+      "name": "linear at with a remainder on write",
+      "root": "LinearRem",
+      "input": { "data": "aabbcc" },
+      "bytes": "03000000aabbcc"
+    },
+    {
+      "name": "fixed placement",
+      "root": "FixedAt",
+      "bytes": "02020000aabb",
+      "json": { "a": 2, "b": 2, "x": "aabb" }
+    },
+    {
+      "name": "fixed placement on write",
+      "root": "FixedAt",
+      "input": { "a": 2, "b": 2, "x": "aabb" },
+      "bytes": "02020000aabb"
+    },
+    {
+      "name": "fixed placement right after the inline bytes",
+      "root": "FixedAt",
+      "input": { "a": 2, "b": 1, "x": "aabb" },
+      "bytes": "0201aabb"
+    },
+    {
+      "name": "fixed placement overlapping the inline bytes",
+      "root": "FixedAt",
+      "input": { "a": 1, "b": 1, "x": "aabb" },
+      "error": { "phase": "serialize", "code": "OVERLAP" }
+    },
+    {
+      "name": "fixed placement overlap is fine on read",
+      "root": "FixedAt",
+      "roundtrip": false,
+      "bytes": "01 01 aa",
+      "json": { "a": 1, "b": 1, "x": "01aa" }
+    },
+    {
+      "name": "two fixed placements",
+      "root": "FixedTwo",
+      "bytes": "010305aabbccdd",
+      "json": { "k": 1, "o1": 3, "o2": 5, "p1": "aabb", "p2": "ccdd" }
+    },
+    {
+      "name": "two fixed placements out of order",
+      "root": "FixedTwo",
+      "input": { "k": 1, "o1": 5, "o2": 3, "p1": "aabb", "p2": "ccdd" },
+      "bytes": "010503ccddaabb"
+    },
+    {
+      "name": "two fixed placements with gaps",
+      "root": "FixedTwo",
+      "input": { "k": 2, "o1": 2, "o2": 4, "p1": "aabb", "p2": "ccdd" },
+      "bytes": "02020400aabb0000ccdd"
+    },
+    {
+      "name": "two fixed placements overlapping",
+      "root": "FixedTwo",
+      "input": { "k": 1, "o1": 3, "o2": 4, "p1": "aabb", "p2": "ccdd" },
+      "error": { "phase": "serialize", "code": "OVERLAP" }
+    },
+    {
+      "name": "pointer inside a base",
+      "root": "Based",
+      "bytes": "09010201000200",
+      "json": { "pre": 9, "s": { "a": 1, "p": { "x": 1, "y": 2 } } }
+    },
+    {
+      "name": "pointer inside a base on write",
+      "root": "Based",
+      "input": { "pre": 9, "s": { "a": 1, "p": { "x": 1, "y": 2 } } },
+      "bytes": "09010201000200"
+    },
+    {
+      "name": "at inside a base",
+      "root": "BasedAt",
+      "bytes": "000001aabb",
+      "json": { "pre": 0, "s": { "ofs": 1, "data": "aabb" } }
+    },
+    {
+      "name": "at inside a base on write",
+      "root": "BasedAt",
+      "input": { "pre": 5, "s": { "data": "aabb" } },
+      "bytes": "050001aabb"
+    },
+    {
+      "name": "pointer and at in declaration order",
+      "root": "Mixed",
+      "bytes": "020601000200aabb",
+      "json": { "p": { "x": 1, "y": 2 }, "ofs": 6, "tail": "aabb" }
+    },
+    {
+      "name": "pointer and at in declaration order on write",
+      "root": "Mixed",
+      "input": { "p": { "x": 1, "y": 2 }, "tail": "aabb" },
+      "bytes": "020601000200aabb"
+    },
+    {
+      "name": "empty and non-empty arrays at the same address",
+      "root": "SameAddress",
+      "bytes": "00 05 05 07 07 aabb 0100",
+      "json": {
+        "n": 0,
+        "ofsA": 5,
+        "ofsB": 5,
+        "ofsC": 7,
+        "ofsD": 7,
+        "a": "",
+        "b": "aabb",
+        "c": [],
+        "d": [1]
+      }
+    },
+    {
+      "name": "empty and non-empty arrays at the same address on write",
+      "root": "SameAddress",
+      "input": { "a": "", "b": "ccdd", "c": [], "d": [2] },
+      "bytes": "00 05 05 07 07 ccdd 0200"
+    },
+    {
+      "name": "offsets inside a target count from the base",
+      "root": "NestedTarget",
+      "bytes": "010201000200",
+      "json": { "b": { "inner": { "x": 1, "y": 2 } } }
+    },
+    {
+      "name": "offsets inside a target on write",
+      "root": "NestedTarget",
+      "input": { "b": { "inner": { "x": 3, "y": 4 } } },
+      "bytes": "010203000400"
+    },
+    {
+      "name": "relative pointer inside a target",
+      "root": "RelInside",
+      "bytes": "01ee0105000600",
+      "json": { "r": { "pad": 238, "p": { "x": 5, "y": 6 } } }
+    },
+    {
+      "name": "relative pointer inside a target on write",
+      "root": "RelInside",
+      "input": { "r": { "pad": 0, "p": { "x": 5, "y": 6 } } },
+      "bytes": "01000105000600"
+    },
+    {
+      "name": "pointer storage too small for the target offset",
+      "root": "Far",
+      "input": {
+        "big": {
+          "data": "000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+        },
+        "p": { "x": 1, "y": 1 }
+      },
+      "error": { "phase": "serialize", "code": "RANGE", "path": ["p"] }
+    },
+    {
+      "name": "nullable pointers in an array of structs",
+      "root": "Items",
+      "bytes": "020700080509000900",
+      "json": {
+        "n": 2,
+        "items": [
+          { "v": 7, "opt": null },
+          { "v": 8, "opt": { "x": 9, "y": 9 } }
+        ]
+      }
+    },
+    {
+      "name": "nullable pointers in an array of structs on write",
+      "root": "Items",
+      "input": {
+        "items": [
+          { "v": 1, "opt": { "x": 1, "y": 1 } },
+          { "v": 2, "opt": null },
+          { "v": 3, "opt": { "x": 3, "y": 3 } }
+        ]
+      },
+      "bytes": "0301070200030b0100010003000300"
+    }
+  ]
+}

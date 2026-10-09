@@ -1,0 +1,30 @@
+{
+  "description": "Slices of a stream: `from raw[a..b]` and `from raw[a..]`, parse only.",
+  "generatedBy": "conformance/scripts/areas/streams-slices.ts",
+  "cases": [
+    {
+      "name": "slices of a stream",
+      "root": "Sliced",
+      "roundtrip": false,
+      "bytes": "0100 0200 0300 0400",
+      "json": {
+        "raw": "0100020003000400",
+        "first": { "a": 1, "b": 2 },
+        "second": { "a": 3, "b": 4 },
+        "tail": "0400"
+      }
+    },
+    {
+      "name": "overlapping slices see the same bytes",
+      "root": "Sliced",
+      "roundtrip": false,
+      "bytes": "ffff 0100 0200 0300",
+      "json": {
+        "raw": "ffff010002000300",
+        "first": { "a": 65535, "b": 1 },
+        "second": { "a": 2, "b": 3 },
+        "tail": "0300"
+      }
+    }
+  ]
+}

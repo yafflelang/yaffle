@@ -1,0 +1,706 @@
+{
+  "description": "Integer widths, signedness, floats (NaN, ±Infinity, -0, subnormals), bool, endianness suffixes and root endianness.",
+  "generatedBy": "conformance/scripts/areas/primitives.ts",
+  "cases": [
+    { "name": "u8 zero", "root": "U8", "bytes": "00", "json": { "v": 0 } },
+    { "name": "u8 one", "root": "U8", "bytes": "01", "json": { "v": 1 } },
+    { "name": "u8 0x7f", "root": "U8", "bytes": "7f", "json": { "v": 127 } },
+    { "name": "u8 0x80", "root": "U8", "bytes": "80", "json": { "v": 128 } },
+    { "name": "u8 max", "root": "U8", "bytes": "ff", "json": { "v": 255 } },
+    {
+      "name": "u8 eof",
+      "root": "U8",
+      "bytes": "",
+      "error": { "phase": "parse", "code": "EOF", "path": ["v"] }
+    },
+    { "name": "u16 le", "root": "U16", "bytes": "3412", "json": { "v": 4660 } },
+    { "name": "u16 max", "root": "U16", "bytes": "ffff", "json": { "v": 65535 } },
+    {
+      "name": "u16 be by root argument",
+      "root": "U16",
+      "args": { "endian": "be" },
+      "bytes": "1234",
+      "json": { "v": 4660 }
+    },
+    {
+      "name": "u16 eof",
+      "root": "U16",
+      "bytes": "01",
+      "error": { "phase": "parse", "code": "EOF", "path": ["v"] }
+    },
+    { "name": "u24 le", "root": "U24", "bytes": "563412", "json": { "v": 1193046 } },
+    { "name": "u24 max", "root": "U24", "bytes": "ffffff", "json": { "v": 16777215 } },
+    {
+      "name": "u24 be by root argument",
+      "root": "U24",
+      "args": { "endian": "be" },
+      "bytes": "123456",
+      "json": { "v": 1193046 }
+    },
+    {
+      "name": "u24 eof",
+      "root": "U24",
+      "bytes": "0102",
+      "error": { "phase": "parse", "code": "EOF", "path": ["v"] }
+    },
+    { "name": "u32 le", "root": "U32", "bytes": "efbeadde", "json": { "v": 3735928559 } },
+    { "name": "u32 max", "root": "U32", "bytes": "ffffffff", "json": { "v": 4294967295 } },
+    {
+      "name": "u32 be by root argument",
+      "root": "U32",
+      "args": { "endian": "be" },
+      "bytes": "deadbeef",
+      "json": { "v": 3735928559 }
+    },
+    {
+      "name": "u32 eof",
+      "root": "U32",
+      "bytes": "010203",
+      "error": { "phase": "parse", "code": "EOF", "path": ["v"] }
+    },
+    { "name": "u40 le", "root": "U40", "bytes": "9a78563412", "json": { "v": 78187493530 } },
+    { "name": "u40 max", "root": "U40", "bytes": "ffffffffff", "json": { "v": 1099511627775 } },
+    {
+      "name": "u40 eof",
+      "root": "U40",
+      "bytes": "01020304",
+      "error": { "phase": "parse", "code": "EOF", "path": ["v"] }
+    },
+    { "name": "u48 le", "root": "U48", "bytes": "bc9a78563412", "json": { "v": 20015998343868 } },
+    { "name": "u48 max", "root": "U48", "bytes": "ffffffffffff", "json": { "v": 281474976710655 } },
+    {
+      "name": "u56 le is a string",
+      "root": "U56",
+      "bytes": "cdab8967452301",
+      "json": { "v": "320255973501901" }
+    },
+    {
+      "name": "u56 small is still a string",
+      "root": "U56",
+      "bytes": "01000000000000",
+      "json": { "v": "1" }
+    },
+    {
+      "name": "u56 max",
+      "root": "U56",
+      "bytes": "ffffffffffffff",
+      "json": { "v": "72057594037927935" }
+    },
+    {
+      "name": "u64 le",
+      "root": "U64",
+      "bytes": "0807060504030201",
+      "json": { "v": "72623859790382856" }
+    },
+    { "name": "u64 zero", "root": "U64", "bytes": "0000000000000000", "json": { "v": "0" } },
+    {
+      "name": "u64 2^53+1 keeps precision",
+      "root": "U64",
+      "bytes": "0100000000002000",
+      "json": { "v": "9007199254740993" }
+    },
+    {
+      "name": "u64 max",
+      "root": "U64",
+      "bytes": "ffffffffffffffff",
+      "json": { "v": "18446744073709551615" }
+    },
+    {
+      "name": "u64 be by root argument",
+      "root": "U64",
+      "args": { "endian": "be" },
+      "bytes": "0102030405060708",
+      "json": { "v": "72623859790382856" }
+    },
+    {
+      "name": "u64 eof",
+      "root": "U64",
+      "bytes": "01020304050607",
+      "error": { "phase": "parse", "code": "EOF", "path": ["v"] }
+    },
+    { "name": "u16le", "root": "U16le", "bytes": "3412", "json": { "v": 4660 } },
+    {
+      "name": "u16le ignores root be",
+      "root": "U16le",
+      "args": { "endian": "be" },
+      "bytes": "3412",
+      "json": { "v": 4660 }
+    },
+    { "name": "u24le", "root": "U24le", "bytes": "563412", "json": { "v": 1193046 } },
+    { "name": "u32le", "root": "U32le", "bytes": "78563412", "json": { "v": 305419896 } },
+    {
+      "name": "u64le",
+      "root": "U64le",
+      "bytes": "0807060504030201",
+      "json": { "v": "72623859790382856" }
+    },
+    { "name": "u16be", "root": "U16be", "bytes": "1234", "json": { "v": 4660 } },
+    {
+      "name": "u16be ignores root le",
+      "root": "U16be",
+      "args": { "endian": "le" },
+      "bytes": "1234",
+      "json": { "v": 4660 }
+    },
+    { "name": "u24be", "root": "U24be", "bytes": "123456", "json": { "v": 1193046 } },
+    { "name": "u32be", "root": "U32be", "bytes": "12345678", "json": { "v": 305419896 } },
+    { "name": "u40be", "root": "U40be", "bytes": "123456789a", "json": { "v": 78187493530 } },
+    { "name": "u48be", "root": "U48be", "bytes": "123456789abc", "json": { "v": 20015998343868 } },
+    {
+      "name": "u56be",
+      "root": "U56be",
+      "bytes": "0123456789abcd",
+      "json": { "v": "320255973501901" }
+    },
+    {
+      "name": "u64be",
+      "root": "U64be",
+      "bytes": "0102030405060708",
+      "json": { "v": "72623859790382856" }
+    },
+    {
+      "name": "u64be max",
+      "root": "U64be",
+      "bytes": "ffffffffffffffff",
+      "json": { "v": "18446744073709551615" }
+    },
+    { "name": "i8 zero", "root": "I8", "bytes": "00", "json": { "v": 0 } },
+    { "name": "i8 -1", "root": "I8", "bytes": "ff", "json": { "v": -1 } },
+    { "name": "i8 min", "root": "I8", "bytes": "80", "json": { "v": -128 } },
+    { "name": "i8 max", "root": "I8", "bytes": "7f", "json": { "v": 127 } },
+    { "name": "i16 -2", "root": "I16", "bytes": "feff", "json": { "v": -2 } },
+    { "name": "i16 min", "root": "I16", "bytes": "0080", "json": { "v": -32768 } },
+    { "name": "i16 max", "root": "I16", "bytes": "ff7f", "json": { "v": 32767 } },
+    { "name": "i24 -1", "root": "I24", "bytes": "ffffff", "json": { "v": -1 } },
+    { "name": "i24 min", "root": "I24", "bytes": "000080", "json": { "v": -8388608 } },
+    { "name": "i24 max", "root": "I24", "bytes": "ffff7f", "json": { "v": 8388607 } },
+    {
+      "name": "i24 sign extends 0x800000+1",
+      "root": "I24",
+      "bytes": "010080",
+      "json": { "v": -8388607 }
+    },
+    { "name": "i32 min", "root": "I32", "bytes": "00000080", "json": { "v": -2147483648 } },
+    { "name": "i32 -1", "root": "I32", "bytes": "ffffffff", "json": { "v": -1 } },
+    { "name": "i32 max", "root": "I32", "bytes": "ffffff7f", "json": { "v": 2147483647 } },
+    { "name": "i40 -1", "root": "I40", "bytes": "ffffffffff", "json": { "v": -1 } },
+    { "name": "i40 min", "root": "I40", "bytes": "0000000080", "json": { "v": -549755813888 } },
+    { "name": "i40 max", "root": "I40", "bytes": "ffffffff7f", "json": { "v": 549755813887 } },
+    {
+      "name": "i48 min",
+      "root": "I48",
+      "bytes": "000000000080",
+      "json": { "v": -140737488355328 }
+    },
+    { "name": "i48 -2", "root": "I48", "bytes": "feffffffffff", "json": { "v": -2 } },
+    {
+      "name": "i56 -1 is a string",
+      "root": "I56",
+      "bytes": "ffffffffffffff",
+      "json": { "v": "-1" }
+    },
+    {
+      "name": "i56 min",
+      "root": "I56",
+      "bytes": "00000000000080",
+      "json": { "v": "-36028797018963968" }
+    },
+    {
+      "name": "i56 max",
+      "root": "I56",
+      "bytes": "ffffffffffff7f",
+      "json": { "v": "36028797018963967" }
+    },
+    {
+      "name": "i64 min",
+      "root": "I64",
+      "bytes": "0000000000000080",
+      "json": { "v": "-9223372036854775808" }
+    },
+    {
+      "name": "i64 max",
+      "root": "I64",
+      "bytes": "ffffffffffffff7f",
+      "json": { "v": "9223372036854775807" }
+    },
+    { "name": "i64 -1", "root": "I64", "bytes": "ffffffffffffffff", "json": { "v": "-1" } },
+    {
+      "name": "i64 be by root argument",
+      "root": "I64",
+      "args": { "endian": "be" },
+      "bytes": "fffffffffffffffe",
+      "json": { "v": "-2" }
+    },
+    { "name": "i16be", "root": "I16be", "bytes": "fffe", "json": { "v": -2 } },
+    { "name": "i24be", "root": "I24be", "bytes": "800000", "json": { "v": -8388608 } },
+    { "name": "i32be", "root": "I32be", "bytes": "80000000", "json": { "v": -2147483648 } },
+    { "name": "i40be", "root": "I40be", "bytes": "ffffffffff", "json": { "v": -1 } },
+    {
+      "name": "i48be",
+      "root": "I48be",
+      "bytes": "800000000000",
+      "json": { "v": -140737488355328 }
+    },
+    { "name": "i56be", "root": "I56be", "bytes": "fffffffffffffe", "json": { "v": "-2" } },
+    {
+      "name": "i64be",
+      "root": "I64be",
+      "bytes": "8000000000000000",
+      "json": { "v": "-9223372036854775808" }
+    },
+    { "name": "f16 one", "root": "F16", "bytes": "003c", "json": { "v": 1 } },
+    { "name": "f16 -2", "root": "F16", "bytes": "00c0", "json": { "v": -2 } },
+    { "name": "f16 max", "root": "F16", "bytes": "ff7b", "json": { "v": 65504 } },
+    {
+      "name": "f16 smallest subnormal",
+      "root": "F16",
+      "bytes": "0100",
+      "json": { "v": 5.960464477539063e-8 }
+    },
+    {
+      "name": "f16 largest subnormal",
+      "root": "F16",
+      "bytes": "ff03",
+      "json": { "v": 0.00006097555160522461 }
+    },
+    {
+      "name": "f16 smallest normal",
+      "root": "F16",
+      "bytes": "0004",
+      "json": { "v": 0.00006103515625 }
+    },
+    { "name": "f16 one third", "root": "F16", "bytes": "5535", "json": { "v": 0.333251953125 } },
+    { "name": "f16 zero", "root": "F16", "bytes": "0000", "json": { "v": 0 } },
+    { "name": "f16 negative zero", "root": "F16", "bytes": "0080", "json": { "v": "-0" } },
+    { "name": "f16 infinity", "root": "F16", "bytes": "007c", "json": { "v": "Infinity" } },
+    {
+      "name": "f16 negative infinity",
+      "root": "F16",
+      "bytes": "00fc",
+      "json": { "v": "-Infinity" }
+    },
+    { "name": "f16 canonical NaN", "root": "F16", "bytes": "007e", "json": { "v": "NaN" } },
+    { "name": "f16be one", "root": "F16be", "bytes": "3c00", "json": { "v": 1 } },
+    { "name": "f16be 0.5", "root": "F16be", "bytes": "3800", "json": { "v": 0.5 } },
+    {
+      "name": "f16 NaN payload reads as NaN",
+      "root": "F16",
+      "roundtrip": false,
+      "bytes": "017c",
+      "json": { "v": "NaN" }
+    },
+    {
+      "name": "f16 negative NaN reads as NaN",
+      "root": "F16",
+      "roundtrip": false,
+      "bytes": "00fe",
+      "json": { "v": "NaN" }
+    },
+    {
+      "name": "f16 writes NaN canonically",
+      "root": "F16",
+      "input": { "v": "NaN" },
+      "bytes": "007e"
+    },
+    { "name": "f16 writes -0", "root": "F16", "input": { "v": "-0" }, "bytes": "0080" },
+    {
+      "name": "f16 writes -Infinity",
+      "root": "F16",
+      "input": { "v": "-Infinity" },
+      "bytes": "00fc"
+    },
+    {
+      "name": "f16 rounds to nearest even (1 + 2^-11 -> 1)",
+      "root": "F16",
+      "input": { "v": 1.00048828125 },
+      "bytes": "003c"
+    },
+    {
+      "name": "f16 rounds to nearest even (1 + 3*2^-11 -> 1 + 2^-9)",
+      "root": "F16",
+      "input": { "v": 1.00146484375 },
+      "bytes": "023c"
+    },
+    { "name": "f16 rounds 0.1", "root": "F16", "input": { "v": 0.1 }, "bytes": "662e" },
+    { "name": "f32 1.5", "root": "F32", "bytes": "0000c03f", "json": { "v": 1.5 } },
+    {
+      "name": "f32 0.1 is the f32 value",
+      "root": "F32",
+      "bytes": "cdcccc3d",
+      "json": { "v": 0.10000000149011612 }
+    },
+    { "name": "f32 -0", "root": "F32", "bytes": "00000080", "json": { "v": "-0" } },
+    { "name": "f32 zero", "root": "F32", "bytes": "00000000", "json": { "v": 0 } },
+    { "name": "f32 infinity", "root": "F32", "bytes": "0000807f", "json": { "v": "Infinity" } },
+    {
+      "name": "f32 negative infinity",
+      "root": "F32",
+      "bytes": "000080ff",
+      "json": { "v": "-Infinity" }
+    },
+    { "name": "f32 canonical NaN", "root": "F32", "bytes": "0000c07f", "json": { "v": "NaN" } },
+    {
+      "name": "f32 max",
+      "root": "F32",
+      "bytes": "ffff7f7f",
+      "json": { "v": 3.4028234663852886e38 }
+    },
+    {
+      "name": "f32 smallest subnormal",
+      "root": "F32",
+      "bytes": "01000000",
+      "json": { "v": 1.401298464324817e-45 }
+    },
+    {
+      "name": "f32 smallest normal",
+      "root": "F32",
+      "bytes": "00008000",
+      "json": { "v": 1.1754943508222875e-38 }
+    },
+    { "name": "f32 -123.25", "root": "F32", "bytes": "0080f6c2", "json": { "v": -123.25 } },
+    {
+      "name": "f32 signaling NaN reads as NaN",
+      "root": "F32",
+      "roundtrip": false,
+      "bytes": "0100807f",
+      "json": { "v": "NaN" }
+    },
+    {
+      "name": "f32 negative NaN reads as NaN",
+      "root": "F32",
+      "roundtrip": false,
+      "bytes": "0000c0ff",
+      "json": { "v": "NaN" }
+    },
+    {
+      "name": "f32 writes NaN canonically",
+      "root": "F32",
+      "input": { "v": "NaN" },
+      "bytes": "0000c07f"
+    },
+    {
+      "name": "f32 writes Infinity",
+      "root": "F32",
+      "input": { "v": "Infinity" },
+      "bytes": "0000807f"
+    },
+    {
+      "name": "f32 rounds a double to nearest",
+      "root": "F32",
+      "input": { "v": 0.1 },
+      "bytes": "cdcccc3d"
+    },
+    {
+      "name": "f32 writes an integer-valued number",
+      "root": "F32",
+      "input": { "v": 16777216 },
+      "bytes": "0000804b"
+    },
+    { "name": "f32be 1.5", "root": "F32be", "bytes": "3fc00000", "json": { "v": 1.5 } },
+    {
+      "name": "f32le ignores root be",
+      "root": "F32le",
+      "args": { "endian": "be" },
+      "bytes": "0000c03f",
+      "json": { "v": 1.5 }
+    },
+    {
+      "name": "f32 be by root argument",
+      "root": "F32",
+      "args": { "endian": "be" },
+      "bytes": "3fc00000",
+      "json": { "v": 1.5 }
+    },
+    { "name": "f64 one", "root": "F64", "bytes": "000000000000f03f", "json": { "v": 1 } },
+    { "name": "f64 0.1", "root": "F64", "bytes": "9a9999999999b93f", "json": { "v": 0.1 } },
+    { "name": "f64 -0", "root": "F64", "bytes": "0000000000000080", "json": { "v": "-0" } },
+    {
+      "name": "f64 canonical NaN",
+      "root": "F64",
+      "bytes": "000000000000f87f",
+      "json": { "v": "NaN" }
+    },
+    {
+      "name": "f64 infinity",
+      "root": "F64",
+      "bytes": "000000000000f07f",
+      "json": { "v": "Infinity" }
+    },
+    {
+      "name": "f64 negative infinity",
+      "root": "F64",
+      "bytes": "000000000000f0ff",
+      "json": { "v": "-Infinity" }
+    },
+    {
+      "name": "f64 smallest subnormal",
+      "root": "F64",
+      "bytes": "0100000000000000",
+      "json": { "v": 5e-324 }
+    },
+    {
+      "name": "f64 max",
+      "root": "F64",
+      "bytes": "ffffffffffffef7f",
+      "json": { "v": 1.7976931348623157e308 }
+    },
+    {
+      "name": "f64 2^53",
+      "root": "F64",
+      "bytes": "0000000000004043",
+      "json": { "v": 9007199254740992 }
+    },
+    {
+      "name": "f64 NaN payload reads as NaN",
+      "root": "F64",
+      "roundtrip": false,
+      "bytes": "010000000000f07f",
+      "json": { "v": "NaN" }
+    },
+    {
+      "name": "f64 writes NaN canonically",
+      "root": "F64",
+      "input": { "v": "NaN" },
+      "bytes": "000000000000f87f"
+    },
+    { "name": "f64 writes -0", "root": "F64", "input": { "v": "-0" }, "bytes": "0000000000000080" },
+    { "name": "f64be one", "root": "F64be", "bytes": "3ff0000000000000", "json": { "v": 1 } },
+    {
+      "name": "f64 eof",
+      "root": "F64",
+      "bytes": "00000000000000",
+      "error": { "phase": "parse", "code": "EOF", "path": ["v"] }
+    },
+    {
+      "name": "f16 eof",
+      "root": "F16",
+      "bytes": "00",
+      "error": { "phase": "parse", "code": "EOF", "path": ["v"] }
+    },
+    { "name": "bool false", "root": "Bool", "bytes": "00", "json": { "v": false } },
+    { "name": "bool true", "root": "Bool", "bytes": "01", "json": { "v": true } },
+    {
+      "name": "bool nonzero reads as true",
+      "root": "Bool",
+      "roundtrip": false,
+      "bytes": "02",
+      "json": { "v": true }
+    },
+    {
+      "name": "bool 0xff reads as true",
+      "root": "Bool",
+      "roundtrip": false,
+      "bytes": "ff",
+      "json": { "v": true }
+    },
+    { "name": "bool writes 1 for true", "root": "Bool", "input": { "v": true }, "bytes": "01" },
+    { "name": "bool writes 0 for false", "root": "Bool", "input": { "v": false }, "bytes": "00" },
+    {
+      "name": "bool strict rejects 2",
+      "root": "Bool",
+      "strict": true,
+      "bytes": "02",
+      "error": { "phase": "parse", "code": "CHECK", "path": ["v"] }
+    },
+    {
+      "name": "bool strict accepts 1",
+      "root": "Bool",
+      "strict": true,
+      "bytes": "01",
+      "json": { "v": true }
+    },
+    {
+      "name": "bool eof",
+      "root": "Bool",
+      "bytes": "",
+      "error": { "phase": "parse", "code": "EOF", "path": ["v"] }
+    },
+    { "name": "u8 writes 255", "root": "U8", "input": { "v": 255 }, "bytes": "ff" },
+    {
+      "name": "u8 256 is out of range",
+      "root": "U8",
+      "input": { "v": 256 },
+      "error": { "phase": "serialize", "code": "RANGE", "path": ["v"] }
+    },
+    {
+      "name": "u8 -1 is out of range",
+      "root": "U8",
+      "input": { "v": -1 },
+      "error": { "phase": "serialize", "code": "RANGE", "path": ["v"] }
+    },
+    {
+      "name": "i8 -129 is out of range",
+      "root": "I8",
+      "input": { "v": -129 },
+      "error": { "phase": "serialize", "code": "RANGE", "path": ["v"] }
+    },
+    {
+      "name": "i8 128 is out of range",
+      "root": "I8",
+      "input": { "v": 128 },
+      "error": { "phase": "serialize", "code": "RANGE", "path": ["v"] }
+    },
+    { "name": "i8 writes -128", "root": "I8", "input": { "v": -128 }, "bytes": "80" },
+    {
+      "name": "u24 2^24 is out of range",
+      "root": "U24",
+      "input": { "v": 16777216 },
+      "error": { "phase": "serialize", "code": "RANGE", "path": ["v"] }
+    },
+    { "name": "i24 writes -1", "root": "I24", "input": { "v": -1 }, "bytes": "ffffff" },
+    {
+      "name": "i24 2^23 is out of range",
+      "root": "I24",
+      "input": { "v": 8388608 },
+      "error": { "phase": "serialize", "code": "RANGE", "path": ["v"] }
+    },
+    {
+      "name": "u32 2^32 is out of range",
+      "root": "U32",
+      "input": { "v": 4294967296 },
+      "error": { "phase": "serialize", "code": "RANGE", "path": ["v"] }
+    },
+    {
+      "name": "u40 2^40 is out of range",
+      "root": "U40",
+      "input": { "v": 1099511627776 },
+      "error": { "phase": "serialize", "code": "RANGE", "path": ["v"] }
+    },
+    {
+      "name": "u48 writes max",
+      "root": "U48",
+      "input": { "v": 281474976710655 },
+      "bytes": "ffffffffffff"
+    },
+    {
+      "name": "u56 2^56 is out of range",
+      "root": "U56",
+      "input": { "v": "72057594037927936" },
+      "error": { "phase": "serialize", "code": "RANGE", "path": ["v"] }
+    },
+    {
+      "name": "u64 writes max",
+      "root": "U64",
+      "input": { "v": "18446744073709551615" },
+      "bytes": "ffffffffffffffff"
+    },
+    {
+      "name": "u64 2^64 is out of range",
+      "root": "U64",
+      "input": { "v": "18446744073709551616" },
+      "error": { "phase": "serialize", "code": "RANGE", "path": ["v"] }
+    },
+    {
+      "name": "u64 negative is out of range",
+      "root": "U64",
+      "input": { "v": "-1" },
+      "error": { "phase": "serialize", "code": "RANGE", "path": ["v"] }
+    },
+    {
+      "name": "i64 writes min",
+      "root": "I64",
+      "input": { "v": "-9223372036854775808" },
+      "bytes": "0000000000000080"
+    },
+    {
+      "name": "i64 2^63 is out of range",
+      "root": "I64",
+      "input": { "v": "9223372036854775808" },
+      "error": { "phase": "serialize", "code": "RANGE", "path": ["v"] }
+    },
+    {
+      "name": "u8 missing field",
+      "root": "U8",
+      "input": {},
+      "error": { "phase": "serialize", "code": "INPUT", "path": ["v"] }
+    },
+    {
+      "name": "u8 string is the wrong type",
+      "root": "U8",
+      "input": { "v": "1" },
+      "error": { "phase": "serialize", "code": "INPUT", "path": ["v"] }
+    },
+    {
+      "name": "bool number is the wrong type",
+      "root": "Bool",
+      "input": { "v": 1 },
+      "error": { "phase": "serialize", "code": "INPUT", "path": ["v"] }
+    },
+    {
+      "name": "u16 writes be by root argument",
+      "root": "U16",
+      "args": { "endian": "be" },
+      "input": { "v": 4660 },
+      "bytes": "1234"
+    },
+    { "name": "u16be writes be", "root": "U16be", "input": { "v": 4660 }, "bytes": "1234" },
+    {
+      "name": "mixed fields",
+      "root": "Mixed",
+      "bytes": "010302040506f9ffffff40200000000000000000008001d4fe00b8",
+      "json": {
+        "a": 1,
+        "b": 515,
+        "c": 263430,
+        "d": -7,
+        "e": 2.5,
+        "f": "9223372036854775808",
+        "g": true,
+        "h": -300,
+        "i": -0.5
+      }
+    },
+    {
+      "name": "mixed fields with root be",
+      "root": "Mixed",
+      "args": { "endian": "be" },
+      "bytes": "010203040506fffffff940200000800000000000000001d4feb800",
+      "json": {
+        "a": 1,
+        "b": 515,
+        "c": 263430,
+        "d": -7,
+        "e": 2.5,
+        "f": "9223372036854775808",
+        "g": true,
+        "h": -300,
+        "i": -0.5
+      }
+    },
+    {
+      "name": "mixed fields eof in the middle",
+      "root": "Mixed",
+      "bytes": "010302040506f9ffffff4020",
+      "error": { "phase": "parse", "code": "EOF", "path": ["e"] }
+    },
+    {
+      "name": "mixed fields serialize",
+      "root": "Mixed",
+      "input": {
+        "a": 1,
+        "b": 515,
+        "c": 263430,
+        "d": -7,
+        "e": 2.5,
+        "f": "9223372036854775808",
+        "g": true,
+        "h": -300,
+        "i": -0.5
+      },
+      "bytes": "010302040506f9ffffff40200000000000000000008001d4fe00b8"
+    },
+    {
+      "name": "semicolons",
+      "root": "Semicolons",
+      "bytes": "01 0200 ff",
+      "json": { "a": 1, "b": 2, "c": -1 }
+    },
+    {
+      "name": "trailing bytes after the root are ignored",
+      "root": "U8",
+      "roundtrip": false,
+      "bytes": "0102",
+      "json": { "v": 1 }
+    }
+  ]
+}

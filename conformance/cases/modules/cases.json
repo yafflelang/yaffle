@@ -1,0 +1,157 @@
+{
+  "description": "Named/namespace imports, exported constants, cross-file generics/aliases/cycles, every literal form.",
+  "generatedBy": "conformance/scripts/areas/modules.ts",
+  "cases": [
+    {
+      "name": "named imports",
+      "root": "Imports",
+      "bytes": "010002000103000400616200000008000003",
+      "json": {
+        "p": { "x": 1, "y": 2 },
+        "pts": { "n": 1, "items": [{ "x": 3, "y": 4 }] },
+        "n": "ab",
+        "sector": 2048,
+        "version": 3
+      }
+    },
+    {
+      "name": "named imports on write",
+      "root": "Imports",
+      "input": { "p": { "x": 1, "y": 2 }, "pts": { "items": [{ "x": 3, "y": 4 }] }, "n": "ab" },
+      "bytes": "010002000103000400616200000008000003"
+    },
+    {
+      "name": "imported constant checked",
+      "root": "Imports",
+      "bytes": "0100020000616200000004000003",
+      "error": { "phase": "parse", "code": "CHECK", "path": ["sector"] }
+    },
+    {
+      "name": "an exported struct of an imported module is a root too",
+      "root": "Pt",
+      "bytes": "05000600",
+      "json": { "x": 5, "y": 6 }
+    },
+    {
+      "name": "namespace import",
+      "root": "Namespaced",
+      "bytes": "0203 02",
+      "json": { "r": { "w": 2, "h": 3 }, "c": "Green" }
+    },
+    {
+      "name": "namespace import on write",
+      "root": "Namespaced",
+      "input": { "r": { "w": 1, "h": 1 }, "c": "Red" },
+      "bytes": "0101 01"
+    },
+    {
+      "name": "cross-file cycle, null",
+      "root": "Cycle",
+      "bytes": "01 0a00",
+      "json": { "f": { "v": 10, "back": null } }
+    },
+    {
+      "name": "cross-file cycle",
+      "root": "Cycle",
+      "bytes": "01 0a03 0b01",
+      "json": { "f": { "v": 10, "back": { "w": 11, "fwd": { "$ref": "/f" } } } }
+    },
+    {
+      "name": "cross-file cycle on write",
+      "root": "Cycle",
+      "input": { "f": { "v": 1, "back": { "w": 2, "fwd": null } } },
+      "bytes": "01 0103 0200"
+    },
+    {
+      "name": "non-exported struct through an exported one",
+      "root": "Reexport",
+      "bytes": "07",
+      "json": { "u": { "p": { "secret": 7 } } }
+    },
+    {
+      "name": "constants folded into expressions",
+      "root": "ConstExpr",
+      "bytes": "0800 01020304",
+      "json": { "pages": 8, "data": "01020304" }
+    },
+    {
+      "name": "constant length from an import",
+      "root": "ConstExpr",
+      "input": { "data": "010203" },
+      "error": { "phase": "serialize", "code": "DERIVE", "path": ["data"] }
+    },
+    {
+      "name": "number literals",
+      "root": "Numbers",
+      "bytes": "5041434c0a40420f00fbffff",
+      "json": { "hex": 1279476048, "bin": 10, "dec": 1000000, "neg": -5, "big": 65535 }
+    },
+    {
+      "name": "number literals on write",
+      "root": "Numbers",
+      "input": {},
+      "bytes": "5041434c0a40420f00fbffff"
+    },
+    {
+      "name": "binary literal checked",
+      "root": "Numbers",
+      "bytes": "5041434c0b40420f00fbffff",
+      "error": { "phase": "parse", "code": "CHECK", "path": ["bin"] }
+    },
+    {
+      "name": "byte literals",
+      "root": "ByteLiterals",
+      "bytes": "5f2a91c3 010203",
+      "json": { "hex": "5f2a91c3", "b64": "010203", "empty": "" }
+    },
+    {
+      "name": "byte literals on write",
+      "root": "ByteLiterals",
+      "input": {},
+      "bytes": "5f2a91c3 010203"
+    },
+    {
+      "name": "base64 literal checked",
+      "root": "ByteLiterals",
+      "bytes": "5f2a91c3 010204",
+      "error": { "phase": "parse", "code": "CHECK", "path": ["b64"] }
+    },
+    {
+      "name": "fourcc is written order in every endianness",
+      "root": "FourCC",
+      "bytes": "415243564152435641524356",
+      "json": { "inherited": 1447252545, "big": 1095910230, "fixedBe": 1095910230 }
+    },
+    {
+      "name": "fourcc on write",
+      "root": "FourCC",
+      "input": {},
+      "bytes": "415243564152435641524356"
+    },
+    {
+      "name": "fourcc under root be",
+      "root": "FourCC",
+      "args": { "endian": "be" },
+      "input": {},
+      "bytes": "415243564152435641524356"
+    },
+    {
+      "name": "fourcc checked",
+      "root": "FourCC",
+      "bytes": "564352414152435641524356",
+      "error": { "phase": "parse", "code": "CHECK", "path": ["inherited"] }
+    },
+    {
+      "name": "string literals",
+      "root": "Strings",
+      "bytes": "43484e4b686900",
+      "json": { "tag": "CHNK", "word": "hi" }
+    },
+    {
+      "name": "string literal checked",
+      "root": "Strings",
+      "bytes": "43484e4b686f00",
+      "error": { "phase": "parse", "code": "CHECK", "path": ["word"] }
+    }
+  ]
+}

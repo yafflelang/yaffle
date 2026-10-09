@@ -1,0 +1,163 @@
+{
+  "description": "The strict fill shorthand: `@padUntil(n, strict)`, with a fill byte or function, on @align, @padBefore/@padAfter, a struct-level @alignEnd and a block, checked on read without @strict; other padding stays unchecked.",
+  "generatedBy": "conformance/scripts/areas/strict-fill.ts",
+  "cases": [
+    {
+      "name": "strict padUntil: zeros",
+      "root": "PadStrict",
+      "bytes": "01 000000 02",
+      "json": { "a": 1, "b": 2 }
+    },
+    {
+      "name": "strict padUntil: a nonzero byte",
+      "root": "PadStrict",
+      "bytes": "01 000100 02",
+      "error": { "phase": "parse", "code": "CHECK", "path": ["a"] }
+    },
+    {
+      "name": "strict padUntil on write",
+      "root": "PadStrict",
+      "input": { "a": 1, "b": 2 },
+      "bytes": "01 000000 02"
+    },
+    {
+      "name": "strict fill byte",
+      "root": "FillStrict",
+      "bytes": "01 ffffff 02",
+      "json": { "a": 1, "b": 2 }
+    },
+    {
+      "name": "strict fill byte mismatch",
+      "root": "FillStrict",
+      "bytes": "01 ff00ff 02",
+      "error": { "phase": "parse", "code": "CHECK", "path": ["a"] }
+    },
+    {
+      "name": "strict fill byte: zeros are wrong too",
+      "root": "FillStrict",
+      "bytes": "01 000000 02",
+      "error": { "phase": "parse", "code": "CHECK", "path": ["a"] }
+    },
+    {
+      "name": "strict fill byte on write",
+      "root": "FillStrict",
+      "input": { "a": 1, "b": 2 },
+      "bytes": "01 ffffff 02"
+    },
+    {
+      "name": "strict align",
+      "root": "AlignStrict",
+      "bytes": "01 000000 02",
+      "json": { "a": 1, "b": 2 }
+    },
+    {
+      "name": "strict align mismatch",
+      "root": "AlignStrict",
+      "bytes": "01 000001 02",
+      "error": { "phase": "parse", "code": "CHECK", "path": ["b"] }
+    },
+    {
+      "name": "strict align on write",
+      "root": "AlignStrict",
+      "input": { "a": 7, "b": 8 },
+      "bytes": "07 000000 08"
+    },
+    {
+      "name": "strict padBefore and padAfter",
+      "root": "BeforeAfter",
+      "bytes": "0000 aa cc",
+      "json": { "a": 170 }
+    },
+    {
+      "name": "strict padBefore mismatch",
+      "root": "BeforeAfter",
+      "bytes": "0100 aa cc",
+      "error": { "phase": "parse", "code": "CHECK", "path": ["a"] }
+    },
+    {
+      "name": "strict padAfter mismatch",
+      "root": "BeforeAfter",
+      "bytes": "0000 aa 00",
+      "error": { "phase": "parse", "code": "CHECK", "path": ["a"] }
+    },
+    {
+      "name": "strict padBefore and padAfter on write",
+      "root": "BeforeAfter",
+      "input": { "a": 5 },
+      "bytes": "0000 05 cc"
+    },
+    {
+      "name": "only the strict padding is checked",
+      "root": "OnlyThisPadding",
+      "roundtrip": false,
+      "bytes": "01 00 ffff 02",
+      "json": { "a": 1, "b": 2 }
+    },
+    {
+      "name": "the strict padding of several",
+      "root": "OnlyThisPadding",
+      "bytes": "01 05 0000 02",
+      "error": { "phase": "parse", "code": "CHECK", "path": ["a"] }
+    },
+    {
+      "name": "mixed padding on write",
+      "root": "OnlyThisPadding",
+      "input": { "a": 1, "b": 2 },
+      "bytes": "01 00 0000 02"
+    },
+    {
+      "name": "strict struct-level alignEnd",
+      "root": "UsesEndStrict",
+      "bytes": "01 000000 02",
+      "json": { "e": { "a": 1 }, "b": 2 }
+    },
+    {
+      "name": "strict struct-level alignEnd mismatch",
+      "root": "UsesEndStrict",
+      "bytes": "01 000900 02",
+      "error": { "phase": "parse", "code": "CHECK" }
+    },
+    {
+      "name": "strict struct-level alignEnd on write",
+      "root": "UsesEndStrict",
+      "input": { "e": { "a": 1 }, "b": 2 },
+      "bytes": "01 000000 02"
+    },
+    {
+      "name": "strict block padding",
+      "root": "BlockStrict",
+      "bytes": "01 02 0000 03",
+      "json": { "a": 1, "b": 2, "c": 3 }
+    },
+    {
+      "name": "strict block padding mismatch",
+      "root": "BlockStrict",
+      "bytes": "01 02 0100 03",
+      "error": { "phase": "parse", "code": "CHECK" }
+    },
+    {
+      "name": "strict block padding on write",
+      "root": "BlockStrict",
+      "input": { "a": 1, "b": 2, "c": 3 },
+      "bytes": "01 02 0000 03"
+    },
+    {
+      "name": "strict fill function",
+      "root": "FnStrict",
+      "bytes": "01 a0a1a2 02",
+      "json": { "a": 1, "b": 2 }
+    },
+    {
+      "name": "strict fill function mismatch",
+      "root": "FnStrict",
+      "bytes": "01 a0a1a3 02",
+      "error": { "phase": "parse", "code": "CHECK", "path": ["b"] }
+    },
+    {
+      "name": "strict fill function on write",
+      "root": "FnStrict",
+      "input": { "a": 1, "b": 2 },
+      "bytes": "01 a0a1a2 02"
+    }
+  ]
+}

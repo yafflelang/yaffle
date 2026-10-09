@@ -1,0 +1,87 @@
+// Pointers and placements: owned pointers, @relative, @nullable, arrays of pointers, shared targets
+// (JSON $ref), recursion and cycles, `at` with derived offsets, linear `at` with placement
+// constraints, fixed (irreversible) placements and overlaps, and @base.
+
+struct Pt {
+  u16 x
+  u16 y
+}
+
+export struct Owned { Pt *p : u32 }
+export struct TwoPtrs { Pt *a : u32  Pt *b : u32 }
+export struct Rel { u8 pad  Pt *p : i16 @relative }
+export struct Nullable { Pt *p : u32 @nullable }
+export struct NullableFF { Pt *p : u32 @nullable(0xffffffff) }
+export struct PtrArray { u8 n  Pt *pts[n] : u32 }
+export struct PtrToPrim { u32 *v : u8 }
+export struct PtrToStr { str *s : u16  u8 after }
+export struct PtrBe { @endian(be) { Pt *p : u32 } }
+
+// Recursion: a linked list, and a cycle.
+struct Node {
+  u8    v
+  Node *next : u8 @nullable
+}
+export struct List { Node *first : u8 }
+
+// Default layout is pre-order: each struct, then its targets in declaration order.
+struct B { Pt *q : u8 }
+export struct PreOrder { Pt *p : u8  B *b : u8  Pt *r : u8 }
+
+// `at` with a derived offset.
+export struct At { u32 ofs  Pt p at ofs }
+export struct AtArray { u8 n  u32 ofs  Pt items[n] at ofs }
+export struct AtBytes { u16 len  u16 ofs  u8 data[len] at ofs }
+
+// Linear `at`: the offset is derived and the target must satisfy a placement constraint.
+export struct Linear { u8 sector  u8 data[4] at sector * 8 }
+export struct LinearRem { u8 n  u8 slot  u8 data[n] at slot * 16 + 4 }
+
+// Irreversible `at`: the offset fields are inputs; the target goes exactly there.
+export struct FixedAt { u8 a  u8 b  u8 x[2] at a * b }
+export struct FixedTwo { u8 k  u8 o1  u8 o2  u8 p1[2] at o1 * k  u8 p2[2] at o2 * k }
+
+// @base: offsets inside count from the start of the @base struct.
+struct Sub @base {
+  u8  a
+  Pt *p : u8
+}
+export struct Based { u8 pre  Sub s }
+
+struct SubAt @base {
+  u8 ofs
+  u8 data[2] at ofs
+}
+export struct BasedAt { u16 pre  SubAt s }
+
+// Two placed arrays starting at the same address (an empty one, then the next): values, no $ref.
+export struct SameAddress {
+  u8  n
+  u8  ofsA
+  u8  ofsB
+  u8  ofsC
+  u8  ofsD
+  u8  a[n] at ofsA
+  u8  b[2] at ofsB
+  u16 c[n] at ofsC
+  u16 d[1] at ofsD
+}
+
+// Offsets inside a target count from the base, not from the target.
+struct Box { Pt *inner : u8 }
+export struct NestedTarget { Box *b : u8 }
+
+// A relative pointer inside a target.
+struct RelBox { u8 pad  Pt *p : i8 @relative }
+export struct RelInside { RelBox *r : u8 }
+
+// A target past what a u8 pointer can reach.
+struct Big { u8 data[300] }
+export struct Far { Big *big : u8  Pt *p : u8 }
+
+// Nullable pointers in an array of structs.
+struct Item { u8 v  Pt *opt : u8 @nullable }
+export struct Items { u8 n  Item items[n] }
+
+// A pointer field after an `at` field: targets are placed in declaration order.
+export struct Mixed { Pt *p : u8  u8 ofs  u8 tail[2] at ofs }

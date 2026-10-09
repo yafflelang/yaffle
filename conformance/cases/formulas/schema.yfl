@@ -1,0 +1,93 @@
+// Write formulas (`= expr`): sizeof, offsetof, crc32, adler32, min/max, an extern fn, formulas over
+// later fields, and formulas that choose a reverse the compiler can't infer.
+
+extern fn sum8(u8 data[]) -> u8
+
+struct Body {
+  u16 a
+  u8  b[a]
+}
+
+export struct Sized {
+  u32  size = sizeof(body)
+  Body body
+}
+
+export struct SizedArray {
+  u16 n = sizeof(items)
+  u32 items[3]
+}
+
+export struct Crc {
+  u32 crc = crc32(data)
+  u8  data[4]
+}
+
+export struct CrcStruct {
+  u32  crc = crc32(body)
+  Body body
+}
+
+export struct Adler {
+  u8  data[3]
+  u32 check = adler32(data)
+}
+
+export struct Ofs {
+  u8  ofs = offsetof(b)
+  u8  a[3]
+  u8  b
+}
+
+export struct Sum {
+  u8 s = sum8(data)
+  u8 data[4]
+}
+
+export struct SumEncoded {
+  Body body
+  u8   s = sum8(encode(body))
+}
+
+// You choose the reverse when the compiler can't.
+export struct Flags {
+  u32 n = flags.length * 8
+  u8  flags[(n + 7) / 8]
+}
+
+export struct ConstExpr { u32 x = 2 * 3 + 1 }
+
+// Formulas see every field, including later ones.
+export struct Later {
+  u8 total = a + b
+  u8 a
+  u8 b
+}
+
+export struct MinMax {
+  u8 a
+  u8 b
+  u8 lo = min(a, b)
+  u8 hi = max(a, b)
+}
+
+// A formula's value is checked against the read side: n is a constant length.
+export struct ConstLen {
+  u8 n = 3
+  u8 data[n]
+}
+
+// Bitwise and shift operators in formulas.
+export struct Bitwise {
+  u8  lo
+  u8  hi
+  u16 packed = (hi << 8) | lo
+  u8  inv = ~lo & 0xff
+  u8  x = lo ^ hi
+}
+
+// Conditional expression in a formula.
+export struct Cond {
+  u8 v
+  u8 kind = v > 10 ? 2 : 1
+}

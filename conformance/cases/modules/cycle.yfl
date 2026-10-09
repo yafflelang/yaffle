@@ -1,0 +1,7 @@
+// Cross-file type cycle with shapes.yfl.
+import { Forward } from "./shapes.yfl"
+
+export struct Back {
+  u8       w
+  Forward *fwd : u8 @nullable
+}

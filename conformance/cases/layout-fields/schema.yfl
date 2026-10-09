@@ -1,0 +1,34 @@
+// Layout items that read fields: attribute arguments of `layout { … }` items are
+// evaluated like write formulas, in the struct whose layout it is. An archive entry's data, for
+// example, is aligned to the entry's own `align` field.
+
+export struct AlignByField {
+  u8 align
+  u8 size
+  u8 offset
+  u8 data[size] at offset
+  layout { data @align(align) }
+}
+
+export struct TwoTargets {
+  u8 shift
+  u8 n1
+  u8 o1
+  u8 n2
+  u8 o2
+  u8 a[n1] at o1
+  u8 b[n2] at o2
+  layout { b @align(1 << shift)  a @align(2) }
+}
+
+export struct Records {
+  u8     count
+  Rec    recs[count]
+  layout { recs[*].body @align(count * 2) }
+}
+
+struct Rec {
+  u8 n
+  u8 ofs
+  u8 body[n] at ofs
+}

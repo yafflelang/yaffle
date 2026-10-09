@@ -1,0 +1,26 @@
+// Constants (written automatically, checked on read), `in` with sets, ranges and literal unions,
+// `in /regex/` (whole-string match, portable subset) and `where` conditions.
+
+export struct Magic { u16 magic = 42  u8 v }
+export struct Tag { char tag[4] = "ARCV"  u8 v }
+export struct Sig { u8 sig[4] = x"89504e47" }
+export struct NegConst { i8 a = -5  i32be b = -100000 }
+export struct FloatConst { f32 one = 1.0 }
+export struct BoolConst { bool on = true }
+
+export struct InSet { char order[2] in ("II", "MM") }
+export struct InRange { u32 version in (1, 2, 5..9) }
+export struct InNeg { i8 v in (-5..-1, 10) }
+export struct InU64 { u64 v in (0, 0xffffffffffffffff) }
+
+export struct Regex { str ver in /v\d\.\d{1,2}/ }
+export struct RegexClass { char code[3] in /[A-Z][a-z0-9_]+/ }
+export struct RegexAlt { str word in /(cat|dog)s?/ }
+
+export struct Where { u32 size where it % 4 == 0 }
+export struct WhereDep { u8 lo  u8 hi where it >= lo }
+export struct WhereStr { str name where it != "" }
+export struct WhereAnd { u16 v where it >= 0x100 && it < 0x200 }
+
+// Several constraints on one field.
+export struct Both { u8 v in (1..100) where it % 2 == 0 }

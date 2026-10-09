@@ -1,0 +1,436 @@
+{
+  "description": "layout items, this, leftovers, pulling out, item alignment, constraints, @ref pools and a miniature container format.",
+  "generatedBy": "conformance/scripts/areas/layout.ts",
+  "cases": [
+    {
+      "name": "layout reorders targets",
+      "root": "Reorder",
+      "bytes": "01 0403 bb aa",
+      "json": { "m": { "a": { "v": 170 }, "b": { "v": 187 } } }
+    },
+    {
+      "name": "layout reorders targets on write",
+      "root": "Reorder",
+      "input": { "m": { "a": { "v": 1 }, "b": { "v": 2 } } },
+      "bytes": "01 0403 02 01"
+    },
+    {
+      "name": "default order also parses",
+      "root": "Reorder",
+      "roundtrip": false,
+      "bytes": "01 0304 aa bb",
+      "json": { "m": { "a": { "v": 170 }, "b": { "v": 187 } } }
+    },
+    {
+      "name": "this between targets",
+      "root": "ThisMiddle",
+      "bytes": "02 bb 0401 aa",
+      "json": { "m": { "a": { "v": 170 }, "b": { "v": 187 } } }
+    },
+    {
+      "name": "this between targets on write",
+      "root": "ThisMiddle",
+      "input": { "m": { "a": { "v": 1 }, "b": { "v": 2 } } },
+      "bytes": "02 02 0401 01"
+    },
+    {
+      "name": "this after targets",
+      "root": "ThisLast",
+      "bytes": "03 aa bb 0102",
+      "json": { "m": { "a": { "v": 170 }, "b": { "v": 187 } } }
+    },
+    {
+      "name": "this after targets on write",
+      "root": "ThisLast",
+      "input": { "m": { "a": { "v": 1 }, "b": { "v": 2 } } },
+      "bytes": "03 01 02 0102"
+    },
+    {
+      "name": "leftovers in default order",
+      "root": "Leftovers",
+      "bytes": "01 050604 cc aa bb",
+      "json": { "t": { "a": { "v": 170 }, "b": { "v": 187 }, "c": { "v": 204 } } }
+    },
+    {
+      "name": "leftovers on write",
+      "root": "Leftovers",
+      "input": { "t": { "a": { "v": 1 }, "b": { "v": 2 }, "c": { "v": 3 } } },
+      "bytes": "01 050604 03 01 02"
+    },
+    {
+      "name": "pulling inner targets out",
+      "root": "Pull",
+      "bytes": "0407 12 22 0602 11 0903 21",
+      "json": {
+        "m1": { "a": { "v": 17 }, "b": { "v": 18 } },
+        "m2": { "a": { "v": 33 }, "b": { "v": 34 } }
+      }
+    },
+    {
+      "name": "pulling inner targets out on write",
+      "root": "Pull",
+      "input": {
+        "m1": { "a": { "v": 17 }, "b": { "v": 18 } },
+        "m2": { "a": { "v": 33 }, "b": { "v": 34 } }
+      },
+      "bytes": "0407 12 22 0602 11 0903 21"
+    },
+    {
+      "name": "pulling out of every element",
+      "root": "PullEach",
+      "bytes": "02 0508 10 11 0307 20 040a 21",
+      "json": {
+        "n": 2,
+        "ms": [
+          { "a": { "v": 16 }, "b": { "v": 32 } },
+          { "a": { "v": 17 }, "b": { "v": 33 } }
+        ]
+      }
+    },
+    {
+      "name": "pulling out of every element, one element",
+      "root": "PullEach",
+      "input": { "ms": [{ "a": { "v": 1 }, "b": { "v": 2 } }] },
+      "bytes": "01 03 01 0205 02"
+    },
+    {
+      "name": "item alignment",
+      "root": "ItemAlign",
+      "bytes": "04080000aa000000bb",
+      "json": { "a": { "v": 170 }, "b": { "v": 187 } }
+    },
+    {
+      "name": "item alignment on write",
+      "root": "ItemAlign",
+      "input": { "a": { "v": 1 }, "b": { "v": 2 } },
+      "bytes": "040800000100000002"
+    },
+    {
+      "name": "nested items inherit the item alignment unless they set their own",
+      "root": "ItemAlignNested",
+      "bytes": "04000000080a0000770088",
+      "json": { "t": { "x": { "v": 119 }, "y": { "v": 136 } } }
+    },
+    {
+      "name": "nested item alignment on write",
+      "root": "ItemAlignNested",
+      "input": { "t": { "x": { "v": 1 }, "y": { "v": 2 } } },
+      "bytes": "04000000080a0000010002"
+    },
+    {
+      "name": "constraint inside a layout item",
+      "root": "ConstraintInLayout",
+      "bytes": "06 01 0000 0102 aa",
+      "json": { "a": { "v": 170 }, "sector": 1, "data": "0102" }
+    },
+    {
+      "name": "constraint inside a layout item on write",
+      "root": "ConstraintInLayout",
+      "input": { "a": { "v": 9 }, "data": "0304" },
+      "bytes": "06 01 0000 0304 09"
+    },
+    {
+      "name": "pulling out two levels deep",
+      "root": "TwoLevels",
+      "bytes": "02 11 0405 01 22",
+      "json": { "m": { "d": { "x": { "v": 17 } }, "l": { "v": 34 } } }
+    },
+    {
+      "name": "pulling out two levels deep on write",
+      "root": "TwoLevels",
+      "input": { "m": { "d": { "x": { "v": 1 } }, "l": { "v": 2 } } },
+      "bytes": "02 01 0405 01 02"
+    },
+    {
+      "name": "aligned this",
+      "root": "ThisAligned",
+      "bytes": "04 aa 0000 01",
+      "json": { "t": { "a": { "v": 170 } } }
+    },
+    {
+      "name": "aligned this on write",
+      "root": "ThisAligned",
+      "input": { "t": { "a": { "v": 7 } } },
+      "bytes": "04 07 0000 01"
+    },
+    {
+      "name": "null item adds no alignment",
+      "root": "NullItem",
+      "bytes": "01 0003 bb",
+      "json": { "o": { "a": null, "b": { "v": 187 } } }
+    },
+    {
+      "name": "null item on write",
+      "root": "NullItem",
+      "input": { "o": { "a": null, "b": { "v": 1 } } },
+      "bytes": "01 0003 01"
+    },
+    {
+      "name": "non-null item aligned",
+      "root": "NullItem",
+      "bytes": "01 0405 00 aa bb",
+      "json": { "o": { "a": { "v": 170 }, "b": { "v": 187 } } }
+    },
+    {
+      "name": "non-null item aligned on write",
+      "root": "NullItem",
+      "input": { "o": { "a": { "v": 1 }, "b": { "v": 2 } } },
+      "bytes": "01 0405 00 01 02"
+    },
+    {
+      "name": "each over an inline array",
+      "root": "InlineEach",
+      "bytes": "0604 0705 20 21 10 11",
+      "json": {
+        "ps": [
+          { "x": { "v": 16 }, "y": { "v": 32 } },
+          { "x": { "v": 17 }, "y": { "v": 33 } }
+        ]
+      }
+    },
+    {
+      "name": "each over an inline array on write",
+      "root": "InlineEach",
+      "input": {
+        "ps": [
+          { "x": { "v": 1 }, "y": { "v": 2 } },
+          { "x": { "v": 3 }, "y": { "v": 4 } }
+        ]
+      },
+      "bytes": "0604 0705 02 04 01 03"
+    },
+    {
+      "name": "@ref to an inline field",
+      "root": "RefField",
+      "bytes": "0100 0200 00",
+      "json": { "h": { "a": 1, "b": 2 }, "again": { "$ref": "/h" } }
+    },
+    {
+      "name": "@ref to an inline field by identity",
+      "root": "RefField",
+      "input": { "h": { "a": 1, "b": 2 }, "again": { "$ref": "/h" } },
+      "bytes": "0100 0200 00"
+    },
+    {
+      "name": "@ref to an inline field by equal value",
+      "root": "RefField",
+      "input": { "h": { "a": 1, "b": 2 }, "again": { "a": 1, "b": 2 } },
+      "bytes": "0100 0200 00"
+    },
+    {
+      "name": "@ref to an inline field without an equal value",
+      "root": "RefField",
+      "input": { "h": { "a": 1, "b": 2 }, "again": { "a": 9, "b": 9 } },
+      "error": { "phase": "serialize", "code": "REF", "path": ["again"] }
+    },
+    {
+      "name": "records with targets pulled out per field",
+      "root": "Records",
+      "bytes": "02 06 20 00 21 10 0502 0004",
+      "json": {
+        "n": 2,
+        "recsOfs": 6,
+        "recs": [
+          { "x": { "v": 16 }, "y": { "v": 32 } },
+          { "x": null, "y": { "v": 33 } }
+        ]
+      }
+    },
+    {
+      "name": "records with targets pulled out per field on write",
+      "root": "Records",
+      "input": {
+        "recs": [
+          { "x": { "v": 16 }, "y": { "v": 32 } },
+          { "x": null, "y": { "v": 33 } }
+        ]
+      },
+      "bytes": "02 06 20 00 21 10 0502 0004"
+    },
+    {
+      "name": "records with no targets",
+      "root": "Records",
+      "input": { "recs": [{ "x": null, "y": null }] },
+      "bytes": "01 02 0000"
+    },
+    {
+      "name": "@ref into a pool",
+      "root": "RefPool",
+      "bytes": "61620063640000020300",
+      "json": { "pool": ["ab", "cd"], "n": 2, "items": [{ "name": "cd" }, { "name": "ab" }] }
+    },
+    {
+      "name": "@ref resolves to the equal pooled string",
+      "root": "RefPool",
+      "input": {
+        "pool": ["ab", "cd"],
+        "items": [{ "name": "ab" }, { "name": "cd" }, { "name": "cd" }]
+      },
+      "bytes": "6162006364000003000303"
+    },
+    {
+      "name": "@ref picks the first equal value",
+      "root": "RefPool",
+      "input": { "pool": ["x", "x"], "items": [{ "name": "x" }] },
+      "bytes": "78007800000100"
+    },
+    {
+      "name": "@ref without an equal value",
+      "root": "RefPool",
+      "input": { "pool": ["ab"], "items": [{ "name": "zz" }] },
+      "error": { "phase": "serialize", "code": "REF", "path": ["items", 0, "name"] }
+    },
+    {
+      "name": "@ref may point into the middle of a string on read",
+      "root": "RefPool",
+      "roundtrip": false,
+      "bytes": "61626300000101",
+      "json": { "pool": ["abc"], "n": 1, "items": [{ "name": "bc" }] }
+    },
+    {
+      "name": "mini container",
+      "root": "MiniContainer",
+      "bytes": "43484e4b0201343e3c0000000000000069646c650077616c6b00000000000000030102030a0b0c0002240126282a550015011002202c02300000003434380000",
+      "json": {
+        "magic": "CHNK",
+        "r": 2,
+        "s": 1,
+        "recordsOfs": 52,
+        "indexOfs": 62,
+        "recPtrsOfs": 60,
+        "pool": ["idle", "walk"],
+        "records": [
+          {
+            "model": { "size": 3, "data": "010203" },
+            "curves": {
+              "x": { "n": 2, "pointsOfs": 36, "points": "0a0b" },
+              "y": { "n": 1, "pointsOfs": 38, "points": "0c" },
+              "a": 85
+            },
+            "nMotions": 2,
+            "motionsOfs": 48,
+            "motions": [
+              { "name": "walk", "v": 1 },
+              { "name": "idle", "v": 2 }
+            ]
+          },
+          { "model": null, "curves": null, "nMotions": 0, "motionsOfs": 52, "motions": [] }
+        ],
+        "index": "00",
+        "recPtrs": [{ "$ref": "/records/0" }, { "$ref": "/records/1" }]
+      }
+    },
+    {
+      "name": "mini container from its input",
+      "root": "MiniContainer",
+      "input": {
+        "pool": ["idle", "walk"],
+        "records": [
+          {
+            "model": { "data": "010203" },
+            "curves": { "x": { "points": "0a0b" }, "y": { "points": "0c" }, "a": 85 },
+            "motions": [
+              { "name": "walk", "v": 1 },
+              { "name": "idle", "v": 2 }
+            ]
+          },
+          { "model": null, "curves": null, "motions": [] }
+        ],
+        "index": "00",
+        "recPtrs": [{ "$ref": "/records/0" }, { "$ref": "/records/1" }]
+      },
+      "bytes": "43484e4b0201343e3c0000000000000069646c650077616c6b00000000000000030102030a0b0c0002240126282a550015011002202c02300000003434380000"
+    },
+    {
+      "name": "mini container with three records and an unused string",
+      "root": "MiniContainer",
+      "bytes": "43484e4b030254636000000000000000610062620063636300756e7573656400000000000000000001ff00000000000005112233445501000203013602383a3c0100150307000044014446480200100412050000283e0142304a024e0000005254585c00010000000000000000000000",
+      "json": {
+        "magic": "CHNK",
+        "r": 3,
+        "s": 2,
+        "recordsOfs": 84,
+        "indexOfs": 99,
+        "recPtrsOfs": 96,
+        "pool": ["a", "bb", "ccc", "unused"],
+        "records": [
+          {
+            "model": { "size": 1, "data": "ff" },
+            "curves": {
+              "x": { "n": 1, "pointsOfs": 54, "points": "01" },
+              "y": { "n": 2, "pointsOfs": 56, "points": "0203" },
+              "a": 1
+            },
+            "nMotions": 1,
+            "motionsOfs": 66,
+            "motions": [{ "name": "ccc", "v": 3 }]
+          },
+          {
+            "model": { "size": 5, "data": "1122334455" },
+            "curves": {
+              "x": { "n": 0, "pointsOfs": 68, "points": "" },
+              "y": { "n": 1, "pointsOfs": 68, "points": "07" },
+              "a": 2
+            },
+            "nMotions": 2,
+            "motionsOfs": 78,
+            "motions": [
+              { "name": "a", "v": 4 },
+              { "name": "bb", "v": 5 }
+            ]
+          },
+          { "model": null, "curves": null, "nMotions": 0, "motionsOfs": 82, "motions": [] }
+        ],
+        "index": "0001",
+        "recPtrs": [{ "$ref": "/records/0" }, { "$ref": "/records/1" }, { "$ref": "/records/2" }]
+      }
+    },
+    {
+      "name": "mini container with three records from its input",
+      "root": "MiniContainer",
+      "input": {
+        "pool": ["a", "bb", "ccc", "unused"],
+        "records": [
+          {
+            "model": { "data": "ff" },
+            "curves": { "x": { "points": "01" }, "y": { "points": "0203" }, "a": 1 },
+            "motions": [{ "name": "ccc", "v": 3 }]
+          },
+          {
+            "model": { "data": "1122334455" },
+            "curves": { "x": { "points": "" }, "y": { "points": "07" }, "a": 2 },
+            "motions": [
+              { "name": "a", "v": 4 },
+              { "name": "bb", "v": 5 }
+            ]
+          },
+          { "model": null, "curves": null, "motions": [] }
+        ],
+        "index": "0001",
+        "recPtrs": [{ "$ref": "/records/0" }, { "$ref": "/records/1" }, { "$ref": "/records/2" }]
+      },
+      "bytes": "43484e4b030254636000000000000000610062620063636300756e7573656400000000000000000001ff00000000000005112233445501000203013602383a3c0100150307000044014446480200100412050000283e0142304a024e0000005254585c00010000000000000000000000"
+    },
+    {
+      "name": "mini container motion name missing from the pool",
+      "root": "MiniContainer",
+      "input": {
+        "pool": ["idle"],
+        "records": [
+          {
+            "model": { "data": "010203" },
+            "curves": { "x": { "points": "0a0b" }, "y": { "points": "0c" }, "a": 85 },
+            "motions": [
+              { "name": "walk", "v": 1 },
+              { "name": "idle", "v": 2 }
+            ]
+          },
+          { "model": null, "curves": null, "motions": [] }
+        ],
+        "index": "00",
+        "recPtrs": [{ "$ref": "/records/0" }, { "$ref": "/records/1" }]
+      },
+      "error": { "phase": "serialize", "code": "REF", "path": ["records", 0, "motions", 0, "name"] }
+    }
+  ]
+}

@@ -1,0 +1,285 @@
+{
+  "description": "Inherited $endian through nested structs, @endian on blocks/fields/structs, field-driven endianness (TIFF).",
+  "generatedBy": "conformance/scripts/areas/endianness.ts",
+  "cases": [
+    {
+      "name": "nested inherits le",
+      "root": "Nested",
+      "bytes": "0201060504030708",
+      "json": { "a": { "x": 258, "y": 50595078 }, "b": 1800 }
+    },
+    {
+      "name": "nested inherits root be",
+      "root": "Nested",
+      "args": { "endian": "be" },
+      "bytes": "0102030405060708",
+      "json": { "a": { "x": 258, "y": 50595078 }, "b": 1800 }
+    },
+    {
+      "name": "nested serialize le",
+      "root": "Nested",
+      "input": { "a": { "x": 1, "y": 2 }, "b": 3 },
+      "bytes": "0100020000000003"
+    },
+    {
+      "name": "nested serialize be",
+      "root": "Nested",
+      "args": { "endian": "be" },
+      "input": { "a": { "x": 1, "y": 2 }, "b": 3 },
+      "bytes": "0001000000020003"
+    },
+    {
+      "name": "block switches to be and back",
+      "root": "BlockBe",
+      "bytes": "01000200000000030000000400050600",
+      "json": { "a": { "x": 1, "y": 2 }, "b": { "x": 3, "y": 4 }, "c": 5, "d": 6 }
+    },
+    {
+      "name": "block be under root be",
+      "root": "BlockBe",
+      "args": { "endian": "be" },
+      "bytes": "00010000000200030000000400050006",
+      "json": { "a": { "x": 1, "y": 2 }, "b": { "x": 3, "y": 4 }, "c": 5, "d": 6 }
+    },
+    {
+      "name": "field attribute be",
+      "root": "FieldBe",
+      "bytes": "000100000002030004000000",
+      "json": { "a": { "x": 1, "y": 2 }, "b": { "x": 3, "y": 4 } }
+    },
+    {
+      "name": "field attribute be under root be",
+      "root": "FieldBe",
+      "args": { "endian": "be" },
+      "bytes": "000100000002000300000004",
+      "json": { "a": { "x": 1, "y": 2 }, "b": { "x": 3, "y": 4 } }
+    },
+    {
+      "name": "struct attribute be",
+      "root": "StructBe",
+      "bytes": "0a0b000100000002030004000000",
+      "json": { "s": { "x": 2571, "inner": { "x": 1, "y": 2 } }, "t": { "x": 3, "y": 4 } }
+    },
+    {
+      "name": "struct attribute be ignores root le explicitly",
+      "root": "StructBe",
+      "args": { "endian": "le" },
+      "bytes": "0a0b000100000002030004000000",
+      "json": { "s": { "x": 2571, "inner": { "x": 1, "y": 2 } }, "t": { "x": 3, "y": 4 } }
+    },
+    {
+      "name": "fixed suffixes keep their order",
+      "root": "Fixed",
+      "bytes": "010000020003040000050600",
+      "json": { "f": { "l": 1, "b": 2, "i": 3 }, "g": { "l": 4, "b": 5, "i": 6 } }
+    },
+    {
+      "name": "fixed suffixes under root be",
+      "root": "Fixed",
+      "args": { "endian": "be" },
+      "bytes": "010000020003040000050006",
+      "json": { "f": { "l": 1, "b": 2, "i": 3 }, "g": { "l": 4, "b": 5, "i": 6 } }
+    },
+    {
+      "name": "probe flag 0 is le",
+      "root": "Probe",
+      "bytes": "003412050006000000",
+      "json": { "flag": 0, "v": 4660, "s": { "x": 5, "y": 6 } }
+    },
+    {
+      "name": "probe flag 1 is be",
+      "root": "Probe",
+      "bytes": "011234000500000006",
+      "json": { "flag": 1, "v": 4660, "s": { "x": 5, "y": 6 } }
+    },
+    {
+      "name": "probe flag 0 ignores root be",
+      "root": "Probe",
+      "args": { "endian": "be" },
+      "bytes": "003412050006000000",
+      "json": { "flag": 0, "v": 4660, "s": { "x": 5, "y": 6 } }
+    },
+    {
+      "name": "probe serialize be",
+      "root": "Probe",
+      "input": { "flag": 7, "v": 1, "s": { "x": 2, "y": 3 } },
+      "bytes": "070001000200000003"
+    },
+    {
+      "name": "nested blocks: innermost wins",
+      "root": "NestedBlocks",
+      "bytes": "000102000003",
+      "json": { "a": 1, "b": 2, "c": 3 }
+    },
+    {
+      "name": "widths le",
+      "root": "Widths",
+      "bytes": "030201feffffffff0f0e0d0c0b0a0000c03f00000000000002c00038",
+      "json": { "a": 66051, "b": -2, "c": 11042563100175, "d": 1.5, "e": -2.25, "f": 0.5 }
+    },
+    {
+      "name": "widths be",
+      "root": "Widths",
+      "args": { "endian": "be" },
+      "bytes": "010203fffffffffe0a0b0c0d0e0f3fc00000c0020000000000003800",
+      "json": { "a": 66051, "b": -2, "c": 11042563100175, "d": 1.5, "e": -2.25, "f": 0.5 }
+    },
+    {
+      "name": "tiff little endian",
+      "root": "Tiff",
+      "bytes": "49492a0008000000020000010300010000008002000001010400010000000403020100000000",
+      "json": {
+        "order": "II",
+        "magic": 42,
+        "firstIfd": 8,
+        "ifd": {
+          "count": 2,
+          "entries": [
+            { "tag": 256, "type": 3, "count": 1, "value": 640 },
+            { "tag": 257, "type": 4, "count": 1, "value": 16909060 }
+          ],
+          "next": 0
+        }
+      }
+    },
+    {
+      "name": "tiff big endian",
+      "root": "Tiff",
+      "bytes": "4d4d002a00000008000201000003000000010000028001010004000000010102030400000000",
+      "json": {
+        "order": "MM",
+        "magic": 42,
+        "firstIfd": 8,
+        "ifd": {
+          "count": 2,
+          "entries": [
+            { "tag": 256, "type": 3, "count": 1, "value": 640 },
+            { "tag": 257, "type": 4, "count": 1, "value": 16909060 }
+          ],
+          "next": 0
+        }
+      }
+    },
+    {
+      "name": "tiff big endian ignores root le",
+      "root": "Tiff",
+      "args": { "endian": "le" },
+      "bytes": "4d4d002a00000008000201000003000000010000028001010004000000010102030400000000",
+      "json": {
+        "order": "MM",
+        "magic": 42,
+        "firstIfd": 8,
+        "ifd": {
+          "count": 2,
+          "entries": [
+            { "tag": 256, "type": 3, "count": 1, "value": 640 },
+            { "tag": 257, "type": 4, "count": 1, "value": 16909060 }
+          ],
+          "next": 0
+        }
+      }
+    },
+    {
+      "name": "tiff with the IFD after a gap",
+      "root": "Tiff",
+      "roundtrip": false,
+      "bytes": "4d4d002a000000100000000000000000000201000003000000010000028001010004000000010102030400000000",
+      "json": {
+        "order": "MM",
+        "magic": 42,
+        "firstIfd": 16,
+        "ifd": {
+          "count": 2,
+          "entries": [
+            { "tag": 256, "type": 3, "count": 1, "value": 640 },
+            { "tag": 257, "type": 4, "count": 1, "value": 16909060 }
+          ],
+          "next": 0
+        }
+      }
+    },
+    {
+      "name": "tiff serialize II places the IFD after the header",
+      "root": "Tiff",
+      "input": {
+        "order": "II",
+        "ifd": {
+          "entries": [
+            { "tag": 256, "type": 3, "count": 1, "value": 640 },
+            { "tag": 257, "type": 4, "count": 1, "value": 16909060 }
+          ],
+          "next": 0
+        }
+      },
+      "bytes": "49492a0008000000020000010300010000008002000001010400010000000403020100000000"
+    },
+    {
+      "name": "tiff serialize MM",
+      "root": "Tiff",
+      "input": {
+        "order": "MM",
+        "ifd": {
+          "entries": [
+            { "tag": 256, "type": 3, "count": 1, "value": 640 },
+            { "tag": 257, "type": 4, "count": 1, "value": 16909060 }
+          ],
+          "next": 0
+        }
+      },
+      "bytes": "4d4d002a00000008000201000003000000010000028001010004000000010102030400000000"
+    },
+    {
+      "name": "tiff bad byte order",
+      "root": "Tiff",
+      "bytes": "58582a0008000000",
+      "error": { "phase": "parse", "code": "CHECK", "path": ["order"] }
+    },
+    {
+      "name": "tiff wrong magic for the byte order",
+      "root": "Tiff",
+      "bytes": "4d4d2a0000000008",
+      "error": { "phase": "parse", "code": "CHECK", "path": ["magic"] }
+    },
+    {
+      "name": "tiff IFD past the end",
+      "root": "Tiff",
+      "bytes": "49492a0000010000",
+      "error": { "phase": "parse", "code": "EOF" }
+    },
+    {
+      "name": "tiff serialize bad byte order",
+      "root": "Tiff",
+      "input": {
+        "order": "XY",
+        "ifd": {
+          "entries": [
+            { "tag": 256, "type": 3, "count": 1, "value": 640 },
+            { "tag": 257, "type": 4, "count": 1, "value": 16909060 }
+          ],
+          "next": 0
+        }
+      },
+      "error": { "phase": "serialize", "code": "CHECK", "path": ["order"] }
+    },
+    {
+      "name": "$endian tested inside a be block",
+      "root": "EndianCond",
+      "bytes": "050102",
+      "json": { "a": 5, "marker": 258 }
+    },
+    {
+      "name": "$endian tested at a be root",
+      "root": "EndianCond",
+      "args": { "endian": "be" },
+      "bytes": "05010207",
+      "json": { "a": 5, "marker": 258, "rootIsBe": 7 }
+    },
+    {
+      "name": "$endian on write",
+      "root": "EndianCond",
+      "args": { "endian": "be" },
+      "input": { "a": 1, "marker": 2, "rootIsBe": 3 },
+      "bytes": "01000203"
+    }
+  ]
+}

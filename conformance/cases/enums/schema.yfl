@@ -1,0 +1,24 @@
+// Enums: closed (unknown values are CHECK errors) and @open (unknown values pass through as
+// numbers), signed and 64-bit storage, endianness, and enums in conditions.
+
+enum Kind : u16 { Sys = 0, Vram = 1, Other = 0x10 }
+enum Open : u8 @open { A = 1, B = 2 }
+enum Signed : i8 { Neg = -1, Zero = 0, Pos = 1 }
+enum Big : u64 @open { Huge = 0xffffffffffffffff, One = 1 }
+enum Sparse : u32 { First = 0x10000, Second = 0x7fffffff }
+
+export struct E { Kind kind }
+export struct EBe { @endian(be) { Kind kind } }
+export struct O { Open o }
+export struct S { Signed s }
+export struct B64 { Big b }
+export struct Sp { Sparse s }
+export struct Many { u8 n  Kind kinds[n] }
+
+// Enum values in expressions.
+export struct Cond {
+  Kind kind
+  if (kind == Kind.Vram) { u32 vramSize }
+}
+
+export struct InEnum { Kind kind in (Kind.Sys, Kind.Vram) }

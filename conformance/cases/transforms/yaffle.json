@@ -1,0 +1,47 @@
+{
+  "sources": ["schema.yfl"],
+  "targets": {
+    "ts": {
+      "out": "../../.out/gen/transforms/ts",
+      "externs": {
+        "swap16": "../../externs/ts/swap16.ts"
+      }
+    },
+    "rust": {
+      "out": "../../.out/gen/transforms/rust",
+      "externs": {
+        "swap16": "../../externs/rust/swap16.rs"
+      }
+    },
+    "python": {
+      "out": "../../.out/gen/transforms/python",
+      "externs": {
+        "swap16": "../../externs/python/swap16.py"
+      }
+    },
+    "go": {
+      "out": "../../.out/gen/transforms/go",
+      "externs": {
+        "swap16": "../../externs/go/swap16.go"
+      }
+    },
+    "csharp": {
+      "out": "../../.out/gen/transforms/csharp",
+      "externs": {
+        "swap16": "../../externs/csharp/swap16.cs"
+      }
+    },
+    "java": {
+      "out": "../../.out/gen/transforms/java",
+      "externs": {
+        "swap16": "../../externs/java/swap16.java"
+      }
+    },
+    "cpp": {
+      "out": "../../.out/gen/transforms/cpp",
+      "externs": {
+        "swap16": "../../externs/cpp/swap16.hpp"
+      }
+    }
+  }
+}

@@ -1,0 +1,55 @@
+// Modules and literals: named and namespace imports, exported constants and aliases across files,
+// a cross-file type cycle, and every literal form (hex/binary/decimal with `_`, x"…", b64"…",
+// FourCC, negative numbers, strings). Importing an exported generic is in ../modules-generic.
+
+import { Pt, PtList, Name, SECTOR, VERSION, UsesPrivate } from "./common.yfl"
+import * as shapes from "./shapes.yfl"
+
+export struct Imports {
+  Pt        p
+  PtList    pts
+  Name      n
+  u32       sector = SECTOR
+  u8        version = VERSION
+}
+
+export struct Namespaced {
+  shapes.Rect  r
+  shapes.Color c
+}
+
+export struct Cycle { shapes.Forward *f : u8 }
+
+export struct Reexport { UsesPrivate u }
+
+// Constants folded into expressions.
+export struct ConstExpr {
+  u16 pages = SECTOR / 0x100
+  u8  data[VERSION + 1]
+}
+
+export struct Numbers {
+  u32 hex = 0x4c43_4150
+  u8  bin = 0b1010
+  u32 dec = 1_000_000
+  i8  neg = -5
+  u16 big = 0xFFFF
+}
+
+export struct ByteLiterals {
+  u8 hex[4] = x"5f2a 91c3"
+  u8 b64[3] = b64"AQID"
+  u8 empty[0] = x""
+}
+
+// A FourCC is the bytes in written order, whatever the endianness.
+export struct FourCC {
+  u32   inherited = 'ARCV'
+  @endian(be) { u32 big = 'ARCV' }
+  u32be fixedBe = 'ARCV'
+}
+
+export struct Strings {
+  char tag[4] = "CHNK"
+  str  word = "hi"
+}

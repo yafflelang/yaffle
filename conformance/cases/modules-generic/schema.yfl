@@ -1,0 +1,16 @@
+// Importing exported generics from another file and instantiating them here. Only the
+// instantiations used by exported structs become code; the generics themselves aren't roots.
+
+import { Span, Pair } from "./common.yfl"
+
+struct Pt { u16 x  u16 y }
+
+export struct UsesSpan {
+  Span<Pt>  pts
+  Span<u16> nums
+}
+
+export struct UsesPair {
+  Pair<u8, Pt>        a
+  Pair<Pair<u8, u8>, u16be> b
+}

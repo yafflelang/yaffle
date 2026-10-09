@@ -1,0 +1,112 @@
+// Inherited endianness ($endian): from the root argument, through nested structs, overridden by
+// @endian on blocks, fields and structs, and driven by a field (TIFF byte-order mark).
+
+struct Inner {
+  u16 x
+  u32 y
+}
+
+// A struct that always uses big endian, wherever it is used.
+struct AlwaysBig @endian(be) {
+  u16 x
+  Inner inner          // inherits be from AlwaysBig
+}
+
+// Fixed suffixes inside an inherited context keep their own byte order.
+struct FixedInside {
+  u16le l
+  u16be b
+  u16   i
+}
+
+export struct Nested {
+  Inner a              // inherits from the root (le unless the endian argument says be)
+  u16be b
+}
+
+export struct BlockBe {
+  Inner a
+  @endian(be) {
+    Inner b
+    u16 c
+  }
+  u16 d                // back to the inherited endianness after the block
+}
+
+export struct FieldBe {
+  Inner a @endian(be)
+  Inner b
+}
+
+export struct StructBe {
+  AlwaysBig s
+  Inner t
+}
+
+export struct Fixed {
+  @endian(be) { FixedInside f }
+  FixedInside g
+}
+
+// Endianness chosen by an earlier field.
+export struct Probe {
+  u8 flag
+  @endian(flag != 0 ? be : le) {
+    u16 v
+    Inner s
+  }
+}
+
+// TIFF: the byte-order mark picks the endianness of everything after it, including a target
+// placed at an offset from inside the block.
+struct IfdEntry {
+  u16 tag
+  u16 type
+  u32 count
+  u32 value
+}
+
+struct Ifd {
+  u16      count
+  IfdEntry entries[count]
+  u32      next
+}
+
+export struct Tiff {
+  char order[2] in ("II", "MM")
+  @endian(order == "MM" ? be : le) {
+    u16 magic = 42
+    u32 firstIfd
+    Ifd ifd at firstIfd
+  }
+}
+
+// Nested blocks: the innermost @endian wins.
+export struct NestedBlocks {
+  @endian(be) {
+    u16 a
+    @endian(le) {
+      u16 b
+    }
+    u16 c
+  }
+}
+
+// Floats and 24/40/48-bit integers follow $endian too.
+export struct Widths {
+  u24 a
+  i40 b
+  u48 c
+  f32 d
+  f64 e
+  f16 f
+}
+
+// $endian is a value that expressions can test.
+export struct EndianCond {
+  @endian(be) {
+    u8 a
+    if ($endian == be) { u16 marker }
+  }
+  if ($endian == be) { u8 rootIsBe }
+}

@@ -1,0 +1,60 @@
+// Padding and alignment: @padBefore, @padAfter, @align (from the nearest @base), @padUntil,
+// @alignEnd, @size windows, fill bytes and fill functions, @strict checks, and the order in which
+// chained attributes apply (nearest the thing first: the leftmost is innermost).
+
+export struct PadBefore { u8 a  u32 b @padBefore(3) }
+export struct PadAfter { u32 b @padAfter(4, 0xcc)  u8 c }
+export struct Align { u8 x  u8 data[4] @align(8) }
+export struct AlignNoop { u32 x  u8 y[2] @align(4) }
+export struct AlignFn { u8 x  u8 tail[2] @align(8, i => 0xa0 + i) }
+export struct AlignBig { u8 a  u64 b @align(8)  u8 c  u32 d @align(4) }
+
+export struct PadUntil { str name @padUntil(8, 0xff)  u8 after }
+export struct PadUntilExact { char tag[4] @padUntil(4)  u8 after }
+
+struct Sub2 { u8 a  u16 b }
+export struct PadUntilStruct { Sub2 s @padUntil(6)  u8 after }
+
+// Struct-level attributes apply wherever the struct is used.
+struct HeaderPad @padUntil(0x10) { char tag[4] = "TEST"  u32 n }
+export struct UsesHeader { HeaderPad h  u8 after }
+
+struct Tail @alignEnd(8) { u8 a  u8 b[2] }
+export struct UsesTail { u8 pre  Tail s  u8 post }
+
+// @align counts from the nearest @base.
+struct Sub @base { u8 a  u8 b @align(4) }
+export struct Based { u8 pre  Sub s }
+
+// Dynamic padding count from an earlier field (an input, not derived).
+export struct PadExpr { u8 n  u8 v @padBefore(n) }
+
+// @size windows: content shorter than the window is followed by zero padding.
+export struct SizeLayer { u8 data[2] @size(4)  u8 after }
+export struct SizeRest { u8 n  u8 data[] @size(n)  u8 after }
+
+// Strict padding: always checked on these fields and structs; LaxPad only in strict mode.
+export struct StrictPad { u8 a @padAfter(2) @strict  u8 b }
+export struct StrictStruct @strict { u8 a @padAfter(2, 0xee)  u8 b }
+export struct StrictFn @strict { u8 x  u8 y @align(4, i => i + 1) }
+export struct LaxPad { u8 a @padAfter(2)  u8 b }
+
+// Attribute order: the leftmost attribute is innermost.
+export struct Order1 { u8 a  u16 v @padBefore(1) @align(4) }   // align, then 1 byte, then v
+export struct Order2 { u8 a  u16 v @align(4) @padBefore(1) }   // 1 byte, then align, then v
+export struct Order3 { u8 a @padAfter(1) @alignEnd(4)  u8 b }   // a, 1 byte, align the end
+
+// A line starting with @ continues the previous field.
+export struct Continued {
+  u8  a
+  u64 b @align(8)
+        @padAfter(2)
+  u8  c
+}
+
+// @align on an array aligns its start; a struct-level @alignEnd pads every element.
+struct Pt2 { u8 x  u8 y }
+export struct AlignArray { u8 a  Pt2 pts[2] @align(4) }
+
+struct E4 @alignEnd(4) { u8 v }
+export struct PaddedElements { E4 es[3]  u8 after }

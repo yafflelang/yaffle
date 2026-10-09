@@ -1,0 +1,31 @@
+// Strings: fixed char[n] with NUL padding, NUL-terminated str/str16/str32, length-prefixed text
+// with derived lengths (lengths count code units), and the utf8/latin1/ascii encodings.
+
+export struct Fixed { char name[8] }
+export struct FixedThenByte { char tag[4]  u8 after }
+
+export struct Cstr { str s }
+export struct CstrPair { str a  str b  u8 after }
+
+export struct Wide { str16 s }
+export struct WideBe { @endian(be) { str16 s } }
+export struct Wider { str32 s }
+export struct WiderBe { str32 s @endian(be) }
+
+export struct Fixed16 { char16 name[4] }
+export struct Fixed32 { char32 name[2] }
+
+// Lengths count code units: UTF-8 bytes, UTF-16 units, UTF-32 units.
+export struct Prefixed { u8 len  char text[len] }
+export struct Prefixed16 { u16 n  char16 text[n] }
+export struct Prefixed32 { u8 n  char32 text[n] }
+export struct PrefixedPlusOne { u8 lenWithNul  char text[lenWithNul - 1]  u8 nul = 0 }
+
+export struct Latin1 { char name[4] @encoding("latin1") }
+// str is char[until 0]; @encoding goes on the char form.
+export struct Latin1Cstr { char s[until 0] @encoding("latin1") }
+export struct Ascii { char tag[4] @encoding("ascii") }
+export struct AsciiCstr { char s[until 0] @encoding("ascii") }
+
+export struct List { str names[until ""] }
+export struct CountedList { u8 n  str names[n] }

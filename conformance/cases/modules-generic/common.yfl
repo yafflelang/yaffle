@@ -1,0 +1,9 @@
+// Exports a generic struct and a generic-using alias.
+
+export struct Span<T> {
+  u8 n
+  u8 ofs
+  T  items[n] at ofs
+}
+
+export struct Pair<A, B> { A first  B second }

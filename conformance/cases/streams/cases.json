@@ -1,0 +1,155 @@
+{
+  "description": "`from` fields, joined pieces, split by input sizes or @split(fit), a miniature fragmented stream.",
+  "generatedBy": "conformance/scripts/areas/streams.ts",
+  "cases": [
+    {
+      "name": "from a field",
+      "root": "FromField",
+      "bytes": "0421202220",
+      "json": { "n": 4, "raw": "01000200", "inner": { "a": 1, "b": 2 } }
+    },
+    {
+      "name": "from a field on write derives the field",
+      "root": "FromField",
+      "input": { "inner": { "a": 3, "b": 4 } },
+      "bytes": "0423202420"
+    },
+    {
+      "name": "from a field ignores a given carrier value",
+      "root": "FromField",
+      "input": { "raw": "ffffffff", "inner": { "a": 3, "b": 4 } },
+      "bytes": "0423202420"
+    },
+    {
+      "name": "from a field with unread bytes",
+      "root": "FromField",
+      "roundtrip": false,
+      "bytes": "052120222029",
+      "json": { "n": 5, "raw": "0100020009", "inner": { "a": 1, "b": 2 } }
+    },
+    {
+      "name": "from a field too short for the struct",
+      "root": "FromField",
+      "bytes": "03212022",
+      "error": { "phase": "parse", "code": "EOF", "path": ["inner", "b"] }
+    },
+    {
+      "name": "joined pieces",
+      "root": "Joined",
+      "bytes": "02 02 0100 02 0200",
+      "json": {
+        "count": 2,
+        "pieces": [
+          { "n": 2, "data": "0100" },
+          { "n": 2, "data": "0200" }
+        ],
+        "inner": { "a": 1, "b": 2 }
+      }
+    },
+    {
+      "name": "joined pieces split elsewhere",
+      "root": "Joined",
+      "bytes": "02 03 010002 01 00",
+      "json": {
+        "count": 2,
+        "pieces": [
+          { "n": 3, "data": "010002" },
+          { "n": 1, "data": "00" }
+        ],
+        "inner": { "a": 1, "b": 2 }
+      }
+    },
+    {
+      "name": "joined pieces split by the input sizes",
+      "root": "Joined",
+      "input": { "pieces": [{ "n": 1 }, { "n": 3 }], "inner": { "a": 1, "b": 2 } },
+      "bytes": "02 01 01 03 000200"
+    },
+    {
+      "name": "joined pieces with an empty piece",
+      "root": "Joined",
+      "input": { "pieces": [{ "n": 0 }, { "n": 4 }], "inner": { "a": 5, "b": 6 } },
+      "bytes": "02 00 04 05000600"
+    },
+    {
+      "name": "joined piece sizes don't cover the stream",
+      "root": "Joined",
+      "input": { "pieces": [{ "n": 1 }], "inner": { "a": 1, "b": 2 } },
+      "error": { "phase": "serialize", "code": "DERIVE" }
+    },
+    {
+      "name": "joined pieces too short",
+      "root": "Joined",
+      "bytes": "01 03 010002",
+      "error": { "phase": "parse", "code": "EOF", "path": ["inner", "b"] }
+    },
+    {
+      "name": "fragments in fixed blocks",
+      "root": "MiniFrag",
+      "bytes": "0105040361026200050401630464",
+      "json": {
+        "version": 1,
+        "frags": [
+          { "exp": 5, "comp": 4, "data": "6161616262" },
+          { "exp": 5, "comp": 4, "data": "6364646464" }
+        ],
+        "content": "61616162626364646464"
+      }
+    },
+    {
+      "name": "fragments split where each piece fits",
+      "root": "MiniFrag",
+      "input": { "content": "61616162626364646464" },
+      "bytes": "0105040361026200050401630464"
+    },
+    {
+      "name": "fragments split by input sizes",
+      "root": "MiniFrag",
+      "bytes": "01030203610000000706026201630464",
+      "json": {
+        "version": 1,
+        "frags": [
+          { "exp": 3, "comp": 2, "data": "616161" },
+          { "exp": 7, "comp": 6, "data": "62626364646464" }
+        ],
+        "content": "61616162626364646464"
+      }
+    },
+    {
+      "name": "fragment sizes from the input win over fit",
+      "root": "MiniFrag",
+      "input": { "frags": [{ "exp": 3 }, { "exp": 7 }], "content": "61616162626364646464" },
+      "bytes": "01030203610000000706026201630464"
+    },
+    {
+      "name": "a fragment size from the input that doesn't fit its block",
+      "root": "MiniFrag",
+      "input": { "frags": [{ "exp": 7 }, { "exp": 3 }], "content": "61616162626364646464" },
+      "error": { "phase": "serialize", "code": "OVERLAP" }
+    },
+    {
+      "name": "three fragments by fit",
+      "root": "MiniFrag",
+      "input": { "content": "6162636465666768" },
+      "bytes": "010204016101620003060163016401650306016601670168"
+    },
+    {
+      "name": "no content, no fragments",
+      "root": "MiniFrag",
+      "input": { "content": "" },
+      "bytes": "01"
+    },
+    {
+      "name": "no fragments",
+      "root": "MiniFrag",
+      "bytes": "01",
+      "json": { "version": 1, "frags": [], "content": "" }
+    },
+    {
+      "name": "fragment with corrupt data",
+      "root": "MiniFrag",
+      "bytes": "01050400610262",
+      "error": { "phase": "parse", "code": "CODEC", "path": ["frags", 0, "data"] }
+    }
+  ]
+}

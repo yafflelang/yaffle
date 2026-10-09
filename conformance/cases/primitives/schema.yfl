@@ -1,0 +1,68 @@
+// Every primitive: all integer widths (signed and unsigned), f16/f32/f64 and bool, with inherited
+// endianness (the root defaults to le; the `endian` root argument switches it) and with fixed
+// le/be suffixes. One root per type, so each case targets exactly one primitive.
+
+export struct U8  { u8  v }
+export struct U16 { u16 v }
+export struct U24 { u24 v }
+export struct U32 { u32 v }
+export struct U40 { u40 v }
+export struct U48 { u48 v }
+export struct U56 { u56 v }
+export struct U64 { u64 v }
+
+export struct U16le { u16le v }
+export struct U24le { u24le v }
+export struct U32le { u32le v }
+export struct U64le { u64le v }
+
+export struct U16be { u16be v }
+export struct U24be { u24be v }
+export struct U32be { u32be v }
+export struct U40be { u40be v }
+export struct U48be { u48be v }
+export struct U56be { u56be v }
+export struct U64be { u64be v }
+
+export struct I8  { i8  v }
+export struct I16 { i16 v }
+export struct I24 { i24 v }
+export struct I32 { i32 v }
+export struct I40 { i40 v }
+export struct I48 { i48 v }
+export struct I56 { i56 v }
+export struct I64 { i64 v }
+
+export struct I16be { i16be v }
+export struct I24be { i24be v }
+export struct I32be { i32be v }
+export struct I40be { i40be v }
+export struct I48be { i48be v }
+export struct I56be { i56be v }
+export struct I64be { i64be v }
+
+export struct F16 { f16 v }
+export struct F32 { f32 v }
+export struct F64 { f64 v }
+export struct F16be { f16be v }
+export struct F32be { f32be v }
+export struct F64be { f64be v }
+export struct F32le { f32le v }
+
+export struct Bool { bool v }
+
+// Several primitives in a row: offsets advance by each width.
+export struct Mixed {
+  u8    a
+  u16   b
+  u24be c
+  i32   d
+  f32be e
+  u64   f
+  bool  g
+  i16le h
+  f16   i
+}
+
+// Semicolons are optional; a struct pasted from C with them still parses.
+export struct Semicolons { u8 a; u16 b; i8 c; }

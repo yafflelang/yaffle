@@ -1,0 +1,145 @@
+{
+  "description": "Alignment origin and offset: `@align(n, offset: k)`, offsets from fields, `@alignEnd` with an offset, `from: file` inside a @base, a struct-level `@alignEnd(…, from: file)`, a virtual stream as the file, layout items, and both together.",
+  "generatedBy": "conformance/scripts/areas/align-origin.ts",
+  "cases": [
+    {
+      "name": "offset: a block that ends aligned",
+      "root": "Offset",
+      "bytes": "0102 000000 aabbcc dd",
+      "json": { "a": 513, "tail": "aabbcc", "after": 221 }
+    },
+    {
+      "name": "offset on write",
+      "root": "Offset",
+      "input": { "a": 1, "tail": "010203", "after": 4 },
+      "bytes": "0100 000000 010203 04"
+    },
+    {
+      "name": "offset padding isn't checked without strict",
+      "root": "Offset",
+      "roundtrip": false,
+      "bytes": "0102 ffffff aabbcc dd",
+      "json": { "a": 513, "tail": "aabbcc", "after": 221 }
+    },
+    {
+      "name": "offset padding past the end",
+      "root": "Offset",
+      "bytes": "0102 0000",
+      "error": { "phase": "parse", "code": "EOF", "path": ["tail"] }
+    },
+    {
+      "name": "offset from a field: k = 5 puts v at 3",
+      "root": "OffsetField",
+      "bytes": "05 0000 77",
+      "json": { "k": 5, "v": 119 }
+    },
+    {
+      "name": "offset from a field: k = 7 needs no padding",
+      "root": "OffsetField",
+      "bytes": "07 77",
+      "json": { "k": 7, "v": 119 }
+    },
+    {
+      "name": "offset from a field: k = 0 is plain alignment",
+      "root": "OffsetField",
+      "bytes": "000000000000000077",
+      "json": { "k": 0, "v": 119 }
+    },
+    {
+      "name": "offset from a field on write",
+      "root": "OffsetField",
+      "input": { "k": 6, "v": 1 },
+      "bytes": "06 00 01"
+    },
+    {
+      "name": "alignEnd with an offset",
+      "root": "EndOffset",
+      "bytes": "aa 0000000000 0201",
+      "json": { "a": 170, "b": 258 }
+    },
+    {
+      "name": "alignEnd with an offset on write",
+      "root": "EndOffset",
+      "input": { "a": 1, "b": 2 },
+      "bytes": "01 0000000000 0200"
+    },
+    {
+      "name": "from: file inside a @base",
+      "root": "Origin",
+      "bytes": "010203 11 000000 22 33",
+      "json": { "pre": "010203", "inner": { "x": 17, "y": 34, "z": 51 } }
+    },
+    {
+      "name": "from: file inside a @base on write",
+      "root": "Origin",
+      "input": { "pre": "aabbcc", "inner": { "x": 1, "y": 2, "z": 3 } },
+      "bytes": "aabbcc 01 000000 02 03"
+    },
+    {
+      "name": "from: file padding past the end",
+      "root": "Origin",
+      "bytes": "010203 11 000000 22",
+      "error": { "phase": "parse", "code": "EOF", "path": ["inner", "z"] }
+    },
+    {
+      "name": "from: base written out",
+      "root": "ExplicitBase",
+      "bytes": "010203 11 000000 22",
+      "json": { "pre": "010203", "inner": { "x": 17, "y": 34 } }
+    },
+    {
+      "name": "from: base on write",
+      "root": "ExplicitBase",
+      "input": { "pre": "000000", "inner": { "x": 1, "y": 2 } },
+      "bytes": "000000 01 000000 02"
+    },
+    {
+      "name": "alignEnd from the file",
+      "root": "UsesEndFile",
+      "bytes": "010203 aa 00000000 bb",
+      "json": { "pre": "010203", "e": { "a": 170 }, "post": 187 }
+    },
+    {
+      "name": "alignEnd from the file on write",
+      "root": "UsesEndFile",
+      "input": { "pre": "000000", "e": { "a": 1 }, "post": 2 },
+      "bytes": "000000 01 00000000 02"
+    },
+    {
+      "name": "from: file is the start of a virtual stream",
+      "root": "InStream",
+      "bytes": "ff aa000000bb010203",
+      "json": { "pre": 255, "raw": "aa000000bb010203", "s": { "a": 170, "b": 187, "c": "010203" } }
+    },
+    {
+      "name": "from: file in a stream on write",
+      "root": "InStream",
+      "input": { "pre": 1, "s": { "a": 2, "b": 3, "c": "040506" } },
+      "bytes": "01 02000000 03 040506"
+    },
+    {
+      "name": "layout item aligned from the file",
+      "root": "LayoutOrigin",
+      "bytes": "010203 02 05 000000 dddd",
+      "json": { "pre": "010203", "blk": { "n": 2, "ofs": 5, "data": "dddd" } }
+    },
+    {
+      "name": "layout item aligned from the file on write",
+      "root": "LayoutOrigin",
+      "input": { "pre": "000000", "blk": { "data": "0102" } },
+      "bytes": "000000 02 05 000000 0102"
+    },
+    {
+      "name": "from: file and offset together",
+      "root": "Both",
+      "bytes": "010203 aa 00000000000000 0102030405",
+      "json": { "pre": "010203", "i": { "a": 170, "b": "0102030405" } }
+    },
+    {
+      "name": "from: file and offset together on write",
+      "root": "Both",
+      "input": { "pre": "000000", "i": { "a": 1, "b": "0a0b0c0d0e" } },
+      "bytes": "000000 01 00000000000000 0a0b0c0d0e"
+    }
+  ]
+}

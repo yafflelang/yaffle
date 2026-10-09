@@ -1,0 +1,14 @@
+// Slices of a stream (`raw[a..b]`, `raw[a..]`), read side only: writing slices is in
+// ../slices-write.
+
+struct Inner {
+  u16 a
+  u16 b
+}
+
+export struct Sliced {
+  u8    raw[8]
+  Inner first  from raw[0..4]
+  Inner second from raw[4..8]
+  u8    tail[] from raw[6..]
+}

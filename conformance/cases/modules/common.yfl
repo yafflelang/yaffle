@@ -1,0 +1,15 @@
+// Imported by schema.yfl.
+
+export const u32 SECTOR = 0x800
+export const u8 VERSION = 3
+
+export struct Pt { u16 x  u16 y }
+
+export struct PtList { u8 n  Pt items[n] }
+
+export type Name = char[4]
+
+// Not exported: only visible inside this file.
+struct Private { u8 secret }
+
+export struct UsesPrivate { Private p }

@@ -1,0 +1,61 @@
+{
+  "sources": ["schema.yfl"],
+  "targets": {
+    "ts": {
+      "out": "../../.out/gen/generics/ts",
+      "externs": {
+        "xor": "../../externs/ts/xor.ts",
+        "VarInt": "../../externs/ts/varint.ts",
+        "Bcd16": "../../externs/ts/bcd16.ts"
+      }
+    },
+    "rust": {
+      "out": "../../.out/gen/generics/rust",
+      "externs": {
+        "xor": "../../externs/rust/xor.rs#XOR",
+        "VarInt": "../../externs/rust/varint.rs#VARINT",
+        "Bcd16": "../../externs/rust/bcd16.rs#BCD16"
+      }
+    },
+    "python": {
+      "out": "../../.out/gen/generics/python",
+      "externs": {
+        "xor": "../../externs/python/xor.py",
+        "VarInt": "../../externs/python/varint.py",
+        "Bcd16": "../../externs/python/bcd16.py"
+      }
+    },
+    "go": {
+      "out": "../../.out/gen/generics/go",
+      "externs": {
+        "xor": "../../externs/go/xor.go",
+        "VarInt": "../../externs/go/varint.go",
+        "Bcd16": "../../externs/go/bcd16.go"
+      }
+    },
+    "csharp": {
+      "out": "../../.out/gen/generics/csharp",
+      "externs": {
+        "xor": "../../externs/csharp/xor.cs",
+        "VarInt": "../../externs/csharp/varint.cs",
+        "Bcd16": "../../externs/csharp/bcd16.cs"
+      }
+    },
+    "java": {
+      "out": "../../.out/gen/generics/java",
+      "externs": {
+        "xor": "../../externs/java/xor.java#XOR",
+        "VarInt": "../../externs/java/varint.java#VARINT",
+        "Bcd16": "../../externs/java/bcd16.java#BCD16"
+      }
+    },
+    "cpp": {
+      "out": "../../.out/gen/generics/cpp",
+      "externs": {
+        "xor": "../../externs/cpp/xor.hpp",
+        "VarInt": "../../externs/cpp/varint.hpp",
+        "Bcd16": "../../externs/cpp/bcd16.hpp"
+      }
+    }
+  }
+}

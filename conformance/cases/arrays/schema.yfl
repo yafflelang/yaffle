@@ -1,0 +1,46 @@
+// Arrays: counts, `until` terminators, `[]` to the end of the region, derived and shared counts,
+// reversible count arithmetic (with divisibility checks) and irreversible counts (checked inputs).
+
+struct P {
+  u8 x
+  u8 y
+}
+
+export struct Counted { u32 count  P items[count] }
+export struct CountedU8 { u8 count  P items[count] }
+export struct CountU64 { u64 n  u8 b[n] }
+export struct FixedCount { u16 v[3] }
+export struct BoolArr { u8 n  bool flags[n] }
+export struct I8Arr { u8 n  i8 vals[n] }
+export struct U8Arr { u8 n  u8 vals[n] }            // u8 arrays are bytes (hex in JSON)
+export struct F32Arr { u8 n  f32 vals[n] }
+export struct U64Arr { u8 n  u64 vals[n] }
+
+export struct Until { u16 list[until 0xffff] }
+export struct UntilBytes { u8 data[until 0] }
+export struct UntilSigned { i8 vals[until -1]  u8 after }
+
+export struct Rest { u8 tag  u16 vals[] }
+export struct RestBytes { u8 tag  u8 rest[] }
+export struct RestStructs { P pts[] }
+
+// Shared count: both arrays must have the same length on write.
+export struct Shared { u8 n  u16 a[n]  u8 b[n] }
+
+// Reversible arithmetic: the count is derived, and divisibility is checked.
+export struct Pairs { u8 pairs  u16 ids[pairs * 2] }
+export struct PlusOne { u8 nMinus1  u8 data[nMinus1 + 1] }
+export struct MinusTwo { u8 nPlus2  u8 data[nPlus2 - 2] }
+export struct Shifted { u8 words  u8 data[words << 2] }
+export struct Affine { u16 n  u8 v[n * 3 + 2] }
+
+// Irreversible: the count stays an input and is checked against the array.
+export struct Irreversible { u8 n  u8 flags[(n + 7) / 8] }
+export struct Product { u8 rows  u8 cols  u16 cells[rows * cols] }
+
+// Nested counts.
+struct Row { u8 m  u8 vals[m] }
+export struct Nested { u8 n  Row rows[n] }
+
+// A negative count.
+export struct SignedCount { i8 n  u8 b[n] }

@@ -1,0 +1,157 @@
+{
+  "description": "Generic structs (one and two parameters, nested, pointers), type aliases with transforms/parameters/layers, extern types.",
+  "generatedBy": "conformance/scripts/areas/generics.ts",
+  "cases": [
+    {
+      "name": "generic struct instantiated twice",
+      "root": "UsesSpan",
+      "bytes": "0204030c01000200030004000a000b000c00",
+      "json": {
+        "pts": {
+          "n": 2,
+          "ofs": 4,
+          "items": [
+            { "x": 1, "y": 2 },
+            { "x": 3, "y": 4 }
+          ]
+        },
+        "nums": { "n": 3, "ofs": 12, "items": [10, 11, 12] }
+      }
+    },
+    {
+      "name": "generic struct on write",
+      "root": "UsesSpan",
+      "input": { "pts": { "items": [{ "x": 5, "y": 6 }] }, "nums": { "items": [] } },
+      "bytes": "0104000805000600"
+    },
+    {
+      "name": "generic with two parameters, nested",
+      "root": "UsesPair",
+      "bytes": "010002030004000506",
+      "json": {
+        "p": { "first": 1, "second": 2 },
+        "q": { "first": { "x": 3, "y": 4 }, "second": { "first": 5, "second": 6 } }
+      }
+    },
+    {
+      "name": "generic pointer",
+      "root": "UsesBoxed",
+      "bytes": "02060100020078563412",
+      "json": { "a": { "value": { "x": 1, "y": 2 } }, "b": { "value": 305419896 } }
+    },
+    {
+      "name": "generic pointer on write",
+      "root": "UsesBoxed",
+      "input": { "a": { "value": { "x": 0, "y": 0 } }, "b": { "value": 1 } },
+      "bytes": "02060000000001000000"
+    },
+    {
+      "name": "type aliases",
+      "root": "UsesAlias",
+      "bytes": "8001280000006162630000000000010203",
+      "json": { "f": 1.5, "g": 2.5, "n": "abc", "c": 66051 }
+    },
+    {
+      "name": "type aliases on write",
+      "root": "UsesAlias",
+      "input": { "f": -2, "g": 0.0625, "n": "", "c": 1 },
+      "bytes": "00fe010000000000000000000000000001"
+    },
+    {
+      "name": "alias with byte layers on elements",
+      "root": "UsesEnc",
+      "bytes": "025b5a585a595a5e5a",
+      "json": {
+        "n": 2,
+        "pts": [
+          { "x": 1, "y": 2 },
+          { "x": 3, "y": 4 }
+        ]
+      }
+    },
+    {
+      "name": "extern type",
+      "root": "UsesVarInt",
+      "bytes": "ac028080808080808080800107",
+      "json": { "a": "300", "b": "9223372036854775808", "after": 7 }
+    },
+    {
+      "name": "extern type extremes",
+      "root": "UsesVarInt",
+      "bytes": "00ffffffffffffffffff0101",
+      "json": { "a": "0", "b": "18446744073709551615", "after": 1 }
+    },
+    {
+      "name": "extern type on write",
+      "root": "UsesVarInt",
+      "input": { "a": "127", "b": "128", "after": 2 },
+      "bytes": "7f800102"
+    },
+    {
+      "name": "extern type needs more bytes at the end",
+      "root": "UsesVarInt",
+      "bytes": "ac",
+      "error": { "phase": "parse", "code": "EOF", "path": ["a"] }
+    },
+    {
+      "name": "array of extern types",
+      "root": "VarList",
+      "bytes": "03018001ffffffffffffffffff01",
+      "json": { "n": 3, "vals": ["1", "128", "18446744073709551615"] }
+    },
+    {
+      "name": "array of extern types on write",
+      "root": "VarList",
+      "input": { "vals": ["16384"] },
+      "bytes": "01808001"
+    },
+    {
+      "name": "fixed-size extern type",
+      "root": "UsesBcd",
+      "bytes": "2026 0a",
+      "json": { "year": 2026, "month": 10 }
+    },
+    {
+      "name": "fixed-size extern type on write",
+      "root": "UsesBcd",
+      "input": { "year": 1999, "month": 12 },
+      "bytes": "1999 0c"
+    },
+    {
+      "name": "fixed-size extern type eof",
+      "root": "UsesBcd",
+      "bytes": "20",
+      "error": { "phase": "parse", "code": "EOF", "path": ["year"] }
+    },
+    {
+      "name": "alias of an instantiation",
+      "root": "UsesAliasSpan",
+      "bytes": "010201000200",
+      "json": { "s": { "n": 1, "ofs": 2, "items": [{ "x": 1, "y": 2 }] } }
+    },
+    {
+      "name": "generic with a value parameter",
+      "root": "UsesArr",
+      "bytes": "0201000200",
+      "json": { "count": 2, "a": { "items": [1, 2] } }
+    },
+    {
+      "name": "generic with a value parameter on write",
+      "root": "UsesArr",
+      "input": { "count": 1, "a": { "items": [7] } },
+      "bytes": "010700"
+    },
+    {
+      "name": "generic over an extern type and an enum",
+      "root": "UsesExternArg",
+      "bytes": "ac02070209",
+      "json": { "v": { "first": "300", "second": 7 }, "k": { "first": "B", "second": 9 } }
+    },
+    {
+      "name": "generic over an extern type and an enum on write",
+      "root": "UsesExternArg",
+      "input": { "v": { "first": "1", "second": 2 }, "k": { "first": "A", "second": 3 } },
+      "bytes": "01 02 01 03"
+    }
+  ]
+}

@@ -1,0 +1,61 @@
+// Generics (monomorphized per type argument list), type aliases (with transforms, parameters and
+// byte layers), and extern types (host-implemented primitives, with and without a fixed size).
+
+extern codec xor(u8 key) @ranged
+extern type VarInt(u8 maxBytes) : u64
+extern type Bcd16 : u16 @size(2)
+
+struct Pt { u16 x  u16 y }
+
+struct Span<T> {
+  u8 n
+  u8 ofs
+  T  items[n] at ofs
+}
+
+struct Pair<A, B> {
+  A first
+  B second
+}
+
+struct Boxed<T> { T *value : u8 }
+
+export struct UsesSpan { Span<Pt> pts  Span<u16> nums }
+export struct UsesPair { Pair<u8, u16be> p  Pair<Pt, Pair<u8, u8>> q }
+export struct UsesBoxed { Boxed<Pt> a  Boxed<u32> b }
+
+type Fixed16 = i16 as it / 256.0
+type Fixed(u8 bits) = i32 as it * 1.0 / (1 << bits)   // * 1.0: it / (1 << bits) alone is integer division
+type Name = char[8]
+type U24be = u24be
+type EncPt = Pt @via(xor(0x5a)) @size(4)
+
+export struct UsesAlias {
+  Fixed16 f
+  Fixed(4) g
+  Name     n
+  U24be    c
+}
+
+export struct UsesEnc { u8 n  EncPt pts[n] }
+
+export struct UsesVarInt {
+  VarInt(5)  a
+  VarInt(10) b
+  u8         after
+}
+
+export struct VarList { u8 n  VarInt(10) vals[n] }
+
+export struct UsesBcd { Bcd16 year  u8 month }
+
+// An alias of an instantiation, a generic with a value parameter, and generics over an extern type
+// and an enum.
+type PtSpan = Span<Pt>
+export struct UsesAliasSpan { PtSpan s }
+
+struct Arr<T>(u8 n) { T items[n] }
+export struct UsesArr { u8 count  Arr<u16>(count) a }
+
+enum Kind8 : u8 { A = 1, B = 2 }
+export struct UsesExternArg { Pair<VarInt(3), u8> v  Pair<Kind8, u8> k }

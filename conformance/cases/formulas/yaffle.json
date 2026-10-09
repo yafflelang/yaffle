@@ -1,0 +1,47 @@
+{
+  "sources": ["schema.yfl"],
+  "targets": {
+    "ts": {
+      "out": "../../.out/gen/formulas/ts",
+      "externs": {
+        "sum8": "../../externs/ts/sum8.ts"
+      }
+    },
+    "rust": {
+      "out": "../../.out/gen/formulas/rust",
+      "externs": {
+        "sum8": "../../externs/rust/sum8.rs"
+      }
+    },
+    "python": {
+      "out": "../../.out/gen/formulas/python",
+      "externs": {
+        "sum8": "../../externs/python/sum8.py"
+      }
+    },
+    "go": {
+      "out": "../../.out/gen/formulas/go",
+      "externs": {
+        "sum8": "../../externs/go/sum8.go"
+      }
+    },
+    "csharp": {
+      "out": "../../.out/gen/formulas/csharp",
+      "externs": {
+        "sum8": "../../externs/csharp/sum8.cs"
+      }
+    },
+    "java": {
+      "out": "../../.out/gen/formulas/java",
+      "externs": {
+        "sum8": "../../externs/java/sum8.java"
+      }
+    },
+    "cpp": {
+      "out": "../../.out/gen/formulas/cpp",
+      "externs": {
+        "sum8": "../../externs/cpp/sum8.hpp"
+      }
+    }
+  }
+}

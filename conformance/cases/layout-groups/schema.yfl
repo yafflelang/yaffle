@@ -1,0 +1,113 @@
+// Per-element layout groups: `items[*] { b  c }` places, for each element of the
+// array in order, the nested items (paths relative to the element). Everything the nested items
+// name is claimed by the group; whatever no item places follows in default order. Pointers are u8
+// offsets from the file start, so the expected positions are easy to read off the bytes.
+
+struct Leaf { u8 v }
+
+struct Item {
+  Leaf *a : u8
+  Leaf *b : u8
+  Leaf *c : u8
+}
+
+// For each item: c, then b. The a targets are leftovers: after the group, in default order.
+export struct Group {
+  u8   n
+  Item items[n]
+  layout {
+    items[*] { c  b }
+  }
+}
+
+// Every a pulled out first, then for each item: b, c.
+export struct PullThenGroup {
+  u8   n
+  Item items[n]
+  layout {
+    items[*].a
+    items[*] { b  c }
+  }
+}
+
+// The group's layers apply to everything it places, unless a nested item has its own.
+export struct GroupAlign {
+  u8   n
+  Item items[n]
+  layout {
+    items[*] @align(4) { c  b @align(2)  a }
+  }
+}
+
+// Elements that are pointer targets: `this` places the element itself.
+struct Node {
+  Leaf *x : u8
+  Leaf *y : u8
+}
+
+export struct NodesThis {
+  u8    n
+  Node *nodes[n] : u8
+  layout {
+    nodes[*] { this  y  x }
+  }
+}
+
+// Without `this`, each element's own bytes come first in its turn (as in a unit), then the
+// group's items; the targets the group doesn't name (x) are leftovers after the group.
+export struct NodesLeftover {
+  u8    n
+  Node *nodes[n] : u8
+  layout {
+    nodes[*] { y }
+  }
+}
+
+// Nested groups: for each outer element, for each inner element: y, then x.
+struct Outer {
+  u8   m
+  Node inner[m]
+}
+
+export struct Nested {
+  u8    n
+  Outer outers[n]
+  layout {
+    outers[*] {
+      inner[*] { y  x }
+    }
+  }
+}
+
+// Volumes: the volumes first, then per volume its points, then its pieces.
+struct Vol {
+  u8   np
+  u8   piecesOfs
+  u8   pointsOfs
+  Leaf pieces[np] at piecesOfs
+  Leaf points[np] at pointsOfs
+}
+
+export struct Volumes {
+  u8  n
+  u8  volsOfs
+  Vol vols[n] at volsOfs
+  layout {
+    vols
+    vols[*] { points  pieces }
+  }
+}
+
+// Null targets place nothing and add no alignment.
+struct Opt {
+  Leaf *p : u8 @nullable
+  Leaf *q : u8 @nullable
+}
+
+export struct Nullable {
+  u8  n
+  Opt opts[n]
+  layout {
+    opts[*] @align(2) { q  p }
+  }
+}

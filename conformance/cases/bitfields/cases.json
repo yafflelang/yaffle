@@ -1,0 +1,199 @@
+{
+  "description": "bits blocks (lsb/msb, bool/enum/signed members, reserved, constants, derived counts), C-style runs.",
+  "generatedBy": "conformance/scripts/areas/bitfields.ts",
+  "cases": [
+    {
+      "name": "bits lsb first",
+      "root": "Bits8",
+      "bytes": "03",
+      "json": { "compressed": true, "kind": "Vram" }
+    },
+    {
+      "name": "bits enum member",
+      "root": "Bits8",
+      "bytes": "0a",
+      "json": { "compressed": false, "kind": "Pool" }
+    },
+    {
+      "name": "bits unknown enum value",
+      "root": "Bits8",
+      "bytes": "04",
+      "error": { "phase": "parse", "code": "CHECK", "path": ["kind"] }
+    },
+    {
+      "name": "bits reserved ignored by default",
+      "root": "Bits8",
+      "roundtrip": false,
+      "bytes": "f1",
+      "json": { "compressed": true, "kind": "Sys" }
+    },
+    {
+      "name": "bits reserved checked in strict mode",
+      "root": "Bits8",
+      "strict": true,
+      "bytes": "f1",
+      "error": { "phase": "parse", "code": "CHECK" }
+    },
+    {
+      "name": "bits on write",
+      "root": "Bits8",
+      "input": { "compressed": true, "kind": "Pool" },
+      "bytes": "0b"
+    },
+    { "name": "bits msb first", "root": "Msb", "bytes": "a3", "json": { "hi": 5, "lo": 3 } },
+    {
+      "name": "bits msb first on write",
+      "root": "Msb",
+      "input": { "hi": 7, "lo": 0 },
+      "bytes": "e0"
+    },
+    {
+      "name": "bits value too wide",
+      "root": "Msb",
+      "input": { "hi": 8, "lo": 0 },
+      "error": { "phase": "serialize", "code": "RANGE", "path": ["hi"] }
+    },
+    {
+      "name": "bits signed member is sign extended",
+      "root": "Signed",
+      "bytes": "3f",
+      "json": { "s": -1, "u": 3 }
+    },
+    {
+      "name": "bits signed member positive",
+      "root": "Signed",
+      "bytes": "37",
+      "json": { "s": 7, "u": 3 }
+    },
+    {
+      "name": "bits signed member minimum",
+      "root": "Signed",
+      "bytes": "08",
+      "json": { "s": -8, "u": 0 }
+    },
+    {
+      "name": "bits signed member on write",
+      "root": "Signed",
+      "input": { "s": -2, "u": 1 },
+      "bytes": "1e"
+    },
+    {
+      "name": "bits signed member out of range",
+      "root": "Signed",
+      "input": { "s": 8, "u": 0 },
+      "error": { "phase": "serialize", "code": "RANGE", "path": ["s"] }
+    },
+    {
+      "name": "bits in a u32 unit",
+      "root": "Wide",
+      "bytes": "4523c1ab",
+      "json": { "a": 74565, "b": 2748 }
+    },
+    {
+      "name": "bits in a u32 unit on write",
+      "root": "Wide",
+      "input": { "a": 1048575, "b": 0 },
+      "bytes": "ffff0f00"
+    },
+    {
+      "name": "bits unit follows endianness",
+      "root": "WideBe",
+      "bytes": "123a",
+      "json": { "a": 10, "b": 291 }
+    },
+    {
+      "name": "bits unit follows root be",
+      "root": "Wide",
+      "args": { "endian": "be" },
+      "bytes": "00200001",
+      "json": { "a": 1, "b": 2 }
+    },
+    { "name": "unnamed reserved bits", "root": "Reserved", "bytes": "05", "json": { "a": 5 } },
+    {
+      "name": "unnamed reserved bits ignored",
+      "root": "Reserved",
+      "roundtrip": false,
+      "bytes": "f5",
+      "json": { "a": 5 }
+    },
+    {
+      "name": "unnamed reserved bits strict",
+      "root": "Reserved",
+      "strict": true,
+      "bytes": "f5",
+      "error": { "phase": "parse", "code": "CHECK" }
+    },
+    {
+      "name": "unnamed reserved bits written as zero",
+      "root": "Reserved",
+      "input": { "a": 9 },
+      "bytes": "09"
+    },
+    {
+      "name": "constant in bits",
+      "root": "WithConst",
+      "bytes": "a3",
+      "json": { "version": 3, "flags": 10 }
+    },
+    {
+      "name": "constant in bits mismatch",
+      "root": "WithConst",
+      "bytes": "a2",
+      "error": { "phase": "parse", "code": "CHECK", "path": ["version"] }
+    },
+    {
+      "name": "constant in bits on write",
+      "root": "WithConst",
+      "input": { "flags": 1 },
+      "bytes": "13"
+    },
+    {
+      "name": "count in bits",
+      "root": "BitCount",
+      "bytes": "72aabb",
+      "json": { "n": 2, "tag": 7, "data": "aabb" }
+    },
+    {
+      "name": "count in bits derived",
+      "root": "BitCount",
+      "input": { "tag": 1, "data": "010203" },
+      "bytes": "13010203"
+    },
+    {
+      "name": "count in bits overflows its width",
+      "root": "BitCount",
+      "input": { "tag": 1, "data": "00000000000000000000000000000000" },
+      "error": { "phase": "serialize", "code": "RANGE", "path": ["n"] }
+    },
+    {
+      "name": "c-style run",
+      "root": "CStyle",
+      "bytes": "bcda01",
+      "json": { "sizeHigh": 2748, "level": 13, "after": 1 }
+    },
+    {
+      "name": "c-style run on write",
+      "root": "CStyle",
+      "input": { "sizeHigh": 1, "level": 2, "after": 3 },
+      "bytes": "012003"
+    },
+    {
+      "name": "c-style type change starts a new unit",
+      "root": "CStyleBreak",
+      "bytes": "fdffff",
+      "json": { "a": 5, "b": 31, "c": 511, "d": 127 }
+    },
+    {
+      "name": "bits in a u64 unit",
+      "root": "Bits64",
+      "bytes": "9a78563412cbedef",
+      "json": { "lo": "78187493530", "mid": 1043915, "top": 14 }
+    },
+    {
+      "name": "bits in a u64 unit on write",
+      "root": "Bits64",
+      "input": { "lo": "1", "mid": 0, "top": 15 },
+      "bytes": "01000000000000f0"
+    }
+  ]
+}

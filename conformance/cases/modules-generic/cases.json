@@ -1,0 +1,46 @@
+{
+  "description": "Generic structs exported from one file and instantiated in another.",
+  "generatedBy": "conformance/scripts/areas/modules-generic.ts",
+  "cases": [
+    {
+      "name": "imported generic instantiated twice",
+      "root": "UsesSpan",
+      "bytes": "0204020c010002000300040007000800",
+      "json": {
+        "pts": {
+          "n": 2,
+          "ofs": 4,
+          "items": [
+            { "x": 1, "y": 2 },
+            { "x": 3, "y": 4 }
+          ]
+        },
+        "nums": { "n": 2, "ofs": 12, "items": [7, 8] }
+      }
+    },
+    {
+      "name": "imported generic on write",
+      "root": "UsesSpan",
+      "input": { "pts": { "items": [] }, "nums": { "items": [1] } },
+      "bytes": "000401040100"
+    },
+    {
+      "name": "imported generic with two parameters, nested",
+      "root": "UsesPair",
+      "bytes": "090100020003040506",
+      "json": {
+        "a": { "first": 9, "second": { "x": 1, "y": 2 } },
+        "b": { "first": { "first": 3, "second": 4 }, "second": 1286 }
+      }
+    },
+    {
+      "name": "imported generic with two parameters on write",
+      "root": "UsesPair",
+      "input": {
+        "a": { "first": 9, "second": { "x": 1, "y": 2 } },
+        "b": { "first": { "first": 3, "second": 4 }, "second": 1286 }
+      },
+      "bytes": "090100020003040506"
+    }
+  ]
+}

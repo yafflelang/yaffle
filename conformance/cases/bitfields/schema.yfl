@@ -1,0 +1,89 @@
+// Bitfields: `bits` blocks with an explicit storage unit (LSB first, or @bitorder(msb)), bool and
+// enum members, signed members (sign-extended), reserved bits (0 on write, checked in strict
+// mode), constants and derived counts in bits, and C-style runs of `T name : width`.
+
+enum MemKind : u8 { Sys = 0, Vram = 1, Pool = 5 }
+
+export struct Bits8 {
+  bits u8 {
+    bool    compressed : 1
+    MemKind kind       : 3
+    u8                 : 4
+  }
+}
+
+export struct Msb {
+  bits u8 @bitorder(msb) {
+    u8 hi : 3
+    u8 lo : 5
+  }
+}
+
+export struct Signed {
+  bits u8 {
+    i8 s : 4
+    u8 u : 4
+  }
+}
+
+export struct Wide {
+  bits u32 {
+    u32 a : 20
+    u32 b : 12
+  }
+}
+
+export struct WideBe {
+  @endian(be) {
+    bits u16 {
+      u8  a : 4
+      u16 b : 12
+    }
+  }
+}
+
+export struct Reserved {
+  bits u8 {
+    u8 a : 4
+    u8   : 4
+  }
+}
+
+export struct WithConst {
+  bits u8 {
+    u8 version : 4 = 3
+    u8 flags   : 4
+  }
+}
+
+// A count stored in bits is derived like any other count.
+export struct BitCount {
+  bits u8 {
+    u8 n   : 4
+    u8 tag : 4
+  }
+  u8 data[n]
+}
+
+// C style: consecutive fields of the same integer type share one storage unit.
+export struct CStyle {
+  u16 sizeHigh : 12
+  u16 level    : 4
+  u8  after
+}
+
+// A different type starts a new unit.
+export struct CStyleBreak {
+  u8  a : 3
+  u8  b : 5
+  u16 c : 9
+  u16 d : 7
+}
+
+export struct Bits64 {
+  bits u64 {
+    u64 lo   : 40
+    u32 mid  : 20
+    u8  top  : 4
+  }
+}

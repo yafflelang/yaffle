@@ -1,0 +1,77 @@
+// Parameters (positional, named, struct-typed), root parameters, nested structs that see outer
+// fields lexically, bound `$values` (nearest binding wins), and the built-ins $offset, $end and
+// $index.
+
+struct Blob(u32 n) { u8 data[n] }
+export struct Uses {
+  Blob(2)    a
+  Blob(n: 3) b
+}
+
+struct Header { u8 size  u8 kind }
+struct Body(Header hdr) {
+  u8 x[hdr.size]
+  if (hdr.kind == 1) { u16 extra }
+}
+export struct WithHeader { Header h  Body(h) body }
+
+// Root parameters become parse/serialize options.
+export struct RootParam(u8 n) { u8 data[n] }
+
+// Bound values: later fields and everything nested in them can read them.
+struct Leaf { if ($version >= 2) { u8 extra }  u8 v }
+struct Mid { Leaf leaf }
+export struct Bound {
+  u8  $version
+  Mid m
+}
+
+// The nearest binding wins.
+struct Inner { u8 $version  Leaf l }
+export struct Shadow {
+  u8    $version
+  Inner i
+  Leaf  outer
+}
+
+// A bound root parameter.
+export struct RootBound(u8 $version) { Leaf l }
+
+// Nested structs see outer fields lexically.
+export struct Lexical {
+  u8 n
+  struct Item { u8 vals[n] }
+  u8   count
+  Item items[count]
+}
+
+// $offset: the current position from the base, evaluated where the expression is used (a length
+// is evaluated just before its field is read); $end: the end of the enclosing region.
+export struct Offsets {
+  u8 a
+  u8 b[$offset]
+  u8 rest[$end - $offset - 1]
+  u8 last
+}
+
+// $offset alone on the write side (no $end, which isn't known until the whole value is written).
+export struct OffsetSized {
+  u8 a
+  u8 b[$offset]
+  u8 c
+}
+
+// $index: the element's index in the enclosing array.
+struct Cell { u8 idx where it == $index  u8 pad[$index] }
+export struct Indexed { Cell cells[3] }
+
+// $offset inside a @base struct counts from the base.
+struct Based @base { u8 a  u8 skip[$offset] }
+export struct OffsetInBase { u8 pre  Based b }
+
+// A bound value read by every element of an array.
+struct Elem { u8 data[$k] }
+export struct BoundArray {
+  u8   $k
+  Elem es[2]
+}

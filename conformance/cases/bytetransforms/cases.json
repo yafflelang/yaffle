@@ -1,0 +1,221 @@
+{
+  "description": "@via codecs with arguments, layered @size, @streaming, async, chains, @ranged positions, failures, codec reuse.",
+  "generatedBy": "conformance/scripts/areas/bytetransforms.ts",
+  "cases": [
+    {
+      "name": "xor over the rest of the region",
+      "root": "XorRest",
+      "bytes": "5b585a",
+      "json": { "body": { "a": 1, "b": 2 } }
+    },
+    {
+      "name": "xor on write",
+      "root": "XorRest",
+      "input": { "body": { "a": 255, "b": 4660 } },
+      "bytes": "a56e48"
+    },
+    {
+      "name": "decoded bytes the struct doesn't read are dropped",
+      "root": "XorRest",
+      "roundtrip": false,
+      "bytes": "5b585a53",
+      "json": { "body": { "a": 1, "b": 2 } }
+    },
+    {
+      "name": "codec argument from a field",
+      "root": "XorKey",
+      "bytes": "0f030e0c0d",
+      "json": { "key": 15, "n": 3, "body": { "a": 1, "b": 515 } }
+    },
+    {
+      "name": "codec argument from a field on write",
+      "root": "XorKey",
+      "input": { "key": 128, "body": { "a": 0, "b": 0 } },
+      "bytes": "8003808080"
+    },
+    {
+      "name": "layered sizes",
+      "root": "Rle",
+      "bytes": "03020307ff",
+      "json": { "expSize": 3, "compSize": 2, "body": { "a": 7, "b": 1799 }, "after": 255 }
+    },
+    {
+      "name": "layered sizes are both derived",
+      "root": "Rle",
+      "input": { "body": { "a": 1, "b": 2 }, "after": 0 },
+      "bytes": "030601010102010000"
+    },
+    {
+      "name": "decoded size disagrees with the codec",
+      "root": "Rle",
+      "bytes": "04020307ff",
+      "error": { "phase": "parse", "code": "CODEC", "path": ["body"] }
+    },
+    {
+      "name": "corrupt encoded data",
+      "root": "Rle",
+      "bytes": "03020007ff",
+      "error": { "phase": "parse", "code": "CODEC", "path": ["body"] }
+    },
+    {
+      "name": "on-disk size past the end",
+      "root": "Rle",
+      "bytes": "03090307",
+      "error": { "phase": "parse", "code": "EOF", "path": ["body"] }
+    },
+    {
+      "name": "codec reuse keeps non-canonical encodings",
+      "root": "Rle",
+      "roundtrip": "value",
+      "bytes": "030401070207ff",
+      "json": { "expSize": 3, "compSize": 4, "body": { "a": 7, "b": 1799 }, "after": 255 }
+    },
+    {
+      "name": "the same value re-encoded canonically",
+      "root": "Rle",
+      "input": { "body": { "a": 7, "b": 1799 }, "after": 255 },
+      "bytes": "03020307ff"
+    },
+    {
+      "name": "bytes through a codec",
+      "root": "RleBytes",
+      "bytes": "0206aa01",
+      "json": { "n": 2, "data": "aaaaaaaaaaaa", "after": 1 }
+    },
+    {
+      "name": "bytes through a codec, long runs",
+      "root": "RleBytes",
+      "input": {
+        "data": "000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+        "after": 2
+      },
+      "bytes": "04ff002d0002"
+    },
+    {
+      "name": "bytes through a codec, empty",
+      "root": "RleBytes",
+      "input": { "data": "", "after": 3 },
+      "bytes": "0003"
+    },
+    {
+      "name": "streaming codec finds its end",
+      "root": "Stream",
+      "bytes": "03aa007f",
+      "json": { "data": "aaaaaa", "after": 127 }
+    },
+    {
+      "name": "streaming codec on write",
+      "root": "Stream",
+      "input": { "data": "0102", "after": 1 },
+      "bytes": "010101020001"
+    },
+    {
+      "name": "streaming codec empty",
+      "root": "Stream",
+      "input": { "data": "", "after": 1 },
+      "bytes": "00 01"
+    },
+    {
+      "name": "streaming codec without its terminator",
+      "root": "Stream",
+      "bytes": "03aa",
+      "error": { "phase": "parse", "code": "CODEC", "path": ["data"] }
+    },
+    {
+      "name": "streaming codec with a decoded size",
+      "root": "StreamSized",
+      "bytes": "0303aa007f",
+      "json": { "exp": 3, "data": "aaaaaa", "after": 127 }
+    },
+    {
+      "name": "streaming codec decoded size derived",
+      "root": "StreamSized",
+      "input": { "data": "ffff", "after": 0 },
+      "bytes": "0202ff0000"
+    },
+    {
+      "name": "streaming codec decoded size disagrees",
+      "root": "StreamSized",
+      "bytes": "0403aa007f",
+      "error": { "phase": "parse", "code": "CODEC", "path": ["data"] }
+    },
+    {
+      "name": "async codec",
+      "root": "Async",
+      "bytes": "03101311",
+      "json": { "n": 3, "body": { "a": 1, "b": 2 } }
+    },
+    {
+      "name": "async codec on write",
+      "root": "Async",
+      "input": { "body": { "a": 5, "b": 6 } },
+      "bytes": "03141711"
+    },
+    {
+      "name": "codec chain",
+      "root": "Chain",
+      "bytes": "025652",
+      "json": { "n": 2, "body": { "a": 7, "b": 1799 } }
+    },
+    {
+      "name": "codec chain on write",
+      "root": "Chain",
+      "input": { "body": { "a": 1, "b": 257 } },
+      "bytes": "025654"
+    },
+    {
+      "name": "codec chain with a size at every layer",
+      "root": "ChainSizes",
+      "bytes": "050202faff",
+      "json": { "exp": 5, "mid": 2, "disk": 2, "data": "0000000000" }
+    },
+    {
+      "name": "codec chain sizes derived",
+      "root": "ChainSizes",
+      "input": { "data": "0102" },
+      "bytes": "020404fefefefd"
+    },
+    {
+      "name": "position-dependent ranged codec",
+      "root": "Pos",
+      "bytes": "baaadece",
+      "json": { "data": "aabbccdd" }
+    },
+    {
+      "name": "position-dependent ranged codec on write",
+      "root": "Pos",
+      "input": { "data": "00000000" },
+      "bytes": "10111213"
+    },
+    {
+      "name": "per-element codec through an alias",
+      "root": "Elements",
+      "bytes": "020e0d0f0c0b0f",
+      "json": {
+        "n": 2,
+        "items": [
+          { "a": 1, "b": 2 },
+          { "a": 3, "b": 4 }
+        ]
+      }
+    },
+    {
+      "name": "struct-level codec",
+      "root": "UsesHidden",
+      "bytes": "9eb801",
+      "json": { "h": { "v": 4660 }, "after": 1 }
+    },
+    {
+      "name": "struct-level codec on write",
+      "root": "UsesHidden",
+      "input": { "h": { "v": 1 }, "after": 2 },
+      "bytes": "abaa02"
+    },
+    {
+      "name": "range error after a codec field",
+      "root": "Rle",
+      "input": { "body": { "a": 1, "b": 2 }, "after": 300 },
+      "error": { "phase": "serialize", "code": "RANGE", "path": ["after"] }
+    }
+  ]
+}

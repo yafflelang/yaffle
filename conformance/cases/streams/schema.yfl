@@ -1,0 +1,44 @@
+// Virtual streams: `from` a bytes field, `from arr[*].field` (pieces joined in order),
+// write-side splitting from the pieces' size fields or the @split(fit) policy (a miniature
+// fragmented stream: 8-byte blocks, fragment k at max(k * 8, 1)). @hidden pieces are in ../streams-hidden,
+// slices in ../streams-slices.
+
+extern codec xor(u8 key) @ranged
+extern codec rle
+
+struct Inner {
+  u16 a
+  u16 b
+}
+
+// A single field as the stream.
+export struct FromField {
+  u8    n
+  u8    raw[n] @via(xor(0x20))
+  Inner inner from raw
+}
+
+// Several pieces joined: sizes come from the input (byte-exact round trips).
+struct Piece {
+  u8 n
+  u8 data[n]
+}
+
+export struct Joined {
+  u8    count
+  Piece pieces[count]
+  Inner inner from pieces[*].data
+}
+
+// Fragments in fixed blocks; the decoded content is split where each piece's encoding still fits.
+struct Frag {
+  u8 exp
+  u8 comp
+  u8 data[] @size(exp) @via(rle) @size(comp)
+}
+
+export struct MiniFrag {
+  u8   version = 1
+  Frag frags[] at max($index * 8, 1)
+  u8   content[] from frags[*].data @split(fit)
+}

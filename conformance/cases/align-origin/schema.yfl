@@ -1,0 +1,94 @@
+// Alignment origin and offset: `@align(n, from: file | base, offset: k)` pads
+// before until (position - origin + k) % n == 0, where the origin is the nearest @base (default)
+// or the start of the current byte space (`file`: the source, a codec's decoded region or a
+// virtual stream). `@alignEnd` takes the same arguments for the end position.
+
+// offset: the 3-byte tail ends on a multiple of 4 (pad until (pos + 3) % 4 == 0).
+export struct Offset {
+  u16 a
+  u8  tail[3] @align(4, offset: 3)
+  u8  after
+}
+
+// The offset can be an earlier field.
+export struct OffsetField {
+  u8 k
+  u8 v @align(8, offset: k)
+}
+
+// alignEnd with an offset: pad after until (end + 2) % 8 == 0.
+export struct EndOffset {
+  u8 a @alignEnd(8, offset: 2)
+  u16 b
+}
+
+// Inside a @base: y aligns from the base, z from the file start.
+struct Inner @base {
+  u8 x
+  u8 y @align(4)
+  u8 z @align(4, from: file)
+}
+
+export struct Origin {
+  u8    pre[3]
+  Inner inner
+}
+
+// `from: base` is the default, written out.
+struct InnerBase @base {
+  u8 x
+  u8 y @align(4, from: base)
+}
+
+export struct ExplicitBase {
+  u8        pre[3]
+  InnerBase inner
+}
+
+// A struct-level @alignEnd from the file start.
+struct EndFile @base @alignEnd(8, from: file) {
+  u8 a
+}
+
+export struct UsesEndFile {
+  u8      pre[3]
+  EndFile e
+  u8      post
+}
+
+// In a virtual stream, `file` is the start of the stream (offset 1 of the real file here).
+struct Streamed {
+  u8 a
+  u8 b @align(4, from: file)
+  u8 c[3]
+}
+
+export struct InStream {
+  u8       pre
+  u8       raw[8]
+  Streamed s from raw
+}
+
+// Layout items: the target aligns from the file start although the struct is a @base at 3.
+struct Blk @base {
+  u8 n
+  u8 ofs
+  u8 data[n] at ofs
+  layout { data @align(8, from: file) }
+}
+
+export struct LayoutOrigin {
+  u8  pre[3]
+  Blk blk
+}
+
+// Both: from the file, 5 bytes ahead.
+export struct Both {
+  u8 pre[3]
+  Inner2 i
+}
+
+struct Inner2 @base {
+  u8 a
+  u8 b[5] @align(8, from: file, offset: 5)
+}

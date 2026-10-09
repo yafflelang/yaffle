@@ -1,0 +1,28 @@
+// Virtual streams whose carrier fields are @hidden: they leave the JSON entirely and the writer
+// derives them from the `from` field.
+
+extern codec xor(u8 key) @ranged
+extern codec rle
+
+struct Inner {
+  u16 a
+  u16 b
+}
+
+export struct FromFieldHidden {
+  u8    n
+  u8    raw[n] @via(xor(0x20)) @hidden
+  Inner inner from raw
+}
+
+struct Frag {
+  u8 exp
+  u8 comp
+  u8 data[] @size(exp) @via(rle) @size(comp)
+}
+
+export struct MiniFragHidden {
+  u8   version = 1
+  Frag frags[] at max($index * 8, 1) @hidden
+  u8   content[] from frags[*].data @split(fit)
+}
