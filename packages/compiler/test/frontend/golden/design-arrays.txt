@@ -1,0 +1,13 @@
+module main.yfl (main)
+root Table = Table
+struct Table [Table] (endian endian: endian = le)  {usesEndian}
+  count: u32  = entries.length [auto]  input absent
+  pairs: u32  = ids.length / 2 [auto]  input absent
+  entries: Entry($endian)[count]
+  ids: u16[pairs * 2]
+  hash: bytes[32]
+  list: u16[until 0xffff]
+  more: Entry($endian)[count]
+  rest: bytes[]
+struct Entry [Entry] (endian endian: endian = le)  {usesEndian}
+  x: u32

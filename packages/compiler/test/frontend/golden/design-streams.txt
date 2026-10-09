@@ -1,0 +1,24 @@
+module main.yfl (main)
+extern codec zstd()
+root Fragmented = Fragmented
+root Slices = Slices
+struct Fragmented [Fragmented] (endian endian: endian = le)  {usesEndian}
+  hdr: FragHeader($endian)
+  frags: Frag($endian)[] at(max($index * 0x10000, 32))
+  file: Archive($endian)  from frags[*].data split fit
+struct Slices [Slices] (endian endian: endian = le)  {usesEndian}
+  raw: bytes[0x1000]
+  h: FragHeader($endian)  from raw[16..32]
+  t: FragHeader($endian)  from raw[0x800..]
+struct FragHeader [FragHeader] (endian endian: endian = le)  {usesEndian}
+  magic: u32
+  size: u32
+struct Frag [Frag] (endian endian: endian = le)  {usesEndian}
+  magic: u32  = 0x46524147 [constant]  input absent
+    check it == 0x46524147  "magic == 0x46524147"
+  exp: u32  = encodedSize(data, 0) [auto]  input optional
+  comp: u32  = encodedSize(data, 2) [auto]  input optional
+  check: u32
+  data: bytes[] @size(exp) @via(zstd) @size(comp)  input absent
+struct Archive [Archive] (endian endian: endian = le)  {usesEndian}
+  p: u32

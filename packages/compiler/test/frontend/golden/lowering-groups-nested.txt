@@ -1,0 +1,26 @@
+module main.yfl (main)
+root S = S
+struct S [S] (endian endian: endian = le)
+  n: u8  = outers.length [auto]  input absent
+  outers: Outer($endian)[n]
+  nodes: *Node($endian) : u8[n]
+  layout {
+    outers[*] {
+      inner[*] {
+        y
+        x
+      }
+    }
+    nodes[*] {
+      this
+      y
+    }
+  }
+struct Outer [Outer] (endian endian: endian = le)
+  m: u8  = inner.length [auto]  input absent
+  inner: Node($endian)[m]
+struct Node [Node] (endian endian: endian = le)
+  x: *Leaf($endian) : u8
+  y: *Leaf($endian) : u8
+struct Leaf [Leaf] (endian endian: endian = le)
+  v: u8

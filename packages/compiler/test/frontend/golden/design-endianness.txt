@@ -1,0 +1,10 @@
+module main.yfl (main)
+root TiffHeader = TiffHeader
+struct TiffHeader [TiffHeader] (endian endian: endian = le)
+  order: string<utf8>[2]  literals "II" | "MM"
+    check it in ("II", "MM")  "order in ("II", "MM")"
+  block @endian(order == "MM" ? be : le) {
+    magic: u16  = 42 [constant]  input absent
+      check it == 42  "magic == 42"
+    firstIfd: u32
+  }

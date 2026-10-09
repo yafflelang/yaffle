@@ -1,0 +1,28 @@
+module main.yfl (main)
+root C = C
+root U = U
+struct C [C] (endian endian: endian = le)  {usesEndian}
+  version: u32
+  size: u32
+  tag: string<utf8>[4]
+  if (version >= 3) {
+    extra: u32
+  } else {
+    legacy: u16
+  }
+  switch (tag) on tag {
+    case "ARCV":
+      body: Archive($endian)
+    case "CHNK":
+      body: Chunk($endian)
+    default:
+      body: bytes[size]
+  }
+struct U [U] (endian endian: endian = le)  {usesEndian}
+  n: union { Archive: Archive($endian) | Dict: Dict($endian) }
+struct Archive [Archive] (endian endian: endian = le)  {usesEndian}
+  p: u32
+struct Chunk [Chunk] (endian endian: endian = le)  {usesEndian}
+  a: u32
+struct Dict [Dict] (endian endian: endian = le)  {usesEndian}
+  k: u32

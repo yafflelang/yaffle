@@ -1,0 +1,15 @@
+module main.yfl (main)
+root S = S
+struct S [S] (endian endian: endian = le)
+  a: u8 @align(4, offset: 3)
+  b: u8 @align(4)
+  c: u8 @align(16, 255, from: file)
+  d: u8 @padUntil(4, strict) @padBefore(1, strict) @padAfter(1, 204, strict)
+  k: u8
+  e: u8 @alignEnd(8, offset: k)
+  block @padUntil(8, strict) {
+    f: u8
+  }
+  g: E($endian)
+struct E [E] (endian endian: endian = le) @alignEnd(8, from: file, strict)
+  a: u8

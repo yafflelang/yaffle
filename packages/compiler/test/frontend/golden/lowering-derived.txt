@@ -1,0 +1,20 @@
+module main.yfl (main)
+root S = S
+struct S [S] (endian endian: endian = le)
+  r: u8  = records.length [auto]  input absent
+  s: u8  = index.length [auto]  input absent
+  records: R($endian)[r]
+  index: bytes[s]  = indicesWhere(records, r => r.model != null) [formula]  input absent
+  n: u8  = keys.length [auto]  input absent
+  keys: K($endian)[n]
+    check it == sortedBy(it, k => k.name)  "keys == sortedBy(keys, k => k.name)"
+  m: u8  = ids.length [auto]  input absent
+  ids: bytes[m]  = concat(map(records, x => x.flags), unique(index)) [formula]  input absent
+struct R [R] (endian endian: endian = le)
+  model: *M($endian) : u8 nullable(0)
+  flags: u8
+struct K [K] (endian endian: endian = le)
+  len: u8  = name.length [auto]  input absent
+  name: string<utf8>[len]
+struct M [M] (endian endian: endian = le)
+  x: u8

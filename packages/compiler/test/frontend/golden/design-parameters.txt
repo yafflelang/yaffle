@@ -1,0 +1,35 @@
+module main.yfl (main)
+root Uses = Uses
+root Chunk = Chunk
+root Strict = Strict
+struct Uses [Uses] (endian endian: endian = le)  {usesEndian}
+  a: Blob($endian, 16)
+  b: Blob($endian, 32)
+  h: Header($endian)
+  body: Body($endian, h)
+struct Chunk [Chunk] (endian endian: endian = le)  {usesEndian}
+  version: u32  bind $version
+  r: u32  = records.length [auto]  input absent
+  records: Record($endian, version)[r]
+  inner: Chunk.Inner($endian, r)
+  node: Node($endian, x"00000000000000000000000000000000000000000000000000000000000000ff")
+struct Strict [Strict] (endian endian: endian = le, bound version: u32)
+  if (version > 2) {
+    x: u8
+  }
+struct Blob [Blob] (endian endian: endian = le, n: u32)
+  data: bytes[n]
+struct Header [Header] (endian endian: endian = le)  {usesEndian}
+  count: u32
+struct Body [Body] (endian endian: endian = le, hdr: Header)  {usesEndian}
+  items: u32[hdr.count]
+struct Record [Record] (endian endian: endian = le, bound version: u32)  {usesEndian}
+  m: MotionTable($endian, version)
+struct Chunk.Inner [Chunk_Inner] (endian endian: endian = le, outer r: u32)
+  data: bytes[r]
+struct Node [Node] (endian endian: endian = le, bound key: bytes)
+  tag: bytes[4]
+struct MotionTable [MotionTable] (endian endian: endian = le, bound version: u32)  {usesEndian}
+  if (version >= 144) {
+    extra: u32
+  }

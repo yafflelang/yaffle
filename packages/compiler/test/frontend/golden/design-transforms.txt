@@ -1,0 +1,18 @@
+module main.yfl (main)
+enum MemKind (MemKind) : u16 { Sys = 0, Gpu = 1 }
+enum Open (Open) : u8 open { A = 1 }
+extern fn decodeTag(u32 t) -> u32
+extern fn encodeTag(u32 t) -> u32
+extern fn hex(u32 v) -> string
+root Entry = Entry
+struct Entry [Entry] (endian endian: endian = le)  {usesEndian}
+  count: u8  = names.length [auto]  input absent
+  names: string<utf8>[8][count]
+  kind: enum MemKind
+  open: enum Open
+  angle: (u16 as it * 360.0 / 65536.0 = round(it * 65536.0 / 360.0) (inferred): f64)
+  name: (u8 as names[it] = indexOf(names, it) (inferred): string)
+  tag: (u32 as decodeTag(it) = encodeTag(it): u32)
+  hash: (u32 as hex(it): string)
+  flags: u32  = it | 128 [formula]
+  neg: (i16 as -it + 3 = -(it - 3) (inferred): i32)

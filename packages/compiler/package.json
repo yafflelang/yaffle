@@ -1,0 +1,40 @@
+{
+  "name": "yaffle",
+  "version": "0.1.0",
+  "description": "yaffle compiler: Yet Another File-Format Language & Engine",
+  "type": "module",
+  "exports": {
+    ".": {
+      "development": "./src/index.ts",
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./service": {
+      "development": "./src/service/index.ts",
+      "types": "./dist/service/index.d.ts",
+      "default": "./dist/service/index.js"
+    },
+    "./ir": {
+      "development": "./src/ir/index.ts",
+      "types": "./dist/ir/index.d.ts",
+      "default": "./dist/ir/index.js"
+    }
+  },
+  "bin": {
+    "yaffle": "./dist/cli/main.js"
+  },
+  "files": [
+    "dist",
+    "src"
+  ],
+  "scripts": {
+    "build": "tsc -p .",
+    "typecheck": "tsc -p . --noEmit",
+    "test": "vitest run",
+    "yaffle": "node --conditions=development src/cli/main.ts"
+  },
+  "dependencies": {
+    "@yaffle/runtime": "0.1.0"
+  },
+  "license": "ISC"
+}

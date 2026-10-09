@@ -1,0 +1,14 @@
+module main.yfl (main)
+root Header = Header
+root Entry = Entry
+struct Header [Header] (endian endian: endian = le) @padUntil(128)  {usesEndian}
+  tag: string<utf8>[4]  = "ARCV" [constant]  input absent
+    check it == "ARCV"  "tag == "ARCV""
+  count: u32
+struct Entry [Entry] (endian endian: endian = le)  {usesEndian}
+  a: u32 @padBefore(4)
+  b: u32 @padAfter(4, 204)
+  data: bytes[16] @align(0x100)
+  name: string<utf8>[until 0] @padUntil(32, 255)
+  offset: u64 @align(8) @padAfter(8)
+  tail: bytes[] @align(16, i => i & 255) @strict

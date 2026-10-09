@@ -1,0 +1,22 @@
+module main.yfl (main)
+extern codec chacha20(bytes key, u64 nonce) ranged
+extern codec inflate() streaming
+extern async codec oodle()
+extern codec zstd()
+root Packed = Packed
+root Node = Node
+root Stream = Stream
+struct Packed [Packed] (endian endian: endian = le)  {async usesEndian}
+  expSize: u32  = encodedSize(body, 0) [auto]  input absent
+  compSize: u32  = encodedSize(body, 2) [auto]  input absent
+  body: Chunk($endian) @size(expSize) @via(oodle) @size(compSize)
+struct Node [Node] (endian endian: endian = le)  {usesEndian}
+  nonce: u64
+  size: u32  = encodedSize(file, 2) [auto]  input absent
+  file: Archive($endian) @via(zstd) @via(chacha20(x"000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f", nonce)) @size(size)
+struct Stream [Stream] (endian endian: endian = le)  {usesEndian}
+  file: Archive($endian) @via(inflate)
+struct Chunk [Chunk] (endian endian: endian = le)  {usesEndian}
+  a: u32
+struct Archive [Archive] (endian endian: endian = le)  {usesEndian}
+  p: u32

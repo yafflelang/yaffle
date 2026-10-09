@@ -1,0 +1,14 @@
+module main.yfl (main)
+root S = S
+struct S [S] (endian endian: endian = le)  {usesEndian}
+  raw: bytes[8]  input absent  carrier slices  hidden
+  hdr: H($endian)  from raw[0..4]
+  more: H($endian)  from raw[4..]
+  n: u8  = encodedSize(sized, 0) [auto]  input absent
+  sized: bytes[] @size(n)  input absent  carrier slices
+  first: H($endian)  from sized[0..4]
+  kept: bytes[8]
+  part: H($endian)  from kept[0..4]
+struct H [H] (endian endian: endian = le)  {usesEndian}
+  a: u16
+  b: u16

@@ -1,0 +1,50 @@
+module tiff.yfl (tiff)
+enum TagType (TagType) : u16 open { Byte = 1, Ascii = 2, Short = 3, Long = 4, Rational = 5, SByte = 6, Undefined = 7, SShort = 8, SLong = 9, SRational = 10, Float = 11, Double = 12 }
+root Tiff = Tiff
+struct Tiff [Tiff] (endian endian: endian = le)  {base}
+  order: string<utf8>[2]  literals "II" | "MM"
+    check it in ("II", "MM")  "order in ("II", "MM")"
+  block @endian(order == "MM" ? be : le) {
+    magic: u16  = 42 [constant]  input absent
+      check it == 42  "magic == 42"
+    first: *Ifd($endian) : u32
+  }
+struct Ifd [Ifd] (endian endian: endian = le)  {usesEndian}
+  count: u16  = entries.length [auto]  input absent
+  entries: IfdEntry($endian)[count]
+  next: *Ifd($endian) : u32 nullable(0)
+struct IfdEntry [IfdEntry] (endian endian: endian = le)  {usesEndian}
+  tag: u16
+  type: enum TagType
+  count: u32
+  switch (type) on type {
+    case TagType.Short:
+      if (count <= 2) {
+        shorts: u16[2]
+      } else {
+        shortsOfs: u32  = offsetof(shortValues) [auto]  input absent
+        shortValues: u16[count]  at shortsOfs
+      }
+    case TagType.Long:
+      if (count <= 1) {
+        long: u32
+      } else {
+        longsOfs: u32  = offsetof(longValues) [auto]  input absent
+        longValues: u32[count]  at longsOfs
+      }
+    case TagType.Ascii:
+      if (count <= 4) {
+        text: string<utf8>[4]
+      } else {
+        textOfs: u32  = offsetof(longText) [auto]  input absent
+        longText: string<utf8>[count]  at textOfs
+      }
+    case TagType.Rational:
+      ratOfs: u32  = offsetof(rationals) [auto]  input absent
+      rationals: Rational($endian)[count]  at ratOfs
+    default:
+      raw: bytes[4]
+  }
+struct Rational [Rational] (endian endian: endian = le)  {usesEndian}
+  num: u32
+  den: u32

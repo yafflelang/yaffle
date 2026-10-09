@@ -1,0 +1,32 @@
+module main.yfl (main)
+extern type Half() : f32 size 2
+extern type VarInt(u8 maxBytes) : u64
+extern type uleb128() : u64 builtin
+extern codec xor(u8 key)
+root T = T
+struct T [T] (endian endian: endian = le)  {base usesEndian}
+  a: (i16 as it / 256.0 = round(it * 256.0) (inferred): f64)
+  b: (i32 as it / 0x100 = it * 0x100 (inferred): i32)
+  n: u32  = recs.length [auto]  input absent
+  recs: Record($endian) @via(xor(90)) @size(4)[n]
+  name: string<utf8>[32]
+  names: string<utf8>[32][2]
+  pts: Span<Point>($endian)
+  nums: Span<u16>($endian)
+  v: extern VarInt(5)
+  h: extern Half()
+  len: extern uleb128()  = blob.length [auto]  input absent
+  blob: bytes[len]
+struct Record [Record] (endian endian: endian = le)  {usesEndian}
+  r: u32
+struct Span<Point> [Span_Point] (endian endian: endian = le)  {usesEndian}
+  n: u64  = items.length [auto]  input absent
+  ofs: u64  = offsetof(items) [auto]  input absent
+  items: Point($endian)[n]  at ofs
+struct Span<u16> [Span_u16] (endian endian: endian = le)  {usesEndian}
+  n: u64  = items.length [auto]  input absent
+  ofs: u64  = offsetof(items) [auto]  input absent
+  items: u16[n]  at ofs
+struct Point [Point] (endian endian: endian = le)  {usesEndian}
+  x: f32
+  y: f32

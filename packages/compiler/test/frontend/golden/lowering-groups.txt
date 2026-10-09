@@ -1,0 +1,23 @@
+module main.yfl (main)
+root Cop = Cop
+struct Cop [Cop] (endian endian: endian = le)
+  n: u8  = volumes.length [auto]  input absent
+  volumes: Volume($endian)[n]
+  layout {
+    volumes[*] @align(4) {
+      pieces[*]
+      portals[*].points @align(2)
+      this
+    }
+  }
+struct Volume [Volume] (endian endian: endian = le)
+  np: u8  = pieces.length [auto]  input absent
+  pieces: *Leaf($endian) : u8[np]
+  nq: u8  = portals.length [auto]  input absent
+  portals: Portal($endian)[nq]
+struct Leaf [Leaf] (endian endian: endian = le)
+  v: u8
+struct Portal [Portal] (endian endian: endian = le)
+  n: u8  = points.length [auto]  input absent
+  ofs: u8  = offsetof(points) [auto]  input absent
+  points: Leaf($endian)[n]  at ofs

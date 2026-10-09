@@ -1,0 +1,13 @@
+module main.yfl (main)
+root S = S
+struct S [S] (endian endian: endian = le)  {usesEndian}
+  hi: u8  = size >> 32 [auto]  input absent
+  lo: u32  = size & 0xffffffff [auto]  input absent
+  size: u40  virtual hi << 32 | lo
+  a: u8  = dec / 10 [auto]  input absent
+  b: u8  = dec % 10 [auto]  input absent
+    check it in (0..9)  "b in (0..9)"
+  dec: u16  virtual a * 10 + b  = 7 [formula]  input optional
+  n: u16  = (bytes + 4) / 4 [auto]  input absent
+  bytes: u32  virtual (n - 1) * 4
+    check it % 4 == 0  "bytes % 4 == 0"

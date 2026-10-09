@@ -1,0 +1,23 @@
+module main.yfl (main)
+root Chunk = Chunk
+struct Chunk [Chunk] (endian endian: endian = le)  {base usesEndian}
+  count: u32  = recs.length [auto]  input absent
+  size: u32  = data.length [auto]  input absent
+  model: *Model($endian) : u64
+  graph: *Graph($endian) : i32 relative
+  extra: *Extra($endian) : u64 nullable(0)
+  other: *Extra($endian) : u32 nullable(4294967295)
+  recs: *Record($endian) : u64[count]
+  tableOfs: u64  = offsetof(table) [auto]  input absent
+  table: Record($endian)[count]  at tableOfs
+  sector: u32  = offsetof(data) / 0x800 [auto]  input absent
+  data: bytes[size]  at sector * 0x800 (≡ 0 mod 2048)
+  fixed: bytes[4]  at 16 fixed
+struct Model [Model] (endian endian: endian = le)  {usesEndian}
+  m: u32
+struct Graph [Graph] (endian endian: endian = le)  {usesEndian}
+  g: u32
+struct Extra [Extra] (endian endian: endian = le)  {usesEndian}
+  e: u32
+struct Record [Record] (endian endian: endian = le)  {usesEndian}
+  r: u32

@@ -1,0 +1,226 @@
+{
+  "version": 1,
+  "modules": [
+    {
+      "path": "main.yfl",
+      "name": "main"
+    }
+  ],
+  "structs": [
+    {
+      "id": "S",
+      "name": "S",
+      "module": "main.yfl",
+      "source": {
+        "module": "main.yfl",
+        "start": {
+          "line": 2,
+          "character": 0
+        },
+        "end": {
+          "line": 2,
+          "character": 59
+        }
+      },
+      "params": [
+        {
+          "name": "endian",
+          "type": {
+            "kind": "endian"
+          },
+          "origin": "endian",
+          "default": {
+            "kind": "literal",
+            "value": {
+              "kind": "endian",
+              "value": "le"
+            },
+            "type": {
+              "kind": "endian"
+            }
+          }
+        }
+      ],
+      "members": [
+        {
+          "kind": "field",
+          "name": "n",
+          "source": {
+            "module": "main.yfl",
+            "start": {
+              "line": 2,
+              "character": 18
+            },
+            "end": {
+              "line": 2,
+              "character": 23
+            }
+          },
+          "type": {
+            "kind": "prim",
+            "prim": "u32",
+            "endian": "inherit"
+          },
+          "checks": [],
+          "hidden": false,
+          "output": true,
+          "input": "absent",
+          "derive": {
+            "kind": "call",
+            "callee": {
+              "kind": "builtin",
+              "name": "encodedSize"
+            },
+            "args": [
+              {
+                "kind": "field",
+                "name": "d",
+                "type": {
+                  "kind": "bytes"
+                }
+              },
+              {
+                "kind": "literal",
+                "value": {
+                  "kind": "int",
+                  "value": "1"
+                },
+                "type": {
+                  "kind": "bigint"
+                }
+              }
+            ],
+            "type": {
+              "kind": "bigint"
+            }
+          },
+          "deriveKind": "auto"
+        },
+        {
+          "kind": "field",
+          "name": "k",
+          "source": {
+            "module": "main.yfl",
+            "start": {
+              "line": 2,
+              "character": 25
+            },
+            "end": {
+              "line": 2,
+              "character": 28
+            }
+          },
+          "type": {
+            "kind": "enum",
+            "enum": "K",
+            "endian": "inherit"
+          },
+          "checks": [],
+          "hidden": false,
+          "output": true,
+          "input": "required"
+        },
+        {
+          "kind": "field",
+          "name": "d",
+          "source": {
+            "module": "main.yfl",
+            "start": {
+              "line": 2,
+              "character": 30
+            },
+            "end": {
+              "line": 2,
+              "character": 57
+            }
+          },
+          "type": {
+            "kind": "layered",
+            "inner": {
+              "kind": "bytes",
+              "length": {
+                "kind": "count",
+                "expr": {
+                  "kind": "field",
+                  "name": "n",
+                  "type": {
+                    "kind": "int",
+                    "bits": 32,
+                    "signed": false
+                  }
+                }
+              }
+            },
+            "layers": [
+              {
+                "kind": "via",
+                "codec": "zstd",
+                "args": []
+              },
+              {
+                "kind": "size",
+                "size": {
+                  "kind": "field",
+                  "name": "n",
+                  "type": {
+                    "kind": "int",
+                    "bits": 32,
+                    "signed": false
+                  }
+                }
+              }
+            ]
+          },
+          "checks": [],
+          "hidden": false,
+          "output": true,
+          "input": "required"
+        }
+      ],
+      "base": false,
+      "strict": false,
+      "layers": [],
+      "async": false,
+      "usesEndian": true
+    }
+  ],
+  "enums": [
+    {
+      "id": "K",
+      "name": "K",
+      "module": "main.yfl",
+      "storage": "u8",
+      "members": [
+        {
+          "name": "A",
+          "value": "0"
+        },
+        {
+          "name": "B",
+          "value": "1"
+        }
+      ],
+      "open": false
+    }
+  ],
+  "externs": [
+    {
+      "kind": "codec",
+      "id": "zstd",
+      "name": "zstd",
+      "module": "main.yfl",
+      "params": [],
+      "async": false,
+      "ranged": false,
+      "streaming": false
+    }
+  ],
+  "consts": [],
+  "roots": [
+    {
+      "struct": "S",
+      "name": "S",
+      "module": "main.yfl"
+    }
+  ]
+}

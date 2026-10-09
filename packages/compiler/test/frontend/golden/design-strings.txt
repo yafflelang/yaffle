@@ -1,0 +1,11 @@
+module main.yfl (main)
+root S = S
+struct S [S] (endian endian: endian = le)  {usesEndian}
+  name: string<utf8>[32]
+  path: string<utf8>[until 0]
+  wide: string<utf16>[until 0]
+  wider: string<utf32>[until 0]
+  len: u8  = title.length [auto]  input absent
+  title: string<utf8>[len]
+  latin: string<latin1>[4]
+  units: string<utf16>[len]

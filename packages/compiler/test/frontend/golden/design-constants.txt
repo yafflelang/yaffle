@@ -1,0 +1,19 @@
+module main.yfl (main)
+root C = C
+struct C [C] (endian endian: endian = le)  {usesEndian}
+  magic: u16  = 42 [constant]  input absent
+    check it == 42  "magic == 42"
+  tag: string<utf8>[4]  = "ARCV" [constant]  input absent
+    check it == "ARCV"  "tag == "ARCV""
+  order: string<utf8>[2]  literals "II" | "MM"
+    check it in ("II", "MM")  "order in ("II", "MM")"
+  version: u32
+    check it in (1, 2, 5..9)  "version in (1, 2, 5..9)"
+  ver: string<utf8>[until 0]
+    check it in /v\d\.\d{1,2}/  "ver in /v\d\.\d{1,2}/"
+  size: u32
+    check it % 4 == 0  "size % 4 == 0"
+  tagLe: u32  = $endian == be ? 0x41524356 : 0x56435241 [constant]  input absent
+    check it == ($endian == be ? 0x41524356 : 0x56435241)  "tagLe == 'ARCV'"
+  fixedTag: u32le  = 0x56435241 [constant]  input absent
+    check it == 0x56435241  "fixedTag == 'ARCV'"

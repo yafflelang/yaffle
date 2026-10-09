@@ -1,0 +1,42 @@
+// TIFF 6.0: header with a byte-order mark, a chain of IFDs, tag values inline or at offsets.
+
+enum TagType : u16 @open {
+  Byte = 1, Ascii = 2, Short = 3, Long = 4, Rational = 5, SByte = 6, Undefined = 7,
+  SShort = 8, SLong = 9, SRational = 10, Float = 11, Double = 12
+}
+
+struct Rational { u32 num  u32 den }
+
+/// One directory entry (12 bytes). Values that fit in 4 bytes are stored inline.
+struct IfdEntry {
+  u16     tag
+  TagType type
+  u32     count
+  switch (type) {
+    case Short:
+      if (count <= 2) { u16 shorts[2] } else { u32 shortsOfs  u16 shortValues[count] at shortsOfs }
+    case Long:
+      if (count <= 1) { u32 long } else { u32 longsOfs  u32 longValues[count] at longsOfs }
+    case Ascii:
+      if (count <= 4) { char text[4] } else { u32 textOfs  char longText[count] at textOfs }
+    case Rational:
+      u32 ratOfs
+      Rational rationals[count] at ratOfs
+    default:
+      u8 raw[4]
+  }
+}
+
+struct Ifd {
+  u16      count
+  IfdEntry entries[count]
+  Ifd      *next : u32 @nullable
+}
+
+export struct Tiff @base {
+  char order[2] in ("II", "MM")
+  @endian(order == "MM" ? be : le) {
+    u16  magic = 42
+    Ifd  *first : u32
+  }
+}

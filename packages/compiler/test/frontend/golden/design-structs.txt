@@ -1,0 +1,9 @@
+module main.yfl (main)
+root Entry = Entry
+struct Entry [Entry] (endian endian: endian = le)  {usesEndian}
+  handler: u16
+  kind: u16
+  align: u32
+  offset: u64
+  size: u64
+  crc: u32be

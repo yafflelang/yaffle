@@ -1,0 +1,13 @@
+module main.yfl (main)
+extern fn pathHash(string path) -> u32
+root Node = Node
+struct Node [Node] (endian endian: endian = le)  {usesEndian}
+  n: u32  = flags.length * 8 [formula]  input absent
+  flags: bytes[(n + 7) / 8]
+  size: u32  = sizeof(body) [formula]  input absent
+  crc: u32  = crc32(bytesof(body)) [formula]  input absent
+  hash: u32  = pathHash(path) [formula]  input absent
+  path: string<utf8>[64]
+  body: Body($endian)
+struct Body [Body] (endian endian: endian = le)  {usesEndian}
+  v: u32
