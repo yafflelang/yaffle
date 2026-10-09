@@ -1,0 +1,16 @@
+<Project>
+  <!--
+    Build output (bin/, obj/) goes to $(YAFFLE_CSHARP_ARTIFACTS) when that environment variable is
+    set, so builds can keep the source tree clean. Otherwise the usual bin/ and obj/ next to each
+    project are used (ignored by packages/runtime-csharp/.gitignore).
+  -->
+  <PropertyGroup Condition="'$(YAFFLE_CSHARP_ARTIFACTS)' != ''">
+    <ArtifactsPath>$(YAFFLE_CSHARP_ARTIFACTS)</ArtifactsPath>
+  </PropertyGroup>
+  <PropertyGroup>
+    <LangVersion>13.0</LangVersion>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+  </PropertyGroup>
+</Project>
