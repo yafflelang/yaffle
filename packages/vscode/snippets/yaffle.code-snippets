@@ -1,0 +1,122 @@
+{
+  "struct": {
+    "prefix": "struct",
+    "description": "Struct declaration",
+    "body": ["struct ${1:Name} {", "\t${2:u32} ${3:field}$0", "}"]
+  },
+  "export struct": {
+    "prefix": ["export", "exstruct"],
+    "description": "Exported struct: gets parse/serialize/view in generated code",
+    "body": ["export struct ${1:Name} {", "\t${2:u32} ${3:field}$0", "}"]
+  },
+  "struct with parameters": {
+    "prefix": "structp",
+    "description": "Parameterized struct",
+    "body": ["struct ${1:Blob}(${2:u32} ${3:n}) {", "\t${4:u8} ${5:data}[${3:n}]$0", "}"]
+  },
+  "generic struct": {
+    "prefix": "structg",
+    "description": "Generic struct",
+    "body": ["struct ${1:Span}<${2:T}> {", "\tu64 ${3:n}", "\t${2:T} ${4:items}[${3:n}]$0", "}"]
+  },
+  "magic": {
+    "prefix": "magic",
+    "description": "Constant tag: written automatically, checked on read",
+    "body": ["char ${1:magic}[4] = \"${2:TAG}\"$0"]
+  },
+  "enum": {
+    "prefix": "enum",
+    "description": "Enum with a storage type",
+    "body": ["enum ${1:Kind} : ${2|u8,u16,u32,u64|} {", "\t${3:First} = ${4:0},", "\t$0", "}"]
+  },
+  "bits": {
+    "prefix": "bits",
+    "description": "Bitfield block (LSB first)",
+    "body": ["bits ${1|u8,u16,u32,u64|} {", "\t${2:bool} ${3:flag} : ${4:1}", "\t$0", "}"]
+  },
+  "union": {
+    "prefix": "union",
+    "description": "Union: variants tried in order",
+    "body": ["union ${1:Name} { ${2:First} ${3:Second} }$0"]
+  },
+  "switch": {
+    "prefix": "switch",
+    "description": "Switch on a tag",
+    "body": [
+      "switch (${1:tag}) {",
+      "\tcase ${2:\"TAG\"}: ${3:Type} ${4:body}",
+      "\tdefault: u8 ${5:raw}[${6:size}]",
+      "}$0"
+    ]
+  },
+  "if": {
+    "prefix": "if",
+    "description": "Conditional fields",
+    "body": ["if (${1:version >= 2}) {", "\t$0", "}"]
+  },
+  "if else": {
+    "prefix": "ifelse",
+    "description": "Conditional fields with an alternative",
+    "body": ["if (${1:version >= 2}) {", "\t$2", "} else {", "\t$0", "}"]
+  },
+  "endian block": {
+    "prefix": "endian",
+    "description": "Block with an endianness switch",
+    "body": ["@endian(${1:order == \"MM\" ? be : le}) {", "\t$0", "}"]
+  },
+  "pointer": {
+    "prefix": "ptr",
+    "description": "Pointer field",
+    "body": ["${1:Type} *${2:name} : ${3|u64,u32,i32|}$0"]
+  },
+  "placed array": {
+    "prefix": "at",
+    "description": "Array placed at an offset",
+    "body": ["${1:Type} ${2:items}[${3:count}] at ${4:offset}$0"]
+  },
+  "compressed": {
+    "prefix": "via",
+    "description": "Field behind a codec: decoded size · codec · size on disk",
+    "body": ["${1:Body} ${2:body} @size(${3:expSize}) @via(${4:zstd}) @size(${5:compSize})$0"]
+  },
+  "import": {
+    "prefix": "import",
+    "description": "Import names from another file",
+    "body": ["import { $2 } from \"${1:./common.yfl}\"$0"]
+  },
+  "import namespace": {
+    "prefix": "importas",
+    "description": "Import a file as a namespace",
+    "body": ["import * as ${2:name} from \"${1:./common.yfl}\"$0"]
+  },
+  "const": {
+    "prefix": "const",
+    "description": "Exported constant",
+    "body": ["export const ${1:u32} ${2:NAME} = ${3:0}$0"]
+  },
+  "type alias": {
+    "prefix": "type",
+    "description": "Type alias with a value transform",
+    "body": ["type ${1:Fixed16} = ${2:i16} as ${3:it / 256.0}$0"]
+  },
+  "extern codec": {
+    "prefix": "codec",
+    "description": "Host-implemented byte transform",
+    "body": ["extern ${1|codec,async codec|} ${2:name}$0"]
+  },
+  "extern fn": {
+    "prefix": "fn",
+    "description": "Host-implemented function",
+    "body": ["extern fn ${1:name}(${2:char path[]}) -> ${3:u32}$0"]
+  },
+  "extern type": {
+    "prefix": "externtype",
+    "description": "Host-implemented primitive",
+    "body": ["extern type ${1:VarInt}(${2:u8 maxBytes}) : ${3:u64}$0"]
+  },
+  "layout": {
+    "prefix": "layout",
+    "description": "Where pointer targets go on write",
+    "body": ["layout {", "\t${1:target} @align(${2:8})", "\t$0", "}"]
+  }
+}

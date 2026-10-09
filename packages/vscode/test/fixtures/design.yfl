@@ -1,0 +1,188 @@
+// Examples of every construct (from DESIGN.md) in one file, for grammar tests.
+import { Span, Name, SECTOR } from "./common.yfl"
+import * as lib from "./lib.yfl"
+
+export const u32 SECTOR = 0x800
+
+extern fn pathHash(char path[]) -> u32
+extern codec zstd
+extern codec inflate @streaming
+extern async codec oodle
+extern codec chacha20(u8 key[32], u64 nonce) @ranged
+extern type VarInt(u8 maxBytes) : u64
+extern type Half : f32 @size(2)
+
+/** An archive entry. */
+struct Entry {
+  u16   handler
+  u16   kind
+  u32   align
+  u64   offset
+  u64   size
+  u32be crc                 // fixed endianness
+}
+
+struct TiffHeader {
+  char order[2] in ("II", "MM")
+  @endian(order == "MM" ? be : le) {
+    u16 magic = 42
+    u32 firstIfd
+  }
+}
+
+struct Table {
+  u32   count               // written as entries.length
+  u32   pairs               // written as ids.length / 2
+  Entry entries[count]
+  u16   ids[pairs * 2]
+  u8    hash[0x20]          // u8 arrays become Uint8Array
+  u8    rest[]              // to the end of the enclosing region
+  u16   list[until 0xffff]  // terminator: consumed, not in the value, written back
+}
+
+struct Node {
+  u32  n    = flags.length * 8     // you choose the reverse when the compiler can't
+  u8   flags[(n + 7) / 8]
+  u32  size = sizeof(body)
+  u32  crc  = crc32(body)
+  u32  hash = pathHash(path)
+  char path[0x40]
+  Body body
+}
+
+struct Constraints {
+  u16  magic = 42
+  char tag[4] = "ARCV"
+  char order[2] in ("II", "MM")
+  u32  version in (1, 2, 5..9)
+  str  ver in /v\d\.\d{1,2}/
+  u32  size where it % 4 == 0
+}
+
+struct Strings {
+  char   name[0x20]
+  str    path
+  str16  wide
+  str32  wider
+  u8     len
+  char   title[len]
+}
+
+struct Header @padUntil(0x80) {
+  char tag[4] = "ARCV"
+  u32  count
+}
+
+struct Padded {
+  u32 a        @padBefore(4)
+  u32 b        @padAfter(4, 0xcc)
+  u8  data[16] @align(0x100)
+  u8  tail[]   @align(0x10, i => i & 0xff) @strict
+  str name     @padUntil(0x20, 0xff)
+  u64 offset   @align(8)
+               @padAfter(8)
+}
+
+struct Chunk @base {
+  Model  *model : u64
+  Graph  *graph : i32 @relative
+  Extra  *extra : u64 @nullable
+  Record *recs[count] : u64
+  u64    tableOfs
+  Record table[count] at tableOfs
+  u8     data[size] at sector * 0x800
+}
+
+struct Conditionals {
+  if (version >= 3) { u32 extra } else { u16 legacy }
+  switch (tag) {
+    case "ARCV": Archive body
+    case "CHNK": Chunk   body
+    default:     u8      body[size]
+  }
+}
+
+union Variant { Archive  Dict }
+
+enum MemKind : u16 { Sys = 0, Gpu = 1 }
+
+struct Transforms {
+  MemKind kind
+  u16     angle as it * 360.0 / 65536
+  u8      name  as names[it]
+  u32     tag   as decodeTag(it) = encodeTag(it)
+  u32     hash  as hex(it)
+  u32     flags = it | 0x80
+}
+
+struct Packed {
+  u32  expSize
+  u32  compSize
+  Chunk body @size(expSize) @via(oodle) @size(compSize)
+}
+
+struct Blob(u32 n) { u8 data[n] }
+struct Uses {
+  Blob(16)    a
+  Blob(n: 32) b
+}
+
+struct Bound {
+  u32    $version
+  Record records[r]
+  struct Inner { u8 x }
+}
+
+struct MotionTable {
+  if ($version >= 144) { u32 extra }
+}
+
+struct Keyed(u8 $key[32]) { u8 rest[$end - $offset] }
+
+type Fixed16 = i16 as it / 256.0
+type Fixed(u8 bits) = i32 as it / (1 << bits)
+type EncRec  = Record @via(xor(0x5a))
+type Name    = char[0x20]
+
+struct Span<T> { u64 n  u64 ofs  T items[n] at ofs }
+
+struct Flags {
+  bits u8 {
+    bool    compressed : 1
+    MemKind kind       : 3
+    u8                 : 4
+  }
+  u16 sizeHigh : 12
+  u16 level    : 4
+}
+
+export struct Archive { u32 tag = 'ARCV'  u64 big = 0x5643_5241 }
+
+struct Literals {
+  u8 a[4] = x"5f2a 91c3"
+  u8 b[3] = b64"AAEC"
+  u32 c = 0b1010
+  u32 d = 1_000
+  f32 e = 1.5e3
+}
+
+struct LayoutDemo @base @alignEnd(0x10) {
+  @padUntil(0x80) { /* header */ }
+  str     pool[until ""]
+  Record  records[r]        at recordsOfs
+  Record *recPtrs[r] : u64  at recPtrsOfs @ref
+  layout {
+    records[*].model @align(0x80)
+    records[*]       @align(8)
+    recPtrs
+    this
+  }
+}
+
+struct Fragmented {
+  FragHeader hdr
+  Frag       frags[] at max($index * 0x10000, 0x20)
+  Archive    file from frags[*].data @split(fit)
+  lib.Record r
+  Span<Point> spans
+}

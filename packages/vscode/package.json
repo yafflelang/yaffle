@@ -1,0 +1,242 @@
+{
+  "name": "yaffle-vscode",
+  "displayName": "yaffle",
+  "description": "yaffle language support: highlighting, diagnostics, completion, hover, sample decoding",
+  "version": "0.1.0",
+  "publisher": "yaffle",
+  "license": "ISC",
+  "type": "module",
+  "main": "./dist/extension.cjs",
+  "engines": {
+    "vscode": "^1.100.0"
+  },
+  "categories": [
+    "Programming Languages",
+    "Formatters",
+    "Snippets"
+  ],
+  "keywords": [
+    "yaffle",
+    "binary",
+    "file format",
+    "parser",
+    "reverse engineering"
+  ],
+  "activationEvents": [
+    "workspaceContains:**/yaffle.json"
+  ],
+  "contributes": {
+    "languages": [
+      {
+        "id": "yaffle",
+        "aliases": [
+          "yaffle",
+          "Yaffle"
+        ],
+        "extensions": [
+          ".yfl"
+        ],
+        "configuration": "./language-configuration.json"
+      }
+    ],
+    "grammars": [
+      {
+        "language": "yaffle",
+        "scopeName": "source.yaffle",
+        "path": "./syntaxes/yaffle.tmLanguage.json"
+      }
+    ],
+    "snippets": [
+      {
+        "language": "yaffle",
+        "path": "./snippets/yaffle.code-snippets"
+      }
+    ],
+    "jsonValidation": [
+      {
+        "fileMatch": "yaffle.json",
+        "url": "./schemas/yaffle.schema.json"
+      }
+    ],
+    "commands": [
+      {
+        "command": "yaffle.showIr",
+        "title": "Show IR",
+        "category": "yaffle",
+        "icon": "$(json)"
+      },
+      {
+        "command": "yaffle.decodeSample",
+        "title": "Decode Sample File…",
+        "category": "yaffle",
+        "icon": "$(file-binary)"
+      },
+      {
+        "command": "yaffle.suggestLayout",
+        "title": "Suggest Layout from Sample…",
+        "category": "yaffle"
+      },
+      {
+        "command": "yaffle.clearSample",
+        "title": "Clear Sample Annotations",
+        "category": "yaffle"
+      },
+      {
+        "command": "yaffle.restartServer",
+        "title": "Restart Language Server",
+        "category": "yaffle"
+      },
+      {
+        "command": "yaffle.showOutput",
+        "title": "Show Language Server Output",
+        "category": "yaffle"
+      },
+      {
+        "command": "yaffle.showBindingSources",
+        "title": "Show Binding Sources",
+        "category": "yaffle"
+      }
+    ],
+    "menus": {
+      "commandPalette": [
+        {
+          "command": "yaffle.showIr",
+          "when": "editorLangId == yaffle"
+        },
+        {
+          "command": "yaffle.decodeSample",
+          "when": "editorLangId == yaffle"
+        },
+        {
+          "command": "yaffle.suggestLayout",
+          "when": "editorLangId == yaffle"
+        },
+        {
+          "command": "yaffle.showBindingSources",
+          "when": "false"
+        }
+      ],
+      "editor/context": [
+        {
+          "command": "yaffle.showIr",
+          "when": "editorLangId == yaffle",
+          "group": "yaffle@1"
+        },
+        {
+          "command": "yaffle.decodeSample",
+          "when": "editorLangId == yaffle",
+          "group": "yaffle@2"
+        },
+        {
+          "command": "yaffle.suggestLayout",
+          "when": "editorLangId == yaffle",
+          "group": "yaffle@3"
+        }
+      ],
+      "editor/title": [
+        {
+          "command": "yaffle.showIr",
+          "when": "editorLangId == yaffle",
+          "group": "navigation"
+        }
+      ]
+    },
+    "configuration": {
+      "title": "yaffle",
+      "properties": {
+        "yaffle.server.path": {
+          "type": "string",
+          "default": "",
+          "scope": "machine-overridable",
+          "markdownDescription": "Language server to run instead of the bundled one: a JavaScript module (`.js`/`.mjs`/`.cjs`, run with Node; `.ts` runs with `--conditions=development`) or an executable (started with `--stdio`), e.g. `yaffle-lsp`. Relative paths resolve against the first workspace folder."
+        },
+        "yaffle.server.runtime": {
+          "type": "string",
+          "default": "",
+          "scope": "machine-overridable",
+          "markdownDescription": "Node executable that runs a JavaScript server module. Empty: VS Code's built-in Node."
+        },
+        "yaffle.trace.server": {
+          "type": "string",
+          "enum": [
+            "off",
+            "messages",
+            "verbose"
+          ],
+          "default": "off",
+          "scope": "window",
+          "description": "Trace the communication between VS Code and the yaffle language server."
+        },
+        "yaffle.diagnostics.delay": {
+          "type": "number",
+          "default": 250,
+          "minimum": 0,
+          "maximum": 10000,
+          "description": "Milliseconds to wait after the last edit before checking files again."
+        },
+        "yaffle.diagnostics.scope": {
+          "type": "string",
+          "enum": [
+            "project",
+            "openFiles"
+          ],
+          "enumDescriptions": [
+            "Check every file of the project (from yaffle.json `sources`), open or not.",
+            "Check only the files open in the editor."
+          ],
+          "default": "project",
+          "description": "Which files the language server reports problems for."
+        },
+        "yaffle.inlayHints.enabled": {
+          "type": "boolean",
+          "default": true,
+          "markdownDescription": "Show inlay hints: derived formulas (`count = entries.length`) and `@size` decoded / on-disk labels."
+        },
+        "yaffle.codeLens.enabled": {
+          "type": "boolean",
+          "default": true,
+          "markdownDescription": "Show code lenses such as `needs: $version (u32)` above structs that read bound values."
+        },
+        "yaffle.format.enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable the yaffle formatter."
+        },
+        "yaffle.alignAttributesOnType.enabled": {
+          "type": "boolean",
+          "default": true,
+          "markdownDescription": "Align `@` continuation lines with the attributes of the field above while typing (needs `#editor.formatOnType#`, on by default for yaffle)."
+        },
+        "yaffle.sample.redecodeOnSave": {
+          "type": "boolean",
+          "default": true,
+          "description": "Decode the current sample file again whenever a .yfl file is saved."
+        }
+      }
+    },
+    "configurationDefaults": {
+      "[yaffle]": {
+        "editor.formatOnType": true,
+        "editor.semanticHighlighting.enabled": true
+      }
+    }
+  },
+  "scripts": {
+    "build": "node scripts/build.ts",
+    "typecheck": "tsc -p . --noEmit",
+    "test": "vitest run",
+    "package": "vsce package --no-dependencies --allow-missing-repository --skip-license -o dist/yaffle.vsix",
+    "vscode:prepublish": "node scripts/build.ts --minify"
+  },
+  "devDependencies": {
+    "@types/vscode": "^1.100.0",
+    "@vscode/vsce": "^4.0.0",
+    "@yaffle/lsp": "0.1.0",
+    "esbuild": "^0.28.2",
+    "prettier": "^3.9.9",
+    "vscode-languageclient": "^10.1.2",
+    "vscode-languageserver-protocol": "^3.18.4",
+    "vscode-oniguruma": "^2.0.1",
+    "vscode-textmate": "^9.3.2"
+  }
+}

@@ -1,0 +1,39 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "yaffle project (yaffle.json)",
+  "type": "object",
+  "properties": {
+    "sources": {
+      "type": "array",
+      "description": "Globs of the project's .yfl files, relative to yaffle.json.",
+      "items": { "type": "string" },
+      "default": ["**/*.yfl"]
+    },
+    "targets": {
+      "type": "object",
+      "description": "Code generation targets, by name (ts, rust, …).",
+      "properties": {
+        "ts": { "$ref": "#/definitions/target", "description": "TypeScript target." },
+        "rust": { "$ref": "#/definitions/target", "description": "Rust target." }
+      },
+      "additionalProperties": { "$ref": "#/definitions/target" }
+    }
+  },
+  "definitions": {
+    "target": {
+      "type": "object",
+      "required": ["out"],
+      "properties": {
+        "out": {
+          "type": "string",
+          "description": "Output directory for generated code, relative to yaffle.json."
+        },
+        "externs": {
+          "type": "object",
+          "description": "Implementations of extern functions, codecs and types, by name.",
+          "additionalProperties": { "type": "string" }
+        }
+      }
+    }
+  }
+}

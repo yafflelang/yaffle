@@ -1,0 +1,8 @@
+**
+!package.json
+!language-configuration.json
+!dist/extension.cjs
+!dist/server.mjs
+!syntaxes/**
+!snippets/**
+!schemas/**

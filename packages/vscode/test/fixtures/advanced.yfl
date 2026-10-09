@@ -1,0 +1,48 @@
+// Layout groups, alignment origin and offset, the strict fill shorthand, virtual fields,
+// derived arrays with lambdas, writable slices.
+
+struct Volume {
+  u8     nPieces
+  Piece *pieces[nPieces] : u64
+}
+
+export struct Options {
+  u8     n
+  Volume volumes[n]
+  layout {
+    volumes @align(16)
+    volumes[*] { pieces[*]  portals[*].points }
+    volumes[*] @align(16) {
+      pieces
+    }
+  }
+}
+
+export struct Dict {
+  u8  head[0x19] @align(4, offset: 0x19)
+  Blk blocks[n]  @align(0x100, from: file)
+  u8  pad        @padUntil(0x80, strict) @alignEnd(4, 0xff, strict)
+}
+
+struct Node {
+  u8  sizeHigh
+  u32 sizeLow
+  virtual u40 size = (sizeHigh << 32) | sizeLow
+  virtual u16 small = sizeHigh ?= 3
+}
+
+struct Chunk {
+  u8  r
+  u8  s
+  Rec records[r]
+  u8  index[s] = indicesWhere(records, r => r.model != null)
+  Key keys[n] where it == sortedBy(it, k => k.name)
+  u8  ids[m] = map(filter(records, x => x.model == null), x => x.flags)
+  u8  all[k] = concat(index, unique(ids))
+}
+
+struct Overlay {
+  u8     raw[0x40] @hidden
+  Header hdr  from raw[0x00..0x20]
+  Footer foot from raw[0x20..0x40]
+}
