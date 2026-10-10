@@ -261,7 +261,6 @@ Errors returned by a codec are `CODEC` errors.
 | `YAFFLE_CONFORMANCE_FILTER`  | comma-separated patterns on `<dir>/<case name>`: substrings, globs with `*`, `!` excludes |
 | `YAFFLE_CONFORMANCE_TARGETS` | comma-separated targets (`ts,rust`); `ts` also selects `ts:view`, `ts:view` only the view |
 | `YAFFLE_CONFORMANCE_VIEWS=0` | no view-mode targets (§7)                                                                 |
-| `YAFFLE_CONFORMANCE_KEEP=1`  | keep every scratch directory under `conformance/.out` (by default only failing ones)      |
 
 The CLI's `--filter` and `--targets` set the first two.
 

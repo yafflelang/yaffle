@@ -83,8 +83,6 @@ export interface ConformancePlan {
   compile: CompileFn;
   /** Compile results by case directory path, shared by every target. */
   compiled: Map<string, Compiled>;
-  /** Keep every case directory's scratch output (YAFFLE_CONFORMANCE_KEEP=1), not just failing ones. */
-  keepOutput: boolean;
 }
 
 /** A compiled schema, or the verdict (skip or fail) for every case of its directory. */
@@ -139,8 +137,7 @@ export async function planConformance(opts: RunnerOptions = {}): Promise<Conform
     filter: parseFilter(env.YAFFLE_CONFORMANCE_FILTER),
     workRoot: opts.workRoot ?? join(repoRoot, "conformance", ".out"),
     compile: opts.compile ?? ((await import("yaffle")) as { compile: CompileFn }).compile,
-    compiled: new Map(),
-    keepOutput: env.YAFFLE_CONFORMANCE_KEEP === "1"
+    compiled: new Map()
   };
 }
 
@@ -279,8 +276,7 @@ export async function runDir(
   const outcomes = cases.map(c => outcome(c.name, verdicts.get(c.name)!));
   // Scratch output can be large (generated code and build artifacts per target), so a directory's
   // work dir is deleted once all its cases pass. Failures keep theirs for debugging.
-  if (!plan.keepOutput && outcomes.every(o => o.status !== "fail"))
-    rmSync(workDir, { recursive: true, force: true });
+  if (outcomes.every(o => o.status !== "fail")) rmSync(workDir, { recursive: true, force: true });
   return done(outcomes);
 }
 

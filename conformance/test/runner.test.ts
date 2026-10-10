@@ -621,26 +621,22 @@ describe("view mode (docs/CONFORMANCE.md §7)", () => {
 });
 
 describe("scratch output", () => {
-  async function workDirKept(env: Record<string, string>, fail: boolean) {
+  async function workDirKept(fail: boolean) {
     const root = makeCaseRoot({ d: { cases: BASIC } });
     const adapter = fakeAdapter("ts", c => {
       const r = perfectResult(c);
       if (fail && c.name === "parse") r.json = { x: 99 };
       return r;
     });
-    await runConformance(options(root, { adapters: adapters(adapter), env }));
+    await runConformance(options(root, { adapters: adapters(adapter) }));
     return existsSync(join(root, ".out", "ts", "d"));
   }
 
   it("deletes a passing directory's work dir", async () => {
-    expect(await workDirKept({}, false)).toBe(false);
+    expect(await workDirKept(false)).toBe(false);
   });
 
   it("keeps a failing directory's work dir for debugging", async () => {
-    expect(await workDirKept({}, true)).toBe(true);
-  });
-
-  it("keeps everything with YAFFLE_CONFORMANCE_KEEP=1", async () => {
-    expect(await workDirKept({ YAFFLE_CONFORMANCE_KEEP: "1" }, false)).toBe(true);
+    expect(await workDirKept(true)).toBe(true);
   });
 });
