@@ -1,7 +1,7 @@
 {
   "name": "yaffle",
-  "version": "0.1.0",
-  "description": "yaffle compiler: Yet Another File-Format Language & Engine",
+  "version": "0.0.1",
+  "description": "A language for describing binary file formats, compiled to typed readers and writers",
   "type": "module",
   "exports": {
     ".": {
@@ -21,7 +21,7 @@
     }
   },
   "bin": {
-    "yaffle": "./dist/cli/main.js"
+    "yaffle": "dist/cli/main.js"
   },
   "files": [
     "dist",
@@ -31,10 +31,34 @@
     "build": "tsc -p .",
     "typecheck": "tsc -p . --noEmit",
     "test": "vitest run",
-    "yaffle": "node --conditions=development src/cli/main.ts"
+    "yaffle": "node --conditions=development src/cli/main.ts",
+    "prepublishOnly": "npm run build"
   },
   "dependencies": {
-    "@yaffle/runtime": "0.1.0"
+    "@yaffle/runtime": "0.0.1"
   },
-  "license": "ISC"
+  "license": "ISC",
+  "keywords": [
+    "binary",
+    "file-format",
+    "parser",
+    "serializer",
+    "codegen",
+    "kaitai",
+    "dsl",
+    "compiler"
+  ],
+  "author": "Noah",
+  "homepage": "https://noahcoolboy.github.io/yaffle/",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/noahcoolboy/yaffle.git",
+    "directory": "packages/compiler"
+  },
+  "engines": {
+    "node": ">=24"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
 }
