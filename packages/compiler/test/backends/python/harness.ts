@@ -59,7 +59,7 @@ export function generate(
 }
 
 /**
- * Runs a Python script with the generated package importable (and `yaffle_runtime` unless
+ * Runs a Python script with the generated package importable (and `yaffle` unless
  * `isolated`). The script prints JSON on its last line; the parsed value is returned.
  */
 export async function py(
@@ -91,7 +91,7 @@ export async function py(
 /** Python prelude: JSON output helper and error capture. */
 export const PRELUDE = `
 import json, sys, asyncio
-import yaffle_runtime as rt
+import yaffle as rt
 
 def err(f):
     try:

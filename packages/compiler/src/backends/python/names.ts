@@ -36,6 +36,12 @@ const ANNOTATION_NAMES = [
 
 const ENUM_RESERVED = new Set(["name", "value", "mro"]);
 
+/**
+ * Name of the inlined runtime package inside the output (`inlineRuntime`). Not `yaffle`, so it
+ * cannot collide with a user module of that name; top-level modules never take this name.
+ */
+export const INLINE_RUNTIME_PACKAGE = "_yaffle";
+
 /** Module-level names generated code uses unqualified besides builtins. */
 const MODULE_NAMES = new Set(["annotations", "dataclass", "field", "Variant"]);
 
@@ -153,10 +159,11 @@ export function moduleSegments(name: string): string[] {
     .replace(/\.yfl$/, "")
     .split("/")
     .filter(s => s !== "" && s !== ".")
-    .map(seg => {
+    .map((seg, i) => {
       let s = seg.replace(/[^A-Za-z0-9_]/g, "_");
       if (s === "" || /^[0-9]/.test(s)) s = "m" + s;
-      while (PY_KEYWORDS.has(s) || s === "__init__") s += "_";
+      while (PY_KEYWORDS.has(s) || s === "__init__" || (i === 0 && s === INLINE_RUNTIME_PACKAGE))
+        s += "_";
       return s;
     });
 }

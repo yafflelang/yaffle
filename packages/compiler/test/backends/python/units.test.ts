@@ -18,7 +18,7 @@ async function unittest(dir: string): Promise<string> {
 }
 
 describe.skipIf(!HAVE_PYTHON)("Python unit tests", () => {
-  it("yaffle_runtime", async () => {
+  it("yaffle", async () => {
     const out = await unittest(join(runtimePackageRoot(), "tests"));
     expect(out).toMatch(/Ran \d+ tests/);
   });

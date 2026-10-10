@@ -2,7 +2,7 @@
  * Python backend: IR → a Python package with one module per IR module. Each module holds an
  * `enum.IntEnum` per enum, a dataclass per struct (root structs get `parse`, `serialize`,
  * `to_json`, `from_json`, … methods) and imperative readers, writers, JSON converters and view
- * scanners over the pure-Python runtime `yaffle_runtime`. See docs/targets/python.md.
+ * scanners over the pure-Python runtime `yaffle`. See docs/targets/python.md.
  */
 import { readFileSync, readdirSync } from "node:fs";
 import { dirname, join } from "node:path";
@@ -15,19 +15,16 @@ import { ExprCompiler, detachedCtx, type ExprCtx } from "./expr.ts";
 import { JsonEmitter } from "./json.ts";
 import { Model } from "./model.ts";
 import { ModuleCtx, type EmitOptions } from "./module.ts";
-import { Names, moduleFile, moduleSegments } from "./names.ts";
+import { INLINE_RUNTIME_PACKAGE, Names, moduleFile, moduleSegments } from "./names.ts";
 import { ReadEmitter } from "./read.ts";
 import { TypeEmitter } from "./types.ts";
 import { emitViewInfo } from "./view.ts";
 import { WriteEmitter } from "./write.ts";
 
 export interface PythonTargetOptions {
-  /** Python module the generated code imports the runtime from (default "yaffle_runtime"). */
+  /** Python module the generated code imports the runtime from (default "yaffle"). */
   runtimeModule?: string;
 }
-
-/** Name of the inlined runtime package inside the output. */
-const INLINE_RUNTIME_PACKAGE = "_yaffle_runtime";
 
 export function generatePython(input: IrProgram, options: BackendOptions): GeneratedFile[] {
   const model = new Model(input);
@@ -47,9 +44,7 @@ export function generatePython(input: IrProgram, options: BackendOptions): Gener
   const target = (options.targetOptions ?? {}) as PythonTargetOptions;
   const emitOpts: EmitOptions = {
     externs: options.externs,
-    runtime: options.inlineRuntime
-      ? INLINE_RUNTIME_PACKAGE
-      : (target.runtimeModule ?? "yaffle_runtime"),
+    runtime: options.inlineRuntime ? INLINE_RUNTIME_PACKAGE : (target.runtimeModule ?? "yaffle"),
     runtimeRelative: options.inlineRuntime === true
   };
 
@@ -203,13 +198,13 @@ export function runtimeFiles(): GeneratedFile[] {
     }));
 }
 
-/** Directory of the `yaffle_runtime` package sources. */
+/** Directory of the `yaffle` package sources. */
 export function runtimeSourceDir(): string {
   const here = dirname(fileURLToPath(import.meta.url));
-  return join(here, "../../../../runtime-python/yaffle_runtime");
+  return join(here, "../../../../runtime-python/yaffle");
 }
 
-/** Directory to put on PYTHONPATH so `import yaffle_runtime` works. */
+/** Directory to put on PYTHONPATH so `import yaffle` works. */
 export function runtimePackageRoot(): string {
   return dirname(runtimeSourceDir());
 }

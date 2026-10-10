@@ -45,7 +45,7 @@ async function run(body: string): Promise<unknown> {
     gen,
     `${PRELUDE}
 from ${gen.pkg}.schema import *
-from yaffle_runtime.view import node_of
+from yaffle.view import node_of
 def store_of(v): return node_of(v).space.store
 def frags(cls, frag, arr, sizes, size="exp"):
     body = Body(a=1, mid=bytes(range(200)) * 3, z=0x77)

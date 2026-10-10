@@ -1,4 +1,4 @@
-"""yaffle_runtime: the runtime of the Python code the yaffle compiler generates.
+"""yaffle: the runtime of the Python code the yaffle compiler generates.
 
 Generated modules import it as ``_rt``. Pure Python 3.12+, no dependencies. Besides what
 generated code calls, it offers sources (:func:`file_source`), errors (:class:`YaffleError`),

@@ -1,7 +1,7 @@
 # Python target
 
 The Python backend (`packages/compiler/src/backends/python`) turns the IR into a Python package
-with one module per IR module, over the pure-Python runtime `yaffle_runtime`
+with one module per IR module, over the pure-Python runtime `yaffle`
 (`packages/runtime-python`, Python 3.12+, no dependencies). Generated code and the runtime are
 `mypy --strict` clean.
 
@@ -32,9 +32,9 @@ v._patches(); v._commit(grow="append")               # "default" | "append" | "s
   optional.
 - **Modules:** IR module `formats/archive` becomes `formats/archive.py`, with an
   `__init__.py` per package. Modules import each other as module objects (relative imports), so
-  cycles between modules work. With `inlineRuntime` the runtime is copied into
-  `_yaffle_runtime/` and imported relatively; `targets.python.runtimeModule` names another
-  runtime module.
+  cycles between modules work. With `inlineRuntime` the runtime is copied into `_yaffle/` and
+  imported relatively (a top-level IR module named `_yaffle` becomes `_yaffle_`);
+  `targets.python.runtimeModule` names another runtime module.
 
 ### Types
 
@@ -46,7 +46,7 @@ v._patches(); v._commit(grow="append")               # "default" | "append" | "s
 | other arrays            | `list[T]`                                                  |
 | struct                  | `@dataclass(kw_only=True)`                                 |
 | enum                    | `enum.IntEnum` (open enums: `E \| int`)                    |
-| union                   | `yaffle_runtime.Variant(type, value)`                      |
+| union                   | `yaffle.Variant(type, value)`                              |
 | nullable pointer        | `T \| None`                                                |
 | one-way transform       | the transformed value (canonical JSON shows the raw value) |
 

@@ -2,7 +2,7 @@
  * Conformance adapter for the Python target (docs/CONFORMANCE.md, conformance/src/adapter.ts).
  *
  * Generates the case directory's program as the package `yfl_gen` in `workDir`, writes the cases
- * to a spec file and runs one Python process per case directory (`yaffle_runtime._harness`),
+ * to a spec file and runs one Python process per case directory (`yaffle._harness`),
  * which writes one result file per case: a crash loses one case, and huge JSON doesn't go
  * through a pipe. Results carry the actual JSON, bytes and error; the runner re-checks them.
  */
@@ -109,7 +109,7 @@ export const adapter = {
       specPath,
       JSON.stringify({ maxHexBytes: MAX_HEX_BYTES, mode: mode ?? "parse", cases: specCases })
     );
-    const run = await runPython(["-m", "yaffle_runtime._harness", specPath, outDir], {
+    const run = await runPython(["-m", "yaffle._harness", specPath, outDir], {
       pythonPath: [runtimePackageRoot(), workDir],
       cwd: workDir
     });

@@ -1,4 +1,4 @@
-"""Unit tests of yaffle_runtime (run: python -m unittest discover -s packages/runtime-python/tests)."""
+"""Unit tests of yaffle (run: python -m unittest discover -s packages/runtime-python/tests)."""
 
 from __future__ import annotations
 
@@ -9,8 +9,8 @@ import unittest
 from dataclasses import dataclass
 from typing import Any
 
-import yaffle_runtime as rt
-from yaffle_runtime.layout import StickyPolicy
+import yaffle as rt
+from yaffle.layout import StickyPolicy
 
 
 def code_of(f: Any) -> tuple[str, list[Any]]:

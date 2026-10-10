@@ -143,7 +143,7 @@ print(json.dumps({"async": asyncio.run(main()), "file": fs, "syncerr": sync_err}
     });
   });
 
-  it("inlineRuntime: the package runs without yaffle_runtime installed", async () => {
+  it("inlineRuntime: the package runs without yaffle installed", async () => {
     const gen = generate(
       "feat_inline",
       program({
@@ -158,7 +158,7 @@ print(json.dumps({"async": asyncio.run(main()), "file": fs, "syncerr": sync_err}
 import json, sys
 from ${gen.pkg}.schema import Shape
 s = Shape.parse(bytes.fromhex("01" "0100" "ffff"))
-print(json.dumps({"json": s.to_json(), "rt": "yaffle_runtime" in sys.modules,
+print(json.dumps({"json": s.to_json(), "rt": "yaffle" in sys.modules,
                   "out": s.serialize().hex()}))
 `,
       { isolated: true }
@@ -195,7 +195,7 @@ describe.skipIf(!MYPY)("Python backend: mypy --strict", () => {
       MYPY_CACHE_DIR: join(cacheDir(), "mypy")
     };
     const [cmd, ...args] = MYPY!;
-    const out = execFileSync(cmd!, [...args, "--strict", "-p", gen.pkg, "-p", "yaffle_runtime"], {
+    const out = execFileSync(cmd!, [...args, "--strict", "-p", gen.pkg, "-p", "yaffle"], {
       cwd: gen.dir,
       env: { ...env, MYPYPATH: `${runtimePackageRoot()}` },
       encoding: "utf8"

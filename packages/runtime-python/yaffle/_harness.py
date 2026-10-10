@@ -1,6 +1,6 @@
 """Conformance harness: runs a batch of conformance cases through generated code.
 
-Usage: ``python -m yaffle_runtime._harness <spec.json> <results-dir>``
+Usage: ``python -m yaffle._harness <spec.json> <results-dir>``
 
 The spec (written by the Python backend's conformance adapter) lists the cases of one case
 directory: which generated module and class to use, the input bytes (hex or a file), the JSON,
