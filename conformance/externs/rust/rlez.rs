@@ -1,6 +1,6 @@
 //! `extern codec rlez @streaming`: `rle` pairs then a 0x00 terminator (see ../ts/rlez.ts).
 //! Mapped as `#RLEZ`; the runtime calls `decode_streaming` for @streaming codecs.
-use yaffle_runtime::{Codec, CodecCtx};
+use yaffle::{Codec, CodecCtx};
 
 fn pairs_encode(input: &[u8]) -> Vec<u8> {
     let mut out = Vec::new();

@@ -1,8 +1,8 @@
 //! `extern type VarInt(u8 maxBytes) : u64`: unsigned LEB128 (see ../ts/varint.ts).
-//! Mapped as `#VARINT`: a value implementing `yaffle_runtime::ExternType<Value = u64>`.
+//! Mapped as `#VARINT`: a value implementing `yaffle::ExternType<Value = u64>`.
 //! (`size` can't report an error through the trait: a varint longer than `maxBytes` is given the
 //! size `maxBytes + 1`, past what `read` accepts, so `read` reports it.)
-use yaffle_runtime::{Arg, ExternType};
+use yaffle::{Arg, ExternType};
 
 fn max_bytes(args: &[Arg]) -> usize {
     args.first().and_then(|a| a.as_u64()).unwrap_or(10) as usize

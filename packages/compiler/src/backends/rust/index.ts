@@ -1,5 +1,5 @@
 /**
- * Rust backend: IR → Rust source using the `yaffle-runtime` crate (or an inlined copy).
+ * Rust backend: IR → Rust source using the `yaffle` crate (or an inlined copy).
  *
  * Output: one module file (`mod.rs`) with every type and its reader, writer and canonical JSON,
  * the root API, and per-IR-module re-export submodules. With `targetOptions.crate` it emits a
@@ -8,8 +8,8 @@
  *
  * Target options (yaffle.json `targets.rust`, all optional):
  * - `crate`: `{ name?: string, runtimePath?: string }`: emit a crate. `runtimePath` is the path
- *   of the `yaffle-runtime` crate relative to the output directory (ignored when inlining).
- * - `runtime`: Rust path of the runtime crate in module mode (default `::yaffle_runtime`).
+ *   of the `yaffle` crate relative to the output directory (ignored when inlining).
+ * - `runtime`: Rust path of the runtime crate in module mode (default `::yaffle`).
  * - `fileName`: the module file name in module mode (default `mod.rs`).
  * - `views`: also generate lazy views: `X::view(bytes)` and `XView` types.
  * - `dependencies`: extra crates for the externs (`{ "zstd": "0.13" }`), added to Cargo.toml in
@@ -84,7 +84,7 @@ export function generateModule(
   items.push(...structItems, ...rootItems);
 
   // Re-exports per IR module.
-  const modNames = new NameSet(["yaffle_runtime", "yr"]);
+  const modNames = new NameSet(["yaffle", "yr"]);
   const mods: string[] = [];
   for (const mod of program.modules) {
     const inMod = (x: { module?: string }) => x.module === mod.path || x.module === mod.name;
@@ -160,7 +160,7 @@ export function cargoToml(
     "",
     "[dependencies]"
   ];
-  if (runtimeDep !== undefined) lines.push(`yaffle-runtime = { path = ${tomlValue(runtimeDep)} }`);
+  if (runtimeDep !== undefined) lines.push(`yaffle = { path = ${tomlValue(runtimeDep)} }`);
   lines.push(...extraDeps, "");
   return lines.join("\n");
 }
@@ -233,10 +233,10 @@ export const rustBackend: Backend = {
         : "mod.rs";
     const prefix = crate ? "crate" : "self";
     const runtime = inline
-      ? `${prefix}::yaffle_runtime`
+      ? `${prefix}::yaffle`
       : !crate && typeof to["runtime"] === "string"
         ? to["runtime"]
-        : "::yaffle_runtime";
+        : "::yaffle";
     // Extern files are relative to the output directory: `#[path]`s go up from the file's.
     const up = fileName
       .split("/")
@@ -247,7 +247,7 @@ export const rustBackend: Backend = {
     const ext = externModules(options.externs, prefix, file =>
       file.startsWith("/") ? file : up + file.replace(/^\.\//, "")
     );
-    const header = inline ? ["pub mod yaffle_runtime;", ""] : [];
+    const header = inline ? ["pub mod yaffle;", ""] : [];
     for (const [path, mod] of ext.files)
       header.push(`#[path = ${strLit(path)}]`, `pub mod ${mod};`);
     if (ext.files.size > 0) header.push("");
@@ -267,7 +267,7 @@ export const rustBackend: Backend = {
     if (inline)
       for (const s of runtimeSources())
         files.push({
-          path: `${crate ? "src/" : ""}yaffle_runtime/${s.name}`,
+          path: `${crate ? "src/" : ""}yaffle/${s.name}`,
           contents: s.contents
         });
     return files;

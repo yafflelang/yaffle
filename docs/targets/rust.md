@@ -1,7 +1,7 @@
 # Rust target
 
 The Rust backend (`packages/compiler/src/backends/rust`) turns the IR into Rust source that
-depends on the runtime crate `yaffle-runtime` (`packages/runtime-rust`, no dependencies), referred
+depends on the runtime crate `yaffle` (`packages/runtime-rust`, no dependencies), referred
 to as `yr`, or carries a copy of it inline (`inlineRuntime`).
 
 ## Generated code
@@ -10,7 +10,7 @@ One module file (`mod.rs`) with every type, its reader, writer and canonical JSO
 and one re-export submodule per IR module. Target options (`targets.rust`, all optional):
 
 - `crate: { name?, runtimePath? }`: emit a whole crate (`Cargo.toml` + `src/lib.rs`);
-- `runtime`: the runtime's Rust path in module mode (default `::yaffle_runtime`);
+- `runtime`: the runtime's Rust path in module mode (default `::yaffle`);
 - `fileName`: the module file name (default `mod.rs`);
 - `views`: also generate views (`X::view`, `XView`);
 - `dependencies`: crates the externs need (`{ "zstd": "0.13" }`), added to `Cargo.toml`;
@@ -111,7 +111,7 @@ them into its harness crate.
 | `extern type T(args) : V` | a value implementing `yr::ExternType<Value = V>`                                                                                    |
 | `extern fn f(…) -> R`     | a function taking typed arguments (integers as their Rust type, strings `&str`, bytes `&[u8]`)                                      |
 
-`conformance/externs/rust/stub/yaffle_runtime.rs` mirrors `Arg`, `CodecCtx`, `Codec` and
+`conformance/externs/rust/stub/yaffle.rs` mirrors `Arg`, `CodecCtx`, `Codec` and
 `ExternType`, so the extern files can be unit-tested on their own
 (`conformance/scripts/test-rust-externs.sh`); keep it in sync with `codec.rs`. Async codecs run
 synchronously.

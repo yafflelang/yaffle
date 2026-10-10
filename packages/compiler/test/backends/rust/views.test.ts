@@ -48,7 +48,7 @@ const TESTS = (pf: string, chunkHex: string) => `
 #[cfg(test)]
 mod view_tests {
     use super::*;
-    use yaffle_runtime as yr;
+    use yaffle as yr;
 
     fn unhex(s: &str) -> Vec<u8> { yr::json::unhex(s).unwrap() }
 

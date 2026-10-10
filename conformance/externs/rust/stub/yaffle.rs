@@ -1,4 +1,4 @@
-//! A stand-in for the host-interface part of the Rust runtime (`yaffle_runtime`), so the extern
+//! A stand-in for the host-interface part of the Rust runtime (`yaffle`), so the extern
 //! files can be unit-tested without it (conformance/scripts/test-rust-externs.sh). It mirrors
 //! `packages/runtime-rust/src/codec.rs` (Arg, CodecCtx, Codec, ExternType) as the Rust backend
 //! defined them; the real crate is what generated code links against.

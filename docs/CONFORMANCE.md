@@ -213,19 +213,19 @@ read, write }`). Codec arguments arrive in `ctx.args` (u8 → number, u64 → bi
 Uint8Array).
 
 **Rust** (the host interface of `packages/runtime-rust`): the file becomes a module of the
-generated crate and can `use yaffle_runtime`. The item is the extern's name, or the `#ITEM` of the
+generated crate and can `use yaffle`. The item is the extern's name, or the `#ITEM` of the
 mapping. Dependencies other than the runtime are listed in yaffle.json under
 `targets.rust.dependencies`.
 
-| Extern                     | Item                                                                                                                                                               |
-| -------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `extern fn f(T a, …) -> R` | `pub fn f(a: T, …) -> R` (ints as their Rust type, `u8[]` → `&[u8]`, `char[]` → `&str`)                                                                            |
-| `extern codec c(args)`     | a value implementing `yaffle_runtime::Codec`: `decode(&self, input, &CodecCtx { args, output_size, position })`, `encode(…)`; arguments are `yaffle_runtime::Arg`s |
-| `@streaming` codec         | also `decode_streaming(&self, input, ctx) -> Result<(Vec<u8>, usize), String>` (output, bytes consumed)                                                            |
-| `async codec`              | the same trait, synchronous: an async codec gives the same bytes as its sync twin                                                                                  |
-| `extern type X(args) : T`  | a value implementing `yaffle_runtime::ExternType<Value = T>`: `size(&self, bytes, args) -> Option<usize>`, `read`, `write`                                         |
+| Extern                     | Item                                                                                                                                               |
+| -------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `extern fn f(T a, …) -> R` | `pub fn f(a: T, …) -> R` (ints as their Rust type, `u8[]` → `&[u8]`, `char[]` → `&str`)                                                            |
+| `extern codec c(args)`     | a value implementing `yaffle::Codec`: `decode(&self, input, &CodecCtx { args, output_size, position })`, `encode(…)`; arguments are `yaffle::Arg`s |
+| `@streaming` codec         | also `decode_streaming(&self, input, ctx) -> Result<(Vec<u8>, usize), String>` (output, bytes consumed)                                            |
+| `async codec`              | the same trait, synchronous: an async codec gives the same bytes as its sync twin                                                                  |
+| `extern type X(args) : T`  | a value implementing `yaffle::ExternType<Value = T>`: `size(&self, bytes, args) -> Option<usize>`, `read`, `write`                                 |
 
-`conformance/externs/rust/stub/yaffle_runtime.rs` mirrors that interface so the extern files can be
+`conformance/externs/rust/stub/yaffle.rs` mirrors that interface so the extern files can be
 unit-tested without the runtime (`conformance/scripts/test-rust-externs.sh`).
 
 Errors returned by a codec are `CODEC` errors.

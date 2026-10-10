@@ -1,6 +1,6 @@
 //! `extern codec xor(u8 key) @ranged`: every byte XOR `key` (see ../ts/xor.ts).
-//! Mapped as `"…/xor.rs#XOR"`: a value implementing `yaffle_runtime::Codec`.
-use yaffle_runtime::{Arg, Codec, CodecCtx};
+//! Mapped as `"…/xor.rs#XOR"`: a value implementing `yaffle::Codec`.
+use yaffle::{Arg, Codec, CodecCtx};
 
 pub fn key_arg(args: &[Arg], name: &str) -> Result<u8, String> {
     args.first()

@@ -2,7 +2,7 @@
 //! The Rust runtime calls async codecs through the same synchronous `Codec` trait, so this is
 //! `xor` under another name: an async codec must give the same bytes as its sync twin.
 //! Mapped as `#AXOR`.
-use yaffle_runtime::{Codec, CodecCtx};
+use yaffle::{Codec, CodecCtx};
 
 fn apply(input: &[u8], ctx: &CodecCtx) -> Result<Vec<u8>, String> {
     let key = ctx
@@ -35,7 +35,7 @@ impl Codec for AXor {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use yaffle_runtime::Arg;
+    use yaffle::Arg;
     #[test]
     fn same_as_xor() {
         let args = [Arg::Int(0x0f)];

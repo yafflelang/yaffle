@@ -140,7 +140,7 @@ function mainRs(spec: HarnessSpec): string {
   const mods = [...spec.modules.map(m => m.name), ...Object.keys(spec.sources ?? {})];
   return `// Generated test harness. Do not edit.
 #![allow(dead_code, unused_imports, unused_variables)]
-use yaffle_runtime as yr;
+use yaffle as yr;
 ${mods.map(m => `mod ${m};`).join("\n")}
 
 fn bytes_of(v: &yr::Value) -> yr::Result<Vec<u8>> {
@@ -250,7 +250,7 @@ export function writeHarness(spec: HarnessSpec): void {
   for (const mod of spec.modules) {
     writeIfChanged(
       join(spec.dir, `src/${mod.name}.rs`),
-      generateModule(mod.program, mod.externs ?? {}, "::yaffle_runtime", [], {
+      generateModule(mod.program, mod.externs ?? {}, "::yaffle", [], {
         views: mod.views === true
       })
     );

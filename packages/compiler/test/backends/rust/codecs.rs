@@ -1,5 +1,5 @@
 //! Test codecs and extern types for the Rust backend tests.
-use yaffle_runtime as yr;
+use yaffle as yr;
 
 /// `xor(key)`: XOR every byte with the key argument (default 0x5a).
 pub struct Xor;

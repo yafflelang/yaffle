@@ -1,6 +1,6 @@
 //! `extern codec rle`: (count, byte) pairs with count 1..255, greedy encoder (see ../ts/rle.ts).
 //! Mapped as `#RLE`.
-use yaffle_runtime::{Codec, CodecCtx};
+use yaffle::{Codec, CodecCtx};
 
 pub fn rle_decode(input: &[u8]) -> Result<Vec<u8>, String> {
     if input.len() % 2 != 0 {

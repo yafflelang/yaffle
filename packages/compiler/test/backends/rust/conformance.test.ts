@@ -13,7 +13,7 @@ import { L, S, codec, e, f, konst, len, lenOf, program, t, vt } from "./ir-build
 import { hasRust, scratch } from "./rust-utils.ts";
 
 const XOR_RS = `
-use yaffle_runtime as yr;
+use yaffle as yr;
 pub struct Xor;
 pub const XOR: Xor = Xor;
 impl yr::Codec for Xor {

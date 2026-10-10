@@ -1,6 +1,6 @@
 //! `extern type Bcd16 : u16 @size(2)`: four BCD digits, most significant first (see ../ts/bcd16.ts).
 //! Mapped as `#BCD16`.
-use yaffle_runtime::{Arg, ExternType};
+use yaffle::{Arg, ExternType};
 
 pub struct Bcd16;
 pub const BCD16: Bcd16 = Bcd16;

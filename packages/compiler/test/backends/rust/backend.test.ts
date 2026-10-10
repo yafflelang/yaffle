@@ -52,7 +52,7 @@ describe("rust backend packaging", () => {
     expect(src).toContain("pub r#type: u8,");
     expect(src).toContain("pub self_: u16,");
     expect(src).toContain("pub foo_bar: String,");
-    expect(src).toContain("use ::yaffle_runtime as yr;");
+    expect(src).toContain("use ::yaffle as yr;");
     expect(src).toContain("pub fn parse(bytes: &[u8]) -> yr::Result<Self>");
   });
 
@@ -62,23 +62,23 @@ describe("rust backend packaging", () => {
       targetOptions: { crate: { name: "docs", runtimePath: "../runtime" } }
     });
     expect(crate.map(f => f.path)).toEqual(["Cargo.toml", "src/lib.rs"]);
-    expect(crate[0]!.contents).toContain('yaffle-runtime = { path = "../runtime" }');
+    expect(crate[0]!.contents).toContain('yaffle = { path = "../runtime" }');
     const inline = rustBackend.generate(simple, {
       externs: {},
       inlineRuntime: true,
       targetOptions: { crate: { name: "docs" } }
     });
-    expect(inline.map(f => f.path)).toContain("src/yaffle_runtime/mod.rs");
-    expect(inline.map(f => f.path)).toContain("src/yaffle_runtime/write.rs");
-    expect(inline[0]!.contents).not.toContain("yaffle-runtime");
+    expect(inline.map(f => f.path)).toContain("src/yaffle/mod.rs");
+    expect(inline.map(f => f.path)).toContain("src/yaffle/write.rs");
+    expect(inline[0]!.contents).not.toContain("yaffle");
     expect(inline.find(f => f.path === "src/lib.rs")!.contents).toContain(
-      "use crate::yaffle_runtime as yr;"
+      "use crate::yaffle as yr;"
     );
     for (const s of runtimeSources()) expect(s.contents).not.toContain("#[cfg(test)]");
     const mod = rustBackend.generate(simple, { externs: {}, inlineRuntime: true });
     expect(mod[0]!.path).toBe("mod.rs");
-    expect(mod[0]!.contents).toContain("pub mod yaffle_runtime;");
-    expect(mod[0]!.contents).toContain("use self::yaffle_runtime as yr;");
+    expect(mod[0]!.contents).toContain("pub mod yaffle;");
+    expect(mod[0]!.contents).toContain("use self::yaffle as yr;");
   });
 
   it("requires extern implementations", () => {
@@ -150,7 +150,7 @@ fn roundtrip() {
     let built = Doc { items: vec![Item { r#type: 9, self_: 1 }], foo_bar: "x".into(), ..Default::default() };
     assert_eq!(built.serialize().unwrap(), vec![1, 9, 1, 0, b'x', 0]);
     let err = Doc::parse(&[5, 1]).unwrap_err();
-    assert_eq!(err.code, yaffle_t_inline::yaffle_runtime::ErrorCode::Eof);
+    assert_eq!(err.code, yaffle_t_inline::yaffle::ErrorCode::Eof);
 }
 `
       );

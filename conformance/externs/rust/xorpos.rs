@@ -1,6 +1,6 @@
 //! `extern codec xorpos(u8 key) @ranged`: byte i of the region XOR `(key + i) & 0xff`, where i
 //! counts from the start of the whole encoded region (see ../ts/xorpos.ts). Mapped as `#XORPOS`.
-use yaffle_runtime::{Codec, CodecCtx};
+use yaffle::{Codec, CodecCtx};
 
 fn apply(input: &[u8], ctx: &CodecCtx) -> Result<Vec<u8>, String> {
     let key = ctx
@@ -32,7 +32,7 @@ impl Codec for XorPos {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use yaffle_runtime::Arg;
+    use yaffle::Arg;
     #[test]
     fn positions() {
         let args = [Arg::Int(0xfe)];
