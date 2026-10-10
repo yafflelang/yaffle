@@ -1,10 +1,10 @@
 <p align="center">
-  <a href="https://noahcoolboy.github.io/yaffle/"><img src="docs/assets/yaffle.svg" alt="yaffle logo" height="170"></a>
+  <a href="https://yafflelang.org/"><img src="docs/assets/yaffle.svg" alt="yaffle logo" height="170"></a>
 </p>
 <h1 align="center">yaffle</h1>
 <p align="center">
   <a href="https://github.com/noahcoolboy/yaffle/actions/workflows/ci.yml"><img src="https://github.com/noahcoolboy/yaffle/actions/workflows/ci.yml/badge.svg" alt="CI" height="20"></a>
-  <a href="https://noahcoolboy.github.io/yaffle/"><img src="https://img.shields.io/badge/docs-mdBook-67b528" alt="Docs" height="20"></a>
+  <a href="https://yafflelang.org/"><img src="https://img.shields.io/badge/docs-mdBook-67b528" alt="Docs" height="20"></a>
 </p>
 
 **Y**et **A**nother **F**ile-**F**ormat **L**anguage & **E**ngine: a language for binary file
