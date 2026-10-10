@@ -25,7 +25,7 @@ import { WriteEmitter } from "./write.ts";
 export interface GoTargetOptions {
   /** Package name of the generated code (default "gen"). */
   package?: string;
-  /** Import path of the runtime (default "yafflelang.org/runtime"). */
+  /** Import path of the runtime (default "yafflelang.org/go/yaffle"). */
   runtimeModule?: string;
   /** Generate lazy views (`XView`, `ViewX`; default true). */
   views?: boolean;
@@ -36,7 +36,7 @@ export interface GoTargetOptions {
   materialize?: boolean;
 }
 
-export const DEFAULT_RUNTIME = "yafflelang.org/runtime";
+export const DEFAULT_RUNTIME = "yafflelang.org/go/yaffle";
 
 export function generateGo(input: IrProgram, options: BackendOptions): GeneratedFile[] {
   return generateGoWithInfo(input, options).files;

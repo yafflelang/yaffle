@@ -97,8 +97,8 @@ export class ModuleCtx {
   }
 
   importBlock(): string[] {
-    // The runtime's package is named `yaffle`; name it explicitly when the import path ends
-    // differently (yafflelang.org/runtime).
+    // The runtime's package is named `yaffle`; name it explicitly when a custom import path
+    // ends differently.
     this.use(this.runtime, this.runtime.split("/").pop() === "yaffle" ? undefined : "yaffle");
     const std: string[] = [];
     const other: string[] = [];

@@ -8,7 +8,7 @@ import (
 	"errors"
 	"fmt"
 
-	yaffle "yafflelang.org/runtime"
+	"yafflelang.org/go/yaffle"
 )
 
 type rlezCodec struct{}

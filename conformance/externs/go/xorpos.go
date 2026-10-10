@@ -6,7 +6,7 @@ package externs
 import (
 	"fmt"
 
-	yaffle "yafflelang.org/runtime"
+	"yafflelang.org/go/yaffle"
 )
 
 type xorposCodec struct{}

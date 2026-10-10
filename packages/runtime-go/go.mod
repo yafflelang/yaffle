@@ -1,3 +1,3 @@
-module yafflelang.org/runtime
+module yafflelang.org/go/yaffle
 
 go 1.22

@@ -25,7 +25,7 @@ import (
 	"context"
 	"errors"
 
-	yaffle "yafflelang.org/runtime"
+	"yafflelang.org/go/yaffle"
 )
 
 var counter byte

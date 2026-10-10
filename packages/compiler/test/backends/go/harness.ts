@@ -87,12 +87,11 @@ export async function gofmtList(dir: string): Promise<string> {
 
 /** A main.go importing the generated package. */
 export function mainGo(body: string, imports: string[] = []): string {
-  const imps = ["fmt", "yafflecase/gen", ...imports];
+  const imps = ["fmt", "yafflecase/gen", "yafflelang.org/go/yaffle", ...imports];
   return `package main
 
 import (
 ${imps.map(i => `\t${JSON.stringify(i)}`).join("\n")}
-\tyaffle "yafflelang.org/runtime"
 )
 
 var _ = yaffle.LE
