@@ -35,7 +35,7 @@
     "prepublishOnly": "npm run build"
   },
   "dependencies": {
-    "@yaffle/runtime": "0.0.1"
+    "@yafflelang/runtime": "0.0.1"
   },
   "license": "ISC",
   "keywords": [

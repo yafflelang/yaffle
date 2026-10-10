@@ -1,5 +1,5 @@
 /**
- * @yaffle/runtime: the small runtime used by code the yaffle compiler generates for TypeScript.
+ * @yafflelang/runtime: the small runtime used by code the yaffle compiler generates for TypeScript.
  *
  * Generated modules import it as `$rt`. Everything here is also usable directly (sources,
  * errors, checksums, canonical JSON helpers).

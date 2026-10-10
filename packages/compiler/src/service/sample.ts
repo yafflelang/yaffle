@@ -4,7 +4,7 @@
  *
  * The program is compiled with the chosen struct as a root, generated with the TS backend into a
  * temporary directory (types stripped when Node can), imported, and opened as a lazy *view*
- * (`@yaffle/runtime` views read only what is touched and record every field's byte range). The
+ * (`@yafflelang/runtime` views read only what is touched and record every field's byte range). The
  * walk below annotates the fields of struct instances declared in the source file, forcing only
  * what leads to such instances, with caps on array elements and annotations, so huge files
  * (a 120 MB archive) cost what their headers cost.
@@ -15,7 +15,7 @@ import * as nodeModule from "node:module";
 import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
 import { pathToFileURL } from "node:url";
-import * as runtime from "@yaffle/runtime";
+import * as runtime from "@yafflelang/runtime";
 import { typeName } from "../backends/ts/code.ts";
 import { generateTs } from "../backends/ts/index.ts";
 import { moduleFile } from "../backends/ts/module.ts";

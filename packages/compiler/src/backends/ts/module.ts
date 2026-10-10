@@ -7,7 +7,7 @@ import { ident, relImport, str, typeName } from "./code.ts";
 import type { Model } from "./model.ts";
 
 export interface EmitOptions {
-  /** Module specifier of the runtime as seen from the output root ("@yaffle/runtime" by default). */
+  /** Module specifier of the runtime as seen from the output root ("@yafflelang/runtime" by default). */
   runtime: string;
   /** True if `runtime` is a path relative to the output root (needs re-relativizing per file). */
   runtimeRelative: boolean;

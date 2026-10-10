@@ -21,7 +21,7 @@ import {
   type ShowIrResult,
   SuggestLayoutMethod,
   type SuggestLayoutResult
-} from "@yaffle/lsp/protocol";
+} from "@yafflelang/lsp/protocol";
 import { argPrompt, parseArg } from "./args.ts";
 import { COMMANDS, LANGUAGE_ID } from "./commands.ts";
 import { collectLocations, formatIr } from "./format.ts";

@@ -46,7 +46,7 @@ jobs:
           packages/compiler/test/frontend packages/compiler/test/service packages/compiler/test/cli
 
       - name: Runtime, language server and VS Code extension tests
-        run: npx vitest run --project @yaffle/runtime --project @yaffle/lsp --project yaffle-vscode
+        run: npx vitest run --project @yafflelang/runtime --project @yafflelang/lsp --project yaffle-vscode
 
       - name: Conformance runner tests
         run: >-

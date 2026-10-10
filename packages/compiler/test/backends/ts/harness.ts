@@ -8,7 +8,7 @@ import { dirname, join, resolve } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import ts from "typescript";
 import { expect } from "vitest";
-import type { YaffleError } from "@yaffle/runtime";
+import type { YaffleError } from "@yafflelang/runtime";
 import type { IrProgram } from "yaffle/ir";
 import { compileSource, nodeHost } from "../../../src/index.ts";
 import { generateTs } from "../../../src/backends/ts/index.ts";

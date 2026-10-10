@@ -1,7 +1,7 @@
 # TypeScript target
 
 The TS backend (`packages/compiler/src/backends/ts`) compiles the IR into one TypeScript module
-per `.yfl` module. Generated code imports the runtime `@yaffle/runtime` (`packages/runtime`) as
+per `.yfl` module. Generated code imports the runtime `@yafflelang/runtime` (`packages/runtime`) as
 `$rt`. The output passes `tsc --strict` with `exactOptionalPropertyTypes`,
 `noUncheckedIndexedAccess` and erasable syntax only.
 
@@ -12,7 +12,7 @@ per `.yfl` module. Generated code imports the runtime `@yaffle/runtime` (`packag
     "ts": {
       "out": "src/gen",
       "externs": { "zstd": "./externs/zstd.ts", "pathHash": "./externs/hash.ts#hash" },
-      "runtimeModule": "@yaffle/runtime" // optional, the default
+      "runtimeModule": "@yafflelang/runtime" // optional, the default
     }
   }
 }
@@ -110,7 +110,7 @@ shared with the runtime and may change.
 A source is a `Uint8Array`, a `SyncSource` `{ size, read(offset, length), write?(offset, bytes) }`
 or an `AsyncSource` whose `read` (and `write`) return Promises. A source is detected as async by a
 zero-length probe read. `arraySource(bytes)` and `asyncArraySource(bytes)` from
-`@yaffle/runtime` wrap arrays (they count reads, for tests).
+`@yafflelang/runtime` wrap arrays (they count reads, for tests).
 
 Views read sources through a block cache (64 KiB blocks, 256 blocks; reads over 8 blocks bypass
 it). When a view over a source with `write` commits, the source is updated in place: the
@@ -211,7 +211,7 @@ export const VarInt = {
 
 ## Runtime structure
 
-`@yaffle/runtime` has no dependencies; generated modules import it whole.
+`@yafflelang/runtime` has no dependencies; generated modules import it whole.
 
 | Module                   | Contents                                                                                                                                  |
 | ------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------- |
@@ -235,7 +235,7 @@ The language service (`packages/compiler/src/service`) reads views through `node
 ## Tests
 
 ```sh
-npx vitest run --project @yaffle/runtime
+npx vitest run --project @yafflelang/runtime
 npx vitest run --project yaffle packages/compiler/test/backends/ts
 node --max-old-space-size=12000 --conditions=development conformance/src/cli.ts --targets ts
 YAFFLE_TS_VIEW_REWRITE=1 node --max-old-space-size=12000 --conditions=development conformance/src/cli.ts --targets ts

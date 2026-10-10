@@ -1,5 +1,5 @@
 {
-  "name": "@yaffle/conformance",
+  "name": "@yafflelang/conformance",
   "version": "0.1.0",
   "private": true,
   "type": "module",
@@ -9,6 +9,6 @@
   },
   "dependencies": {
     "yaffle": "0.0.1",
-    "@yaffle/runtime": "0.0.1"
+    "@yafflelang/runtime": "0.0.1"
   }
 }

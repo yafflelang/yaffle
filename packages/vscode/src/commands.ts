@@ -1,5 +1,5 @@
 /** Identifiers contributed in package.json (pure: no `vscode` import). */
-import { ShowBindingSourcesCommand } from "@yaffle/lsp/protocol";
+import { ShowBindingSourcesCommand } from "@yafflelang/lsp/protocol";
 
 export const LANGUAGE_ID = "yaffle";
 

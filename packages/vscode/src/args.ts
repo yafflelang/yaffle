@@ -3,7 +3,7 @@
  * canonical JSON (docs/CONFORMANCE.md): integers as numbers (56- and 64-bit ones as decimal
  * strings), byte arrays as lowercase hex, strings as they are. The prompting is in extension.ts.
  */
-import type { RootParameterDto } from "@yaffle/lsp/protocol";
+import type { RootParameterDto } from "@yafflelang/lsp/protocol";
 
 export type ArgResult = { value?: unknown; error?: string };
 

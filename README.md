@@ -34,7 +34,7 @@ node conformance/scripts/gen-cases.ts --check     # conformance cases match thei
 ```sh
 npm test                                          # every vitest project
 npx vitest run --project yaffle                   # compiler, language service and backends
-npx vitest run --project @yaffle/runtime          # also: @yaffle/lsp, yaffle-vscode, conformance
+npx vitest run --project @yafflelang/runtime          # also: @yafflelang/lsp, yaffle-vscode, conformance
 
 # the conformance suite, in parse and view mode, for the targets you have toolchains for
 node --max-old-space-size=12000 --conditions=development conformance/src/cli.ts --targets ts,rust

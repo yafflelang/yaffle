@@ -1,5 +1,5 @@
 /** Pure helpers of the extension's commands (no `vscode` import, so they can be unit tested). */
-import type { LspRange, ShowIrResult } from "@yaffle/lsp/protocol";
+import type { LspRange, ShowIrResult } from "@yafflelang/lsp/protocol";
 
 export interface LspLocation {
   uri: string;

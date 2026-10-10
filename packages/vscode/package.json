@@ -231,7 +231,7 @@
   "devDependencies": {
     "@types/vscode": "^1.100.0",
     "@vscode/vsce": "^4.0.0",
-    "@yaffle/lsp": "0.1.0",
+    "@yafflelang/lsp": "0.1.0",
     "esbuild": "^0.28.2",
     "prettier": "^3.9.9",
     "vscode-languageclient": "^10.1.2",

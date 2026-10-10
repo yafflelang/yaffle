@@ -1,6 +1,6 @@
 /** Lazy views: reads, in-place patches, structural edits, commit policies, patches. */
 import { beforeAll, describe, expect, it } from "vitest";
-import * as rt from "@yaffle/runtime";
+import * as rt from "@yafflelang/runtime";
 import { build, dv, errorOf, toHex, type Mod } from "./harness.ts";
 import { archiveIr } from "./fixtures/archive.ts";
 

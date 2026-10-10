@@ -2,7 +2,7 @@
  * Rendering of decoded sample annotations (from `yaffle/decodeSample`) as end-of-line
  * decorations. Pure (no `vscode` import) so it can be unit tested.
  */
-import type { LspRange, SampleAnnotationDto } from "@yaffle/lsp/protocol";
+import type { LspRange, SampleAnnotationDto } from "@yafflelang/lsp/protocol";
 
 export interface RenderedAnnotation {
   uri: string;

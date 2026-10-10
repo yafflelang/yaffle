@@ -10,7 +10,7 @@ import {
   type DecodeSampleResult,
   type SampleParams,
   type SampleSource
-} from "@yaffle/lsp/protocol";
+} from "@yafflelang/lsp/protocol";
 import { type RenderedAnnotation, renderAnnotations } from "./annotations.ts";
 import { COMMANDS, LANGUAGE_ID } from "./commands.ts";
 

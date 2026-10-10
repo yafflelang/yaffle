@@ -1,5 +1,5 @@
 {
-  "name": "@yaffle/lsp",
+  "name": "@yafflelang/lsp",
   "version": "0.1.0",
   "description": "yaffle language server",
   "type": "module",

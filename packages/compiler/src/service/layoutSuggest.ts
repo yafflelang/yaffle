@@ -21,7 +21,7 @@
 import type * as A from "../frontend/ast.ts";
 import type { StructSym } from "../frontend/symbols.ts";
 import type { IrLayoutItem, IrMember, IrStruct, IrType } from "../ir/index.ts";
-import * as runtime from "@yaffle/runtime";
+import * as runtime from "@yafflelang/runtime";
 import type { TextEdit, WorkspaceEdit } from "./api.ts";
 import { access, bareType, sampleOptions, structFields, type SampleProgram } from "./sample.ts";
 

@@ -19,7 +19,7 @@ import { WriteEmitter } from "./write.ts";
 import { ViewEmitter } from "./view.ts";
 
 interface TsTargetOptions {
-  /** Runtime module specifier (default "@yaffle/runtime"). */
+  /** Runtime module specifier (default "@yafflelang/runtime"). */
   runtimeModule?: string;
 }
 
@@ -34,7 +34,7 @@ export function generateTs(input: IrProgram, options: BackendOptions): Generated
   const emitOpts: EmitOptions = options.inlineRuntime
     ? { runtime: `${INLINE_RUNTIME_DIR}/index.ts`, runtimeRelative: true, externs: options.externs }
     : {
-        runtime: target.runtimeModule ?? "@yaffle/runtime",
+        runtime: target.runtimeModule ?? "@yafflelang/runtime",
         runtimeRelative: false,
         externs: options.externs
       };
@@ -172,7 +172,7 @@ function runtimeSourceDir(): string {
     readdirSync(mono);
     return mono;
   } catch {
-    const resolved = fileURLToPath(import.meta.resolve("@yaffle/runtime"));
+    const resolved = fileURLToPath(import.meta.resolve("@yafflelang/runtime"));
     return dirname(resolved);
   }
 }

@@ -4,7 +4,7 @@
  * - `syntaxes/yaffle.tmLanguage.json` from `src/grammar.ts`;
  * - `dist/extension.cjs`: the extension, bundled as CommonJS (what the VS Code extension host
  *   loads), with `vscode` external;
- * - `dist/server.mjs`: the language server (`@yaffle/lsp` + the compiler), bundled as ESM and
+ * - `dist/server.mjs`: the language server (`@yafflelang/lsp` + the compiler), bundled as ESM and
  *   run by the extension with VS Code's Node.
  *
  * Sources are TypeScript with `.ts` imports, resolved with the `development` condition, so no

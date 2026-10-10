@@ -1,6 +1,6 @@
 /** Async views (async sources, async codecs) and views over codec regions. */
 import { beforeAll, describe, expect, it } from "vitest";
-import * as rt from "@yaffle/runtime";
+import * as rt from "@yafflelang/runtime";
 import { build, dv, load, toHex, type Mod } from "./harness.ts";
 import { archiveIr } from "./fixtures/archive.ts";
 import { bodyStruct, withExterns } from "./fixtures/externs.ts";

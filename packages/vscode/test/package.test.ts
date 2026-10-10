@@ -14,7 +14,7 @@ import {
   StreamMessageReader,
   StreamMessageWriter
 } from "vscode-languageserver-protocol/node";
-import { DEFAULT_SETTINGS, snippetToPlain } from "@yaffle/lsp";
+import { DEFAULT_SETTINGS, snippetToPlain } from "@yafflelang/lsp";
 import { build, ROOT } from "../scripts/build.ts";
 import { COMMANDS } from "../src/commands.ts";
 import { dump, tokenize } from "./tokenize.ts";

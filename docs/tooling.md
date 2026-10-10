@@ -1,6 +1,6 @@
 # Editor tooling
 
-yaffle ships a language server (`packages/lsp`, `@yaffle/lsp`, executable `yaffle-lsp`) and a VS
+yaffle ships a language server (`packages/lsp`, `@yafflelang/lsp`, executable `yaffle-lsp`) and a VS
 Code extension (`packages/vscode`) that bundles it. The language knowledge lives in the compiler's
 `LanguageService` (`packages/compiler/src/service/api.ts`); the server is a thin, defensive
 protocol adapter over it, so any LSP client gets the same features.
@@ -26,7 +26,7 @@ protocol adapter over it, so any LSP client gets the same features.
 | Formatting         | Whole-document formatting with the client's `tabSize` / `insertSpaces`. Files with syntax errors are left alone.                                                                                                                                                                                                                                                                        |
 | On-type formatting | Typing `@` on a fresh line aligns it with the first postfix attribute of the field above (or its name, as the formatter does); Enter after an `@` continuation line goes back to the field's indentation. Pure text layout, done in the server.                                                                                                                                         |
 
-Custom requests (types in `packages/lsp/src/protocol.ts`, also exported as `@yaffle/lsp/protocol`):
+Custom requests (types in `packages/lsp/src/protocol.ts`, also exported as `@yafflelang/lsp/protocol`):
 
 | Request                 | Params                                  | Result                                                                                                                                                                               |
 | ----------------------- | --------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
@@ -166,7 +166,7 @@ the `development` condition, so no package needs a `tsc` build first. `vsce pack
 ## Tests
 
 ```
-npx vitest run --project @yaffle/lsp --project yaffle-vscode
+npx vitest run --project @yafflelang/lsp --project yaffle-vscode
 ```
 
 - `packages/lsp/test`: the server over an in-memory JSON-RPC connection against a fake service

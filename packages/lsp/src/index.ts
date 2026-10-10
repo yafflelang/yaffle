@@ -1,5 +1,5 @@
 /**
- * @yaffle/lsp: the yaffle language server. `main.ts` is the `yaffle-lsp` executable; this module
+ * @yafflelang/lsp: the yaffle language server. `main.ts` is the `yaffle-lsp` executable; this module
  * is the embedding API (start the server on any connection, with any language service).
  */
 export { startServer, YaffleServer, SERVER_NAME, SERVER_VERSION } from "./server.ts";
