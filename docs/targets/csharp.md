@@ -2,7 +2,7 @@
 
 The C# backend (`packages/compiler/src/backends/csharp`) turns the IR into C# 13 source for .NET 8
 and later; the generated code depends on the runtime library `Yaffle.Runtime`
-(`packages/runtime-csharp`, no dependencies, built for `net8.0` and `net10.0`), or carries it
+(`packages/runtime-csharp`, no dependencies, built for `net8.0`, which runs on .NET 8 and later), or carries it
 inline (`inlineRuntime`).
 
 ## Generated code
