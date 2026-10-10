@@ -371,7 +371,7 @@ export struct Entry {
 
   it("sizes and codecs", async () => {
     const g = golden(
-      "byte-transforms",
+      "codecs",
       `struct Chunk { u32 a }
 struct Archive { u32 p }
 extern codec zstd
@@ -507,7 +507,7 @@ export struct Strict(u32 $version) { if ($version > 2) { u8 x } }   // pins the 
 type Fixed(u8 bits) = i32 as it / (1 << bits)
 extern codec xor(u8 key)
 struct Record { u32 r }
-type EncRec  = Record @via(xor(0x5a)) @size(4)   // per-element transform: \`EncRec recs[n]\`
+type EncRec  = Record @via(xor(0x5a)) @size(4)   // a codec per element: \`EncRec recs[n]\`
 type Name    = char[0x20]
 
 struct Point { f32 x  f32 y }

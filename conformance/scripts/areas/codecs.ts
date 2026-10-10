@@ -1,4 +1,4 @@
-/** Cases for conformance/cases/bytetransforms (uses the conformance externs). */
+/** Cases for conformance/cases/codecs (uses the conformance externs). */
 import {
   area,
   parse,
@@ -223,7 +223,7 @@ add(
 );
 
 export default area(
-  "bytetransforms",
+  "codecs",
   "@via codecs with arguments, layered @size, @streaming, async, chains, @ranged positions, failures, codec reuse.",
   cases
 );

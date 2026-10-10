@@ -1,6 +1,6 @@
 {
   "description": "@via codecs with arguments, layered @size, @streaming, async, chains, @ranged positions, failures, codec reuse.",
-  "generatedBy": "conformance/scripts/areas/bytetransforms.ts",
+  "generatedBy": "conformance/scripts/areas/codecs.ts",
   "cases": [
     {
       "name": "xor over the rest of the region",

@@ -2,7 +2,7 @@
   "sources": ["schema.yfl"],
   "targets": {
     "ts": {
-      "out": "../../.out/gen/bytetransforms/ts",
+      "out": "../../.out/gen/codecs/ts",
       "externs": {
         "xor": "../../externs/ts/xor.ts",
         "xorpos": "../../externs/ts/xorpos.ts",
@@ -12,7 +12,7 @@
       }
     },
     "rust": {
-      "out": "../../.out/gen/bytetransforms/rust",
+      "out": "../../.out/gen/codecs/rust",
       "externs": {
         "xor": "../../externs/rust/xor.rs#XOR",
         "xorpos": "../../externs/rust/xorpos.rs#XORPOS",
@@ -22,7 +22,7 @@
       }
     },
     "python": {
-      "out": "../../.out/gen/bytetransforms/python",
+      "out": "../../.out/gen/codecs/python",
       "externs": {
         "xor": "../../externs/python/xor.py",
         "xorpos": "../../externs/python/xorpos.py",
@@ -32,7 +32,7 @@
       }
     },
     "go": {
-      "out": "../../.out/gen/bytetransforms/go",
+      "out": "../../.out/gen/codecs/go",
       "externs": {
         "xor": "../../externs/go/xor.go",
         "xorpos": "../../externs/go/xorpos.go",
@@ -42,7 +42,7 @@
       }
     },
     "csharp": {
-      "out": "../../.out/gen/bytetransforms/csharp",
+      "out": "../../.out/gen/codecs/csharp",
       "externs": {
         "xor": "../../externs/csharp/xor.cs",
         "xorpos": "../../externs/csharp/xorpos.cs",
@@ -52,7 +52,7 @@
       }
     },
     "java": {
-      "out": "../../.out/gen/bytetransforms/java",
+      "out": "../../.out/gen/codecs/java",
       "externs": {
         "xor": "../../externs/java/xor.java#XOR",
         "xorpos": "../../externs/java/xorpos.java#XORPOS",
@@ -62,7 +62,7 @@
       }
     },
     "cpp": {
-      "out": "../../.out/gen/bytetransforms/cpp",
+      "out": "../../.out/gen/codecs/cpp",
       "externs": {
         "xor": "../../externs/cpp/xor.hpp",
         "xorpos": "../../externs/cpp/xorpos.hpp",

@@ -3,7 +3,7 @@ import type { Area } from "../lib.ts";
 import alignOrigin from "./align-origin.ts";
 import arrays from "./arrays.ts";
 import bitfields from "./bitfields.ts";
-import bytetransforms from "./bytetransforms.ts";
+import codecs from "./codecs.ts";
 import conditionals from "./conditionals.ts";
 import constraints from "./constraints.ts";
 import derivedArrays from "./derived-arrays.ts";
@@ -42,7 +42,7 @@ export const areas: Area[] = [
   pointers,
   layout,
   conditionals,
-  bytetransforms,
+  codecs,
   params,
   generics,
   bitfields,
