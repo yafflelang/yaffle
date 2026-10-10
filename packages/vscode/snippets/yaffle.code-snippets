@@ -96,7 +96,7 @@
   },
   "type alias": {
     "prefix": "type",
-    "description": "Type alias with a value transform",
+    "description": "Type alias with a transform",
     "body": ["type ${1:Fixed16} = ${2:i16} as ${3:it / 256.0}$0"]
   },
   "extern codec": {

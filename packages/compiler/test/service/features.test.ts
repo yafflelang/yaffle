@@ -17,7 +17,7 @@ export struct T {
   Blob(n: 4) c
 }`;
 
-  it("derived formulas after the field, with where they come from", () => {
+  it("derived values after the field, with where they come from", () => {
     const { ls, path } = open(SRC);
     const h = ls.getInlayHints(path, ALL);
     const count = h.find(x => x.label === "= entries.length")!;

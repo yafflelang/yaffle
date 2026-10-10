@@ -549,7 +549,7 @@ const KEYWORD_DOCS: Record<string, [string, string]> = {
   const: ["const T NAME = value", "A named compile-time value."],
   extern: [
     "extern fn / codec / type",
-    "Implemented by the host: functions, byte codecs (`@via`) or value types."
+    "Implemented by the host: functions, codecs (`@via`) or custom primitives."
   ],
   codec: ["extern codec name(params)", "A codec used with `@via(name(…))`."],
   fn: ["extern fn name(params) -> T", "A host function callable in expressions."],

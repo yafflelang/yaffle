@@ -67,7 +67,7 @@ print(json.dumps({
     expect(o.again).toContain("6162630000000000");
   });
 
-  it("builds values with keyword arguments; derived fields are computed", async () => {
+  it("builds values with keyword arguments; derived fields are filled in", async () => {
     const gen = generate("basic_build", program(TABLE));
     const out = await py(
       gen,

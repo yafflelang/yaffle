@@ -1074,7 +1074,7 @@ class BodyLowerer {
                     {
                       file: ctx.module.file,
                       span: v.sym.nameSpan,
-                      message: `'${v.sym.name}' is computed from '${p.name}'`
+                      message: `'${v.sym.name}' is read from '${p.name}'`
                     }
                   ]
                 }
@@ -1593,7 +1593,7 @@ class BodyLowerer {
           wctx,
           f.clauses.asWrite.span,
           "not-invertible",
-          "The write side of `as … = …` must use `it` (the value being written)."
+          "The inverse in `as … = …` must use `it` (the value being written)."
         );
       }
       tr.write = coerce(el, wctx, w, innerValue, f.clauses.asWrite, "The inverse");

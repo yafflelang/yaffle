@@ -351,7 +351,7 @@ function lowerExprInner(
           ctx,
           e.span,
           "unknown-name",
-          "`it` is only available in `as`, `=` with a transform, `where`, and `in`."
+          "`it` is only available in `as`, `=`, `where` and `in`."
         );
         return errorExpr();
       }

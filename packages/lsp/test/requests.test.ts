@@ -227,7 +227,7 @@ describe("request mappings (VS Code-like client)", () => {
         position: pos(2, 11),
         label: "= entries.length",
         kind: 1,
-        tooltip: { kind: "markdown", value: "Derived **automatically**" },
+        tooltip: { kind: "markdown", value: "Derived from the **length of entries**" },
         paddingLeft: true
       }
     ]);

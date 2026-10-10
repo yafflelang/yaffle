@@ -132,7 +132,11 @@ export class DeclEmitter {
           code.line(
             decl.deriveKind === "constant"
               ? summary("Constant: Serialize always writes it (checked by Parse).")
-              : summary("Derived: Serialize computes it (the value set here is ignored).")
+              : decl.deriveKind === "formula"
+                ? summary(
+                    "Computed: Serialize evaluates its formula (the value set here is ignored)."
+                  )
+                : summary("Derived: Serialize recomputes it (the value set here is ignored).")
           );
         else if (!hidden && decl.input === "optional")
           code.line(summary("Optional on write: null lets Serialize compute it."));
@@ -388,7 +392,7 @@ export class ApiEmitter {
     const serialize = `Rt.Writer.SerializeRoot(${layout}, __w => ${writeRoot}(__w, value, __o))`;
     if (!async) {
       method(
-        `Serializes a ${name}. Derived fields are computed; byte-identical if nothing changed.`,
+        `Serializes a ${name}. Derived and computed fields are recomputed; byte-identical if nothing changed.`,
         `public static byte[] Serialize(${name} value, ${options})`,
         [`var __o = options ?? new ${opts}();`, `return ${serialize};`]
       );

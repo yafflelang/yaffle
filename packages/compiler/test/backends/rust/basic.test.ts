@@ -1020,7 +1020,7 @@ describe.skipIf(!hasRust)("rust backend: values and layers", () => {
     expect(err).toMatchObject({ code: "UNION", path: ["node"], offset: 0 });
   });
 
-  it("applies value transforms", async () => {
+  it("applies transforms", async () => {
     const bytes = "0040" + Buffer.from("a\0bb\0ccc\0").toString("hex") + "02" + "0000ffff" + "05";
     // `hash` is one-way: JSON keeps the raw value, so it stays lossless.
     expect(await b.value({ op: "parse", module: "transforms", root: "Tr", bytes })).toEqual({

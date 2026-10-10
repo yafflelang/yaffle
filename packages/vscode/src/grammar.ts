@@ -491,7 +491,7 @@ export const grammar: Grammar = {
     "parameter-declaration": declaration("variable.parameter.yaffle"),
 
     "field-clauses": {
-      comment: "Read-side expressions after a field: = formula, as, where, in, at, from",
+      comment: "Clauses after a field: in, as, where, at, from, ?= default, = formula",
       patterns: [
         inc("regex-in"),
         clause("in", "keyword.other.in.yaffle"),

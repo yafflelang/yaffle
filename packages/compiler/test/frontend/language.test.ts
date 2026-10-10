@@ -16,7 +16,7 @@ describe("stream carriers", () => {
     const s = struct(ok("struct P { u8 x }\nexport struct S { u8 raw[4]  P p from raw }"), "S");
     expect(field(s, "raw")).toMatchObject({ input: "absent", output: true });
   });
-  it("@hidden carriers and pieces are derivable", () => {
+  it("@hidden carriers and pieces are derived", () => {
     expectNoDiag(
       "struct P { u8 x }\nexport struct S { u8 raw[4] @hidden  P p from raw }",
       "hidden-not-derivable"
@@ -33,7 +33,7 @@ describe("stream carriers", () => {
     );
     expect(field(s, "raw").input).toBe("required");
   });
-  it("other @hidden fields still need a derivation", () => {
+  it("other @hidden fields must be derived or computed", () => {
     expectDiag("export struct S { u32 a @hidden }", "hidden-not-derivable");
   });
 });

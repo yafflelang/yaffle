@@ -190,7 +190,7 @@
         "yaffle.inlayHints.enabled": {
           "type": "boolean",
           "default": true,
-          "markdownDescription": "Show inlay hints: derived formulas (`count = entries.length`) and `@size` decoded / on-disk labels."
+          "markdownDescription": "Show inlay hints: derived values (`= entries.length`), inferred transform inverses, slice assembly, `@size` decoded / on-disk labels and parameter names."
         },
         "yaffle.codeLens.enabled": {
           "type": "boolean",

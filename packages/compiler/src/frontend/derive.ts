@@ -558,7 +558,7 @@ function linearParam(e: IrExpr): { a: bigint; b: bigint; name: string } | undefi
   return { a: lin.a, b: lin.b, name };
 }
 
-/** Reports a `@hidden` field the writer can't compute. */
+/** Reports a `@hidden` field that is neither derived nor computed. */
 export function reportHiddenUnderivable(el: Elaborator, f: FieldResult): void {
   const attr = f.sym.decl.attrs.find(a => a.name.name === "hidden");
   const file = f.sym.module.file;
@@ -566,7 +566,7 @@ export function reportHiddenUnderivable(el: Elaborator, f: FieldResult): void {
     file,
     attr?.span ?? f.sym.nameSpan,
     "hidden-not-derivable",
-    `'${f.sym.name}' is @hidden but the writer can't compute it: give it a formula (= …) or use it as a length, size or offset.`,
+    `'${f.sym.name}' is @hidden but neither derived nor computed: give it a formula (= …) or use it as a length, size or offset.`,
     attr ? { fixes: [removalFix("Remove @hidden", file, widenLeft(file, attr.span))] } : {}
   );
 }

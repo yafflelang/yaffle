@@ -109,7 +109,7 @@ export const DIAGNOSTIC_CODES = {
   "pointer-storage": ["error", "A pointer storage type that isn't an integer."],
   "pointer-attribute": [
     "error",
-    "A pointer attribute (@relative, @nullable, @ref) on a field that isn't a pointer."
+    "A pointer attribute (@relative, @nullable, @ref, @origin) on a field that isn't a pointer."
   ],
   // ── derivation and consistency ─────────────────────────────────────────────
   "contradictory-formula": [
@@ -133,7 +133,7 @@ export const DIAGNOSTIC_CODES = {
     "@size inside a non-streaming codec without an outer @size: the codec needs its on-disk size."
   ],
   "layout-cycle": ["error", "A derived value whose own size depends on a position."],
-  "hidden-not-derivable": ["error", "A @hidden field the writer can't compute."],
+  "hidden-not-derivable": ["error", "A @hidden field that is neither derived nor computed."],
   "unknown-layout-path": ["error", "A layout path that doesn't name a field."],
   "layout-not-placeable": [
     "warning",
@@ -159,7 +159,7 @@ export const DIAGNOSTIC_CODES = {
   ],
   "invalid-lambda": [
     "error",
-    "A lambda outside map/filter/indicesWhere/sortedBy (or a padding fill), or a builtin missing its lambda."
+    "A lambda outside map/filter/indicesWhere/sortedBy (or a padding fill), or a built-in missing its lambda."
   ],
   "slice-carrier-input": [
     "hint",

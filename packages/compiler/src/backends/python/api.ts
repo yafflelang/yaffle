@@ -145,7 +145,9 @@ export class ApiEmitter {
       method(
         `def serialize(self, *, ${kw(false)}) -> bytes`,
         () => {
-          doc("Encodes this value (derived fields are computed; inputs are checked).");
+          doc(
+            "Encodes this value (derived and computed fields are recomputed; inputs are checked)."
+          );
           code.line(`return _rt.serialize_with(${layout}, ${write(prelude())})`);
         },
         false

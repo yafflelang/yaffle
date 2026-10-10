@@ -80,7 +80,7 @@ describe("completion", () => {
     expect(l).not.toContain("it");
   });
 
-  it("write side: every field", () => {
+  it("computed fields: every field", () => {
     const l = labels("struct S {\n  u32 n = |\n  u8 body[16]\n}");
     expect(l).toEqual(expect.arrayContaining(["body", "it"]));
     expect(l).not.toContain("n");

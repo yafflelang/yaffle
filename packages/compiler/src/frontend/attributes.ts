@@ -154,7 +154,7 @@ const DEFINITIONS: Record<string, AttrDefinition> = {
     targets: ["field"],
     args: [],
     pointerOnly: true,
-    doc: "The pointer doesn't own its target: on write it points at an equal value already placed in the same base."
+    doc: "The pointer doesn't own its target: on write it points at the input object itself if it was placed, otherwise at the first placed value with an equal encoding, in this base or an enclosing one."
   },
   encoding: {
     targets: ["field", "alias"],

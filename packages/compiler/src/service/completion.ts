@@ -434,7 +434,7 @@ function lastClause(toks: Token[]): string | undefined {
 }
 
 function afterAs(toks: Token[]): boolean {
-  // `as read = write`: the write side sees every field too, so this only matters for `it`
+  // `as read = write`: the inverse sees every field too, so this only matters for `it`
   return toks.some(t => t.kind === "ident" && t.value === "as") && false;
 }
 

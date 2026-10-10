@@ -230,7 +230,7 @@ export struct S {
 // ── virtual fields ───────────────────────────────────────────────────────────
 
 d("go: virtual fields", () => {
-  it("computes the value on read and derives the parts on write", async () => {
+  it("evaluates the value on read and derives the parts on write", async () => {
     const src = compileOk(`export struct T { u8 hi  u32 lo  u64 size = (hi << 32) | lo }`);
     const read = field(src, "T", "size").derive!;
     const p = compileOk(`

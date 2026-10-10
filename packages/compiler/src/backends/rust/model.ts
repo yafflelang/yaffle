@@ -1061,7 +1061,8 @@ export function typeExprs(t: IrType, write = true, out: IrExpr[] = []): IrExpr[]
 
 /**
  * Every expression of a struct's members: types, checks, placements, conditions, and with
- * `write`, the formulas of derived fields and transform writes (readers don't evaluate them).
+ * `write`, the `derive` expressions (derived, computed and constant fields) and transform inverses
+ * (readers don't evaluate them).
  */
 export function memberExprs(members: IrMember[], write: boolean): IrExpr[] {
   const out: IrExpr[] = [];

@@ -13,7 +13,7 @@
  *   struct's fields, its parameters, `it`, lambda parameters and the built-ins `$offset`, `$end`
  *   and `$index`.
  * - **Derivation resolved.** Every value the writer must compute (derived lengths, offsets, sizes,
- *   constants, explicit `=` formulas) is an explicit `derive` expression. Backends never invert
+ *   constants, computed fields) is an explicit `derive` expression. Backends never invert
  *   expressions themselves.
  * - **Checked.** Names resolve, types agree, every path that needs a bound value has one, and
  *   layout paths exist.
@@ -144,20 +144,20 @@ export interface IrField {
   from?: IrFrom;
   /**
    * The raw value the writer stores, ignoring any input value. Present for constants
-   * (`u16 magic = 42`), explicit formulas (`u32 size = sizeof(body)`) and derived
+   * (`u16 magic = 42`), computed fields (`u32 size = sizeof(body)`) and derived
    * fields (`count` from `entries[count]`). Evaluated in the *write context* (IR.md §3.2).
    */
   derive?: IrExpr;
   deriveKind?: "constant" | "formula" | "auto";
   /** Read-side validation. All must hold after reading (and are re-checked on write where noted). */
   checks: IrCheck[];
-  /** Not in the input or output types (`@hidden`). Must be derivable on write. */
+  /** Not in the input or output types (`@hidden`). Must be derived or computed. */
   hidden: boolean;
   /** Presence in the generated output (parse result) type. False only for hidden fields. */
   output: boolean;
   /**
    * Presence in the generated input (serialize argument) type.
-   * absent:   derived, constant or hidden. The writer computes it, and any value given is ignored.
+   * absent:   derived, computed, constant or hidden. The writer computes it, and any value given is ignored.
    * required: the caller must supply it.
    * optional: the caller may supply it, or the writer uses `derive` (e.g. split points of `from arr[*].piece` streams).
    */
@@ -385,7 +385,7 @@ export interface IrPointerType {
   origin?: IrExpr;
   /**
    * owned: the writer places the target (layout engine).
-   * ref:   `@ref`: the writer points at an equal value already placed in the same base.
+   * ref:   `@ref`: the writer points at an equal value already placed in this base or an enclosing one.
    */
   ownership: "owned" | "ref";
 }

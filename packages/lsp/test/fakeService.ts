@@ -456,7 +456,7 @@ export class FakeService implements LanguageService {
             position: { line: i, character: m.index + 5 },
             label: "= entries.length",
             kind: "type",
-            tooltip: "Derived **automatically**",
+            tooltip: "Derived from the **length of entries**",
             paddingLeft: true
           });
         }

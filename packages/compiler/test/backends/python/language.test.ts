@@ -158,7 +158,7 @@ print(json.dumps({"ok": ok.hex(), "a": err(lambda: StrictPad.parse(bytes(bad_a))
     });
   });
 
-  it("virtual fields are computed on read and derive their parts on write", async () => {
+  it("virtual fields are evaluated on read and derive their parts on write", async () => {
     const out = await run(`
 data = Virt(size=0x1234567890).serialize()
 p = Virt.parse(data)

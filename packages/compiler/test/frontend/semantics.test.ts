@@ -196,7 +196,7 @@ describe("transforms", () => {
     expect(codes("export struct S { u8 a as it * it }")).toEqual(["one-way-transform"]);
   });
 
-  it("the explicit write side sees every field", () => {
+  it("an explicit inverse sees every field", () => {
     expect(
       transformWrite(
         "extern fn d(u32 x) -> u32\nextern fn e(u32 x, u32 k) -> u32\nexport struct S { u32 t as d(it) = e(it, key)  u32 key }",
@@ -222,7 +222,7 @@ describe("placements and derivations", () => {
     expect(field(struct(p, "S"), "p").placement).toMatchObject({ fixed: true });
   });
 
-  it("explicit offset formulas keep placements movable", () => {
+  it("computed offsets keep placements movable", () => {
     const p = ok(
       "struct P { u8 x }\nexport struct S @base { u32 o = offsetof(p) - 8  P p at o + 8 }"
     );
