@@ -71,7 +71,7 @@ const TEST_SUPPORT = `
   }
   static void eq(Object expected, Object actual) {
     if (expected instanceof byte[] e && actual instanceof byte[] a) {
-      if (!java.util.Arrays.equals(e, a)) throw new AssertionFailed("expected " + dev.yaffle.runtime.Hex.encode(e) + ", got " + dev.yaffle.runtime.Hex.encode(a));
+      if (!java.util.Arrays.equals(e, a)) throw new AssertionFailed("expected " + org.yafflelang.runtime.Hex.encode(e) + ", got " + org.yafflelang.runtime.Hex.encode(a));
       return;
     }
     if (expected instanceof Number e && actual instanceof Number a && !(e instanceof Double) && !(a instanceof Double)) {
@@ -81,21 +81,21 @@ const TEST_SUPPORT = `
     if (!java.util.Objects.equals(expected, actual)) throw new AssertionFailed("expected " + expected + ", got " + actual);
   }
   static void json(String expected, Object actual) {
-    Object e = dev.yaffle.runtime.Json.parse(expected);
-    String a = dev.yaffle.runtime.Json.write(actual);
-    if (!dev.yaffle.runtime.Json.write(e).equals(a)) throw new AssertionFailed("expected JSON " + dev.yaffle.runtime.Json.write(e) + ", got " + a);
+    Object e = org.yafflelang.runtime.Json.parse(expected);
+    String a = org.yafflelang.runtime.Json.write(actual);
+    if (!org.yafflelang.runtime.Json.write(e).equals(a)) throw new AssertionFailed("expected JSON " + org.yafflelang.runtime.Json.write(e) + ", got " + a);
   }
   static byte[] hex(String s) {
-    return dev.yaffle.runtime.Hex.decode(s);
+    return org.yafflelang.runtime.Hex.decode(s);
   }
   static String hex(byte[] b) {
-    return dev.yaffle.runtime.Hex.encode(b);
+    return org.yafflelang.runtime.Hex.encode(b);
   }
   interface Body { void run() throws Exception; }
-  static dev.yaffle.runtime.YaffleException fails(String code, Body b) {
+  static org.yafflelang.runtime.YaffleException fails(String code, Body b) {
     try {
       b.run();
-    } catch (dev.yaffle.runtime.YaffleException e) {
+    } catch (org.yafflelang.runtime.YaffleException e) {
       if (!e.code().name().equals(code)) throw new AssertionFailed("expected " + code + ", got " + e.getMessage());
       return e;
     } catch (Exception e) {
@@ -103,8 +103,8 @@ const TEST_SUPPORT = `
     }
     throw new AssertionFailed("expected " + code + ", but nothing failed");
   }
-  static void path(String expected, dev.yaffle.runtime.YaffleException e) {
-    String a = dev.yaffle.runtime.Json.write(new java.util.ArrayList<Object>(e.path()));
+  static void path(String expected, org.yafflelang.runtime.YaffleException e) {
+    String a = org.yafflelang.runtime.Json.write(new java.util.ArrayList<Object>(e.path()));
     if (!a.equals(expected)) throw new AssertionFailed("expected path " + expected + ", got " + a + " (" + e.getMessage() + ")");
   }
 `;
@@ -145,7 +145,7 @@ ${methods}
   public static void main(String[] args) throws Exception {
     java.util.Map<String, Object> out = new java.util.LinkedHashMap<>();
 ${dispatch}
-    java.nio.file.Files.writeString(java.nio.file.Path.of(args[0]), dev.yaffle.runtime.Json.write(out));
+    java.nio.file.Files.writeString(java.nio.file.Path.of(args[0]), org.yafflelang.runtime.Json.write(out));
   }
 }
 `;

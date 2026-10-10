@@ -1,7 +1,7 @@
-package dev.yaffle.conformance.externs;
+package org.yafflelang.conformance.externs;
 
-import dev.yaffle.runtime.Codec;
-import dev.yaffle.runtime.CodecCtx;
+import org.yafflelang.runtime.Codec;
+import org.yafflelang.runtime.CodecCtx;
 import java.io.ByteArrayOutputStream;
 
 /**

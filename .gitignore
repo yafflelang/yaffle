@@ -149,6 +149,7 @@ result-*
 # yaffle
 packages/*/dist/
 packages/runtime-rust/target/
+packages/runtime-java/target/
 conformance/.out/
 *.vsix
 

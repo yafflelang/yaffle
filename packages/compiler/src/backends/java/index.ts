@@ -130,7 +130,7 @@ function runtimeFiles(): GeneratedFile[] {
 /** Directory of the runtime's Java sources. */
 export function runtimeSourceDir(): string {
   const here = dirname(fileURLToPath(import.meta.url));
-  // packages/compiler/src/backends/java → packages/runtime-java/src/main/java/dev/yaffle/runtime
+  // packages/compiler/src/backends/java → packages/runtime-java/src/main/java/org/yafflelang/runtime
   return join(here, "../../../../runtime-java/src/main/java", RUNTIME_PACKAGE.replace(/\./g, "/"));
 }
 

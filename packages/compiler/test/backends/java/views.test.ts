@@ -48,9 +48,9 @@ const helpers = `
     for (Entry e : Archive.parse(b).entries) out.add(e.offset);
     return out;
   }
-  static String patches(java.util.List<dev.yaffle.runtime.Patch> ps) {
+  static String patches(java.util.List<org.yafflelang.runtime.Patch> ps) {
     StringBuilder sb = new StringBuilder();
-    for (dev.yaffle.runtime.Patch p : ps) sb.append("[").append(Integer.toHexString(p.at())).append(",").append(p.remove()).append(",").append(p.insert().length).append("]");
+    for (org.yafflelang.runtime.Patch p : ps) sb.append("[").append(Integer.toHexString(p.at())).append(",").append(p.remove()).append(",").append(p.insert().length).append("]");
     return sb.toString();
   }
 `;
@@ -65,7 +65,7 @@ const tests: Record<string, string> = {
     eq(0x40L, v.getEntries().get(1).getSize());
     eq(0x300L, v.getEntries().get(1).getOffset());
     eq(3, v.getEntries().get(2).getData()[0] & 0xff);
-    eq(dev.yaffle.runtime.Json.write(Archive.toJson(Archive.parse(bytes))), dev.yaffle.runtime.Json.write(Archive.toJson(v.toValue())));
+    eq(org.yafflelang.runtime.Json.write(Archive.toJson(Archive.parse(bytes))), org.yafflelang.runtime.Json.write(Archive.toJson(v.toValue())));
     eq(0x80, v.getEntries().get(0).offset());
     eq(0x18, v.getEntries().get(1).size());
     java.util.List<Long> sizes = new java.util.ArrayList<>();
@@ -77,7 +77,7 @@ const tests: Record<string, string> = {
     bad[0x80 + 0x18 + 0x14] = 7; // padding after entry 1's size (strict)
     Archive.View v = Archive.view(bad);
     eq(0x180L, v.getEntries().get(0).getSize());
-    dev.yaffle.runtime.YaffleException e = fails("CHECK", () -> v.getEntries().get(1).getSize());
+    org.yafflelang.runtime.YaffleException e = fails("CHECK", () -> v.getEntries().get(1).getSize());
     path("[\\"entries\\",1,\\"size\\"]", e);
   `,
   "same-size scalar edits are patched in place": `
@@ -100,7 +100,7 @@ const tests: Record<string, string> = {
   `,
   "rejects bad values with the field's path": `
     Archive.View v = Archive.view(sample());
-    dev.yaffle.runtime.YaffleException e = fails("RANGE", () -> v.getEntries().get(0).setAlign(1L << 32));
+    org.yafflelang.runtime.YaffleException e = fails("RANGE", () -> v.getEntries().get(0).setAlign(1L << 32));
     path("[\\"entries\\",0,\\"align\\"]", e);
   `,
   "push: the table grows into padding, existing data stays, new data is appended": `
@@ -121,7 +121,7 @@ const tests: Record<string, string> = {
     byte[] d = new byte[0x50];
     java.util.Arrays.fill(d, (byte) 8);
     v.getEntries().get(1).setData(d);
-    byte[] out = dev.yaffle.runtime.Patch.apply(bytes, v.patches());
+    byte[] out = org.yafflelang.runtime.Patch.apply(bytes, v.patches());
     Archive p = Archive.parse(out);
     eq(0x500L, p.entries.get(1).offset);
     eq(0x400L, p.entries.get(2).offset);
@@ -129,12 +129,12 @@ const tests: Record<string, string> = {
 
     Archive.View v2 = Archive.view(bytes);
     v2.getEntries().get(1).setData(new byte[0x150]);
-    byte[] out2 = v2.commit(dev.yaffle.runtime.Layout.Grow.SPLICE);
+    byte[] out2 = v2.commit(org.yafflelang.runtime.Layout.Grow.SPLICE);
     eq(java.util.List.of(0x100L, 0x300L, 0x500L, 0x600L), offsets(out2));
 
     Archive.View v3 = Archive.view(bytes);
     v3.getEntries().get(1).setData(new byte[0x150]);
-    fails("DERIVE", () -> v3.commit(dev.yaffle.runtime.Layout.Grow.ERROR));
+    fails("DERIVE", () -> v3.commit(org.yafflelang.runtime.Layout.Grow.ERROR));
   `,
   "removing elements": `
     Archive.View v = Archive.view(sample());

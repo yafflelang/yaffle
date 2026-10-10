@@ -91,15 +91,15 @@ const tests: Record<string, string> = {
     byte[] b = Doc.serialize(doc(), v2());
     Doc d = Doc.parse(b, v2());
     check(d.p == d.q, "same object for the same target");
-    String j = dev.yaffle.runtime.Json.write(Doc.toJson(d));
+    String j = org.yafflelang.runtime.Json.write(Doc.toJson(d));
     check(j.contains("\\"q\\":{\\"$ref\\":\\"/p\\"}"), j);
-    Doc back = Doc.fromJson(dev.yaffle.runtime.Json.parse(j));
+    Doc back = Doc.fromJson(org.yafflelang.runtime.Json.parse(j));
     check(back.p == back.q, "$ref restores identity");
     eq(hex(b), hex(Doc.serialize(back, v2())));
   `,
   "canonical JSON": `
     Doc d = Doc.parse(Doc.serialize(doc(), v2()), v2());
-    String j = dev.yaffle.runtime.Json.write(Doc.toJson(d));
+    String j = org.yafflelang.runtime.Json.write(Doc.toJson(d));
     check(j.contains("\\"big\\":\\"18446744073709551615\\""), j);
     check(j.contains("\\"neg\\":\\"-5\\""), j);
     check(j.contains("\\"k\\":\\"B\\""), j);
@@ -108,18 +108,18 @@ const tests: Record<string, string> = {
     check(j.contains("\\"t\\":{\\"type\\":\\"Tagged\\",\\"value\\":{\\"tag\\":1,\\"v\\":9}}"), j);
     check(j.contains("\\"list\\":[1,2,65535]"), j);
     Doc v1 = Doc.parse(Doc.serialize(doc(), new Doc.Options().version(1)), new Doc.Options().version(1));
-    check(!dev.yaffle.runtime.Json.write(Doc.toJson(v1)).contains("extra"), "untaken branch omitted");
+    check(!org.yafflelang.runtime.Json.write(Doc.toJson(v1)).contains("extra"), "untaken branch omitted");
     check(v1.extra == null, "absent conditional field is null");
   `,
   "errors carry code, path and offset": `
     byte[] b = Doc.serialize(doc(), v2());
     b[0] = 0;
-    dev.yaffle.runtime.YaffleException e = fails("CHECK", () -> Doc.parse(b, v2()));
+    org.yafflelang.runtime.YaffleException e = fails("CHECK", () -> Doc.parse(b, v2()));
     path("[\\"magic\\"]", e);
     eq(0L, e.offset());
     Doc d = doc();
     d.list.set(1, 70000);
-    dev.yaffle.runtime.YaffleException e2 = fails("RANGE", () -> Doc.serialize(d, v2()));
+    org.yafflelang.runtime.YaffleException e2 = fails("RANGE", () -> Doc.serialize(d, v2()));
     path("[\\"list\\",1]", e2);
     eq(-1L, e2.offset());
     Doc d3 = doc();
@@ -130,9 +130,9 @@ const tests: Record<string, string> = {
   `,
   "safeParse and async": `
     byte[] b = Doc.serialize(doc(), v2());
-    check(Doc.safeParse(b, v2()) instanceof dev.yaffle.runtime.SafeResult.Ok<Doc>, "ok");
-    dev.yaffle.runtime.SafeResult<Doc> bad = Doc.safeParse(new byte[3], v2());
-    check(bad instanceof dev.yaffle.runtime.SafeResult.Err<Doc> err && err.error().code() == dev.yaffle.runtime.ErrorCode.EOF, "err");
+    check(Doc.safeParse(b, v2()) instanceof org.yafflelang.runtime.SafeResult.Ok<Doc>, "ok");
+    org.yafflelang.runtime.SafeResult<Doc> bad = Doc.safeParse(new byte[3], v2());
+    check(bad instanceof org.yafflelang.runtime.SafeResult.Err<Doc> err && err.error().code() == org.yafflelang.runtime.ErrorCode.EOF, "err");
     Doc d = Doc.parseAsync(b, v2()).get();
     eq(hex(b), hex(Doc.serializeAsync(d, v2()).get()));
   `,
@@ -141,15 +141,15 @@ const tests: Record<string, string> = {
     x.a = 0x0102;
     x.b = 0x03040506L;
     x.c = true;
-    eq("0102" + "03040506" + "01", hex(Be.serialize(x, new Be.Options().endian(dev.yaffle.runtime.Endian.BE))));
+    eq("0102" + "03040506" + "01", hex(Be.serialize(x, new Be.Options().endian(org.yafflelang.runtime.Endian.BE))));
     eq("0201" + "03040506" + "01", hex(Be.serialize(x)));
     check(Be.parse(hex("0201030405060" + "2")).c, "nonzero bool is true");
     fails("CHECK", () -> Be.parse(hex("02010304050602"), new Be.Options().strict(true)));
   `,
   "options from canonical JSON": `
-    Doc.Options o = Doc.Options.fromJson(dev.yaffle.runtime.Json.parse("{\\"version\\":2,\\"endian\\":\\"be\\"}"));
+    Doc.Options o = Doc.Options.fromJson(org.yafflelang.runtime.Json.parse("{\\"version\\":2,\\"endian\\":\\"be\\"}"));
     eq(2L, o.version);
-    check(o.endian == dev.yaffle.runtime.Endian.BE, "endian");
+    check(o.endian == org.yafflelang.runtime.Endian.BE, "endian");
   `
 };
 

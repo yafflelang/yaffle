@@ -148,7 +148,7 @@ const helpers = `
     }
   }
   static String json(Doc d) {
-    return dev.yaffle.runtime.Json.write(Doc.toJson(d));
+    return org.yafflelang.runtime.Json.write(Doc.toJson(d));
   }
 `;
 
@@ -159,7 +159,7 @@ for (let block = 0; block < 10; block++) {
   const from = 1 + block * (SEEDS / 10);
   const to = from + SEEDS / 10 - 1;
   tests[`seeds ${from}..${to}`] = `
-    dev.yaffle.runtime.Layout.Grow[] policies = {dev.yaffle.runtime.Layout.Grow.DEFAULT, dev.yaffle.runtime.Layout.Grow.APPEND, dev.yaffle.runtime.Layout.Grow.SPLICE};
+    org.yafflelang.runtime.Layout.Grow[] policies = {org.yafflelang.runtime.Layout.Grow.DEFAULT, org.yafflelang.runtime.Layout.Grow.APPEND, org.yafflelang.runtime.Layout.Grow.SPLICE};
     for (int seed = ${from}; seed <= ${to}; seed++) {
       Rng r = new Rng(seed);
       Doc plain = doc(r);
@@ -169,9 +169,9 @@ for (let block = 0; block < 10; block++) {
       for (int round = 0; round < 3; round++) {
         int edits = 1 + r.n(5);
         for (int e = 0; e < edits; e++) log.add(edit(r, v, plain));
-        dev.yaffle.runtime.Layout.Grow policy = policies[r.n(policies.length)];
+        org.yafflelang.runtime.Layout.Grow policy = policies[r.n(policies.length)];
         String where = "seed " + seed + " round " + round + " (" + policy + "): " + log;
-        java.util.List<dev.yaffle.runtime.Patch> patches;
+        java.util.List<org.yafflelang.runtime.Patch> patches;
         byte[] committed;
         try {
           patches = v.patches(policy);
@@ -179,7 +179,7 @@ for (let block = 0; block < 10; block++) {
         } catch (RuntimeException x) {
           throw new AssertionFailed(where + ": " + x);
         }
-        check(java.util.Arrays.equals(dev.yaffle.runtime.Patch.apply(bytes, patches), committed), "patches != commit: " + where);
+        check(java.util.Arrays.equals(org.yafflelang.runtime.Patch.apply(bytes, patches), committed), "patches != commit: " + where);
         String want = json(Doc.parse(Doc.serialize(plain)));
         String got = json(Doc.parse(committed));
         check(want.equals(got), where + "\\nwant " + want + "\\ngot  " + got);

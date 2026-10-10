@@ -20,7 +20,7 @@ function javaFiles(dir: string): string[] {
 
 /** Test names, read from the sources (so each gets an `it` even before the run). */
 function testNames(): string[] {
-  const dir = join(runtime, "src/test/java/dev/yaffle/runtime");
+  const dir = join(runtime, "src/test/java/org/yafflelang/runtime");
   const out: string[] = [];
   for (const f of readdirSync(dir)) {
     if (!f.endsWith("Test.java")) continue;
@@ -47,7 +47,7 @@ describe.skipIf(!jdk)("java runtime unit tests", () => {
     if (!jc.ok) throw new Error(`javac failed:\n${jc.output}`);
     const report = join(out, "results.json");
     rmSync(report, { force: true });
-    spawnSync(jdk!.java, ["-cp", classes, "dev.yaffle.runtime.TestMain", report], {
+    spawnSync(jdk!.java, ["-cp", classes, "org.yafflelang.runtime.TestMain", report], {
       encoding: "utf8"
     });
     results = JSON.parse(readFileSync(report, "utf8"));

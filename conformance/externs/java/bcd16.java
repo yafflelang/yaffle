@@ -1,6 +1,6 @@
-package dev.yaffle.conformance.externs;
+package org.yafflelang.conformance.externs;
 
-import dev.yaffle.runtime.ExternType;
+import org.yafflelang.runtime.ExternType;
 
 /**
  * {@code extern type Bcd16 : u16 @size(2)}: four BCD digits, most significant first ({@code 12 34}

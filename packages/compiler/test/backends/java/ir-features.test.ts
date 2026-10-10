@@ -243,7 +243,7 @@ function patch(p: IrProgram): IrProgram {
 
 const helpers = `
   static String js(Object o) {
-    return dev.yaffle.runtime.Json.write(o);
+    return org.yafflelang.runtime.Json.write(o);
   }
 `;
 
@@ -254,7 +254,7 @@ const roundTrip = (root: string, hexIn: string, json: string): string => `
     json(${JSON.stringify(json)}, ${root}.toJson(v));
     eq("${hexIn}", hex(${root}.serialize(${root}.fromJson(${root}.toJson(v)))));
     ${root}.View w = ${root}.view(b);
-    json(${JSON.stringify(json)}, ${root}.toJson((${root}) dev.yaffle.runtime.ViewRead.materialize(w)));
+    json(${JSON.stringify(json)}, ${root}.toJson((${root}) org.yafflelang.runtime.ViewRead.materialize(w)));
     eq("${hexIn}", hex(w.commit()));
 `;
 
@@ -280,8 +280,8 @@ const tests: Record<string, string> = {
     `{"sizeHigh":1,"sizeLow":287454020,"size":4582421316,"tail":7}`
   ),
   "the parts derive from a virtual field": `
-    eq("024433221107", hex(Virt.serialize(Virt.fromJson(dev.yaffle.runtime.Json.parse("{\\"size\\":8877388612,\\"tail\\":7}")))));
-    fails("RANGE", () -> Virt.serialize(Virt.fromJson(dev.yaffle.runtime.Json.parse("{\\"size\\":1099511627776,\\"tail\\":7}"))));
+    eq("024433221107", hex(Virt.serialize(Virt.fromJson(org.yafflelang.runtime.Json.parse("{\\"size\\":8877388612,\\"tail\\":7}")))));
+    fails("RANGE", () -> Virt.serialize(Virt.fromJson(org.yafflelang.runtime.Json.parse("{\\"size\\":1099511627776,\\"tail\\":7}"))));
   `,
   "a virtual field edited through a view": `
     Virt.View v = Virt.view(hex("014433221107"));
@@ -294,15 +294,15 @@ const tests: Record<string, string> = {
     `{"n":3,"vals":"050b0c","m":2,"big":"0102","k":2,"doubled":"0a16","j":3,"uq":"050b0c"}`
   ),
   "derived arrays on write": `
-    Derived d = Derived.fromJson(dev.yaffle.runtime.Json.parse("{\\"vals\\":\\"01141e1e\\"}"));
+    Derived d = Derived.fromJson(org.yafflelang.runtime.Json.parse("{\\"vals\\":\\"01141e1e\\"}"));
     eq("04" + "01141e1e" + "03" + "010203" + "01" + "02" + "03" + "01141e", hex(Derived.serialize(d)));
   `,
   "a check stating a rule": `
     path("[\\"vals\\"]", fails("CHECK", () -> Derived.parse(hex("020b05010000000000"))));
-    fails("CHECK", () -> Derived.serialize(Derived.fromJson(dev.yaffle.runtime.Json.parse("{\\"vals\\":\\"0b05\\"}"))));
+    fails("CHECK", () -> Derived.serialize(Derived.fromJson(org.yafflelang.runtime.Json.parse("{\\"vals\\":\\"0b05\\"}"))));
   `,
   "layout groups place each element's items in order": `
-    Groups g = Groups.fromJson(dev.yaffle.runtime.Json.parse("{\\"vols\\":[{\\"x\\":\\"0102\\",\\"y\\":\\"0304\\"},{\\"x\\":\\"0506\\",\\"y\\":\\"0708\\"}]}"));
+    Groups g = Groups.fromJson(org.yafflelang.runtime.Json.parse("{\\"vols\\":[{\\"x\\":\\"0102\\",\\"y\\":\\"0304\\"},{\\"x\\":\\"0506\\",\\"y\\":\\"0708\\"}]}"));
     byte[] b = Groups.serialize(g);
     eq("12000000100000001600000014000000" + "0304" + "0102" + "0708" + "0506", hex(b));
     json("{\\"vols\\":[{\\"oa\\":18,\\"ob\\":16,\\"x\\":\\"0102\\",\\"y\\":\\"0304\\"},{\\"oa\\":22,\\"ob\\":20,\\"x\\":\\"0506\\",\\"y\\":\\"0708\\"}]}", Groups.toJson(Groups.parse(b)));
@@ -313,7 +313,7 @@ const tests: Record<string, string> = {
     eq("0708", hex(p.vols.get(1).y));
   `,
   "slice carriers are assembled from their slices": `
-    Carrier c = Carrier.fromJson(dev.yaffle.runtime.Json.parse("{\\"first\\":{\\"a\\":1,\\"b\\":2},\\"second\\":{\\"a\\":3,\\"b\\":4}}"));
+    Carrier c = Carrier.fromJson(org.yafflelang.runtime.Json.parse("{\\"first\\":{\\"a\\":1,\\"b\\":2},\\"second\\":{\\"a\\":3,\\"b\\":4}}"));
     eq("0100020003000400", hex(Carrier.serialize(c)));
     json("{\\"first\\":{\\"a\\":1,\\"b\\":2},\\"second\\":{\\"a\\":3,\\"b\\":4}}", Carrier.toJson(Carrier.parse(hex("0100020003000400"))));
     Carrier.View v = Carrier.view(hex("0100020003000400"));
@@ -321,8 +321,8 @@ const tests: Record<string, string> = {
     eq("0100020003000900", hex(v.commit()));
   `,
   "overlapping slices must agree": `
-    eq("010002000300", hex(Overlap.serialize(Overlap.fromJson(dev.yaffle.runtime.Json.parse("{\\"first\\":{\\"a\\":1,\\"b\\":2},\\"second\\":{\\"a\\":2,\\"b\\":3}}")))));
-    fails("DERIVE", () -> Overlap.serialize(Overlap.fromJson(dev.yaffle.runtime.Json.parse("{\\"first\\":{\\"a\\":1,\\"b\\":2},\\"second\\":{\\"a\\":9,\\"b\\":3}}"))));
+    eq("010002000300", hex(Overlap.serialize(Overlap.fromJson(org.yafflelang.runtime.Json.parse("{\\"first\\":{\\"a\\":1,\\"b\\":2},\\"second\\":{\\"a\\":2,\\"b\\":3}}")))));
+    fails("DERIVE", () -> Overlap.serialize(Overlap.fromJson(org.yafflelang.runtime.Json.parse("{\\"first\\":{\\"a\\":1,\\"b\\":2},\\"second\\":{\\"a\\":9,\\"b\\":3}}"))));
   `
 };
 

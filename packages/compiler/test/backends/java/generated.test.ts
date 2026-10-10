@@ -70,7 +70,7 @@ describe.skipIf(!jdk)("java generated code", () => {
       program({ "a.yfl": "export struct A { u8 n  u16 xs[n]  str name }" }),
       { externs: {}, inlineRuntime: true }
     );
-    expect(files.some(f => f.path === "dev/yaffle/runtime/Reader.java")).toBe(true);
+    expect(files.some(f => f.path === "org/yafflelang/runtime/Reader.java")).toBe(true);
     compiles("inline", files, []);
   }, 300_000);
 
@@ -93,6 +93,6 @@ describe.skipIf(!jdk)("java generated code", () => {
     const record = files.find(f => f.path.endsWith("/Record.java"))!.contents;
     expect(record).toContain("public String s;");
     expect(record).toContain("Map<java.lang.String, Object>");
-    expect(record).toContain("dev.yaffle.runtime.Reader $r");
+    expect(record).toContain("org.yafflelang.runtime.Reader $r");
   }, 300_000);
 });

@@ -1,7 +1,7 @@
-package dev.yaffle.conformance.externs;
+package org.yafflelang.conformance.externs;
 
-import dev.yaffle.runtime.Codec;
-import dev.yaffle.runtime.CodecCtx;
+import org.yafflelang.runtime.Codec;
+import org.yafflelang.runtime.CodecCtx;
 
 /**
  * {@code extern codec xorpos(u8 key) @ranged}: byte i of the encoded region is XORed with {@code

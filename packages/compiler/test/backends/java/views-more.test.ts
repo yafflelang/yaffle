@@ -62,7 +62,7 @@ const helpers = `
     return d;
   }
   static String json(Doc d) {
-    return dev.yaffle.runtime.Json.write(Doc.toJson(d));
+    return org.yafflelang.runtime.Json.write(Doc.toJson(d));
   }
 `;
 

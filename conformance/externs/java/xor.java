@@ -1,7 +1,7 @@
-package dev.yaffle.conformance.externs;
+package org.yafflelang.conformance.externs;
 
-import dev.yaffle.runtime.Codec;
-import dev.yaffle.runtime.CodecCtx;
+import org.yafflelang.runtime.Codec;
+import org.yafflelang.runtime.CodecCtx;
 
 /**
  * {@code extern codec xor(u8 key) @ranged}: every byte XOR {@code key}. Its own inverse, and

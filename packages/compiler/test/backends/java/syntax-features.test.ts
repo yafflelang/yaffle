@@ -48,7 +48,7 @@ const input = `{"records":[{"model":{"x":1},"flags":2},{"model":null,"flags":3}]
 
 const tests: Record<string, string> = {
   "every feature round trips": `
-    S v = S.fromJson(dev.yaffle.runtime.Json.parse(${JSON.stringify(input)}));
+    S v = S.fromJson(org.yafflelang.runtime.Json.parse(${JSON.stringify(input)}));
     byte[] b = S.serialize(v);
     S p = S.parse(b);
     eq(hex(new byte[] {0}), hex(p.index));
@@ -60,21 +60,21 @@ const tests: Record<string, string> = {
     eq(9, p.vols.get(1).pieces.get(0).n);
     eq(hex(b), hex(S.serialize(S.fromJson(S.toJson(p)))));
     S.View w = S.view(b);
-    eq(dev.yaffle.runtime.Json.write(S.toJson(p)), dev.yaffle.runtime.Json.write(S.toJson((S) dev.yaffle.runtime.ViewRead.materialize(w))));
+    eq(org.yafflelang.runtime.Json.write(S.toJson(p)), org.yafflelang.runtime.Json.write(S.toJson((S) org.yafflelang.runtime.ViewRead.materialize(w))));
     eq(hex(b), hex(w.commit()));
   `,
   "layout groups put each volume's pieces after it": `
-    byte[] b = S.serialize(S.fromJson(dev.yaffle.runtime.Json.parse(${JSON.stringify(input)})));
+    byte[] b = S.serialize(S.fromJson(org.yafflelang.runtime.Json.parse(${JSON.stringify(input)})));
     S p = S.parse(b);
     // targets: model, then volume 0's pieces, then volume 1's
     check(p.vols.get(0).pieces.get(1) != null, "pieces");
     eq(hex(b), hex(S.serialize(p)));
   `,
   "derived arrays and rules": `
-    byte[] b = Sorted.serialize(Sorted.fromJson(dev.yaffle.runtime.Json.parse("{\\"keys\\":[{\\"name\\":\\"a\\"},{\\"name\\":\\"bc\\"},{\\"name\\":\\"de\\"}]}")));
+    byte[] b = Sorted.serialize(Sorted.fromJson(org.yafflelang.runtime.Json.parse("{\\"keys\\":[{\\"name\\":\\"a\\"},{\\"name\\":\\"bc\\"},{\\"name\\":\\"de\\"}]}")));
     Sorted p = Sorted.parse(b);
     eq("0404", hex(p.doubled));
-    fails("CHECK", () -> Sorted.serialize(Sorted.fromJson(dev.yaffle.runtime.Json.parse("{\\"keys\\":[{\\"name\\":\\"b\\"},{\\"name\\":\\"a\\"}]}"))));
+    fails("CHECK", () -> Sorted.serialize(Sorted.fromJson(org.yafflelang.runtime.Json.parse("{\\"keys\\":[{\\"name\\":\\"b\\"},{\\"name\\":\\"a\\"}]}"))));
   `
 };
 

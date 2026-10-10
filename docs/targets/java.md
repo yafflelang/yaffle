@@ -1,8 +1,9 @@
 # Java target
 
 The Java backend (`packages/compiler/src/backends/java`) turns the IR into Java 21 sources that use
-the runtime in `packages/runtime-java` (package `dev.yaffle.runtime`, no dependencies). Generated
-code and the runtime compile with `javac -Xlint:all -Werror`.
+the runtime in `packages/runtime-java` (package `org.yafflelang.runtime`, no dependencies; Maven
+coordinates `org.yafflelang:yaffle-runtime`). Generated code and the runtime compile with
+`javac -Xlint:all -Werror`.
 
 ## Generated API
 

@@ -1,4 +1,4 @@
-package dev.yaffle.conformance.externs;
+package org.yafflelang.conformance.externs;
 
 /** {@code extern fn swap16(u16 v) -> u16}: swaps the two bytes. Its own inverse. */
 public final class Swap16 {

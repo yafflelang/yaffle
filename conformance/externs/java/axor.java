@@ -1,7 +1,7 @@
-package dev.yaffle.conformance.externs;
+package org.yafflelang.conformance.externs;
 
-import dev.yaffle.runtime.AsyncCodec;
-import dev.yaffle.runtime.CodecCtx;
+import org.yafflelang.runtime.AsyncCodec;
+import org.yafflelang.runtime.CodecCtx;
 import java.util.concurrent.CompletableFuture;
 
 /** {@code extern async codec axor(u8 key)}: the same transform as {@code xor}, through futures. */

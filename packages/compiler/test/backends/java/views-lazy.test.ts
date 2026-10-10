@@ -54,19 +54,19 @@ const helpers = `
   static final java.util.List<Long> positions = new java.util.ArrayList<>();
   static final java.util.List<Long> reads = new java.util.ArrayList<>();
 
-  public static final dev.yaffle.runtime.Codec CNT = new dev.yaffle.runtime.Codec() {
-    @Override public byte[] decode(byte[] in, dev.yaffle.runtime.CodecCtx ctx) { decodes++; return in.clone(); }
-    @Override public byte[] encode(byte[] in, dev.yaffle.runtime.CodecCtx ctx) { return in.clone(); }
+  public static final org.yafflelang.runtime.Codec CNT = new org.yafflelang.runtime.Codec() {
+    @Override public byte[] decode(byte[] in, org.yafflelang.runtime.CodecCtx ctx) { decodes++; return in.clone(); }
+    @Override public byte[] encode(byte[] in, org.yafflelang.runtime.CodecCtx ctx) { return in.clone(); }
   };
 
-  public static final dev.yaffle.runtime.Codec RX = new dev.yaffle.runtime.Codec() {
-    byte[] x(byte[] in, dev.yaffle.runtime.CodecCtx ctx) {
+  public static final org.yafflelang.runtime.Codec RX = new org.yafflelang.runtime.Codec() {
+    byte[] x(byte[] in, org.yafflelang.runtime.CodecCtx ctx) {
       byte[] o = new byte[in.length];
       for (int i = 0; i < in.length; i++) o[i] = (byte) (in[i] ^ (int) ctx.longArg(0));
       return o;
     }
-    @Override public byte[] decode(byte[] in, dev.yaffle.runtime.CodecCtx ctx) { positions.add(ctx.position()); return x(in, ctx); }
-    @Override public byte[] encode(byte[] in, dev.yaffle.runtime.CodecCtx ctx) { return x(in, ctx); }
+    @Override public byte[] decode(byte[] in, org.yafflelang.runtime.CodecCtx ctx) { positions.add(ctx.position()); return x(in, ctx); }
+    @Override public byte[] encode(byte[] in, org.yafflelang.runtime.CodecCtx ctx) { return x(in, ctx); }
   };
 
   static void u32(java.io.ByteArrayOutputStream o, long v) {
@@ -110,15 +110,15 @@ const helpers = `
     return t;
   }
 
-  static dev.yaffle.runtime.Source counting(byte[] b) {
-    return new dev.yaffle.runtime.Source() {
+  static org.yafflelang.runtime.Source counting(byte[] b) {
+    return new org.yafflelang.runtime.Source() {
       @Override public long size() { return b.length; }
       @Override public byte[] read(long off, int len) { reads.add(off); return java.util.Arrays.copyOfRange(b, (int) off, (int) off + len); }
     };
   }
 
-  static dev.yaffle.runtime.AsyncSource countingAsync(byte[] b) {
-    return new dev.yaffle.runtime.AsyncSource() {
+  static org.yafflelang.runtime.AsyncSource countingAsync(byte[] b) {
+    return new org.yafflelang.runtime.AsyncSource() {
       @Override public long size() { return b.length; }
       @Override public java.util.concurrent.CompletableFuture<byte[]> read(long off, int len) {
         reads.add(off);
@@ -141,7 +141,7 @@ const tests: Record<string, string> = {
     eq(2, decodes);
     eq(0x2fff8, v.getBody().getPad().length);
     eq(3, decodes);
-    eq(dev.yaffle.runtime.Json.write(Pieces.toJson(Pieces.parse(pieces()))), dev.yaffle.runtime.Json.write(Pieces.toJson((Pieces) dev.yaffle.runtime.ViewRead.materialize(v))));
+    eq(org.yafflelang.runtime.Json.write(Pieces.toJson(Pieces.parse(pieces()))), org.yafflelang.runtime.Json.write(Pieces.toJson((Pieces) org.yafflelang.runtime.ViewRead.materialize(v))));
   `,
   "a stream piece shorter than its size field fails when touched": `
     byte[] b = pieces();
@@ -184,7 +184,7 @@ const tests: Record<string, string> = {
   "an async view completes accesses as futures": `
     byte[] b = Table.serialize(table());
     reads.clear();
-    dev.yaffle.runtime.AsyncView<Table.View> av = Table.viewAsync(countingAsync(b), null);
+    org.yafflelang.runtime.AsyncView<Table.View> av = Table.viewAsync(countingAsync(b), null);
     java.util.concurrent.CompletableFuture<Long> size = av.get(v -> v.getEntries().get(2).getSize());
     eq(0x20000L, size.join());
     eq("[0]", reads.toString());
@@ -197,7 +197,7 @@ const tests: Record<string, string> = {
   `,
   "async views run accesses in order": `
     byte[] b = Table.serialize(table());
-    dev.yaffle.runtime.AsyncView<Table.View> av = Table.viewAsync(countingAsync(b), null);
+    org.yafflelang.runtime.AsyncView<Table.View> av = Table.viewAsync(countingAsync(b), null);
     java.util.List<java.util.concurrent.CompletableFuture<Long>> fs = new java.util.ArrayList<>();
     for (int k = 0; k < 4; k++) {
       final int i = k;
@@ -206,7 +206,7 @@ const tests: Record<string, string> = {
     java.util.concurrent.CompletableFuture<Object> before = av.materialize();
     av.set(v -> v.getEntries().get(0).setData(new byte[] {5})).join();
     for (int k = 1; k < 4; k++) check(fs.get(k).join() > fs.get(k - 1).join(), "offsets increase");
-    eq(dev.yaffle.runtime.Json.write(Table.toJson(Table.parse(b))), dev.yaffle.runtime.Json.write(Table.toJson((Table) before.join())));
+    eq(org.yafflelang.runtime.Json.write(Table.toJson(Table.parse(b))), org.yafflelang.runtime.Json.write(Table.toJson((Table) before.join())));
     Table after = (Table) av.materialize().join();
     eq(1, after.entries.get(0).data.length); // (derived sizes refresh on commit)
   `,
@@ -216,13 +216,13 @@ const tests: Record<string, string> = {
     eq(4, t.entries.size());
   `,
   "an async source failure fails the access": `
-    dev.yaffle.runtime.AsyncSource bad = new dev.yaffle.runtime.AsyncSource() {
+    org.yafflelang.runtime.AsyncSource bad = new org.yafflelang.runtime.AsyncSource() {
       @Override public long size() { return 100; }
       @Override public java.util.concurrent.CompletableFuture<byte[]> read(long off, int len) {
         return java.util.concurrent.CompletableFuture.failedFuture(new java.io.UncheckedIOException(new java.io.IOException("disk")));
       }
     };
-    dev.yaffle.runtime.AsyncView<Table.View> av = Table.viewAsync(bad, null);
+    org.yafflelang.runtime.AsyncView<Table.View> av = Table.viewAsync(bad, null);
     try {
       av.get(v -> v.getN()).join();
       check(false, "expected a failure");

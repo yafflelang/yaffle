@@ -70,7 +70,7 @@ export struct Residue {
 }
 `;
 
-const J = "dev.yaffle.runtime.Json";
+const J = "org.yafflelang.runtime.Json";
 const json = (s: string): string => `${J}.parse(${JSON.stringify(s)})`;
 
 const tests: Record<string, string> = {
@@ -100,18 +100,18 @@ const tests: Record<string, string> = {
     eq(hex(b), hex(v.commit()));
   `,
   "views: editing a field a layout reads re-lays out on commit": `
-    AlignByField.View v = AlignByField.view(dev.yaffle.runtime.Hex.decode("04020400aabb"));
+    AlignByField.View v = AlignByField.view(org.yafflelang.runtime.Hex.decode("04020400aabb"));
     v.setAlign(8);
     eq("0802080000000000aabb", hex(v.commit()));
   `,
   "views: sticky layout keeps or moves targets by the computed alignment": `
-    AlignByField.View v = AlignByField.view(dev.yaffle.runtime.Hex.decode("04020400aabb"));
+    AlignByField.View v = AlignByField.view(org.yafflelang.runtime.Hex.decode("04020400aabb"));
     v.setData(new byte[] {(byte) 0xaa, (byte) 0xbb, (byte) 0xcc});
     // grows: moves to the end, still aligned to the field
     eq("0403080000000000aabbcc", hex(v.commit()));
-    AlignByField.View v2 = AlignByField.view(dev.yaffle.runtime.Hex.decode("04020400aabb"));
+    AlignByField.View v2 = AlignByField.view(org.yafflelang.runtime.Hex.decode("04020400aabb"));
     v2.setData(new byte[] {(byte) 0xaa, (byte) 0xbb, (byte) 0xcc});
-    eq("04030400aabbcc", hex(v2.commit(dev.yaffle.runtime.Layout.Grow.SPLICE)));
+    eq("04030400aabbcc", hex(v2.commit(org.yafflelang.runtime.Layout.Grow.SPLICE)));
   `,
   "views: element structs re-evaluate their layout on commit": `
     byte[] b = Params.serialize(Params.fromJson(${json('{"a":2,"es":[{"body":"aa"},{"body":"bbcc"}]}')}));
@@ -123,7 +123,7 @@ const tests: Record<string, string> = {
   `,
   "views: sticky layout checks layout-item residues": `
     // data must start at 3 mod 4; the original has it at 4
-    Residue.View v = Residue.view(dev.yaffle.runtime.Hex.decode("01040105aabb"));
+    Residue.View v = Residue.view(org.yafflelang.runtime.Hex.decode("01040105aabb"));
     v.setMore(new byte[] {(byte) 0xbb, (byte) 0xcc});
     eq("01070208000000aabbcc", hex(v.commit()));
   `

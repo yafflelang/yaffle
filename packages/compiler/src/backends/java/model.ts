@@ -84,7 +84,7 @@ const JDK_TYPES: Record<string, string> = {
   Pattern: "java.util.regex.Pattern"
 };
 
-export const RUNTIME_PACKAGE = "dev.yaffle.runtime";
+export const RUNTIME_PACKAGE = "org.yafflelang.runtime";
 
 const RUNTIME_TYPES = new Set(
   (

@@ -14,5 +14,5 @@ find src/main/java -name '*.java' > build/sources.txt
 if [ "$1" = "test" ]; then
   find src/test/java -name '*.java' > build/test-sources.txt
   "$JAVAC" -Xlint:all -Werror -cp build/classes -d build/test-classes @build/test-sources.txt
-  "$JAVA" -cp build/classes:build/test-classes dev.yaffle.runtime.TestMain
+  "$JAVA" -cp build/classes:build/test-classes org.yafflelang.runtime.TestMain
 fi

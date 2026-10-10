@@ -35,20 +35,20 @@ const tests: Record<string, string> = {
     json("{\\"has\\":0}", Cond.toJson(Cond.parse(hex("00"))));
     json("{\\"has\\":1,\\"p\\":{\\"x\\":7}}", Cond.toJson(Cond.parse(hex("010207"))));
     eq("0100", hex(Cond.serialize(Cond.fromJson(Cond.toJson(Cond.parse(hex("0100")))))));
-    json("{\\"has\\":1,\\"p\\":null}", Cond.toJson((Cond) dev.yaffle.runtime.ViewRead.materialize(Cond.view(hex("0100")))));
-    json("{\\"has\\":0}", Cond.toJson((Cond) dev.yaffle.runtime.ViewRead.materialize(Cond.view(hex("00")))));
+    json("{\\"has\\":1,\\"p\\":null}", Cond.toJson((Cond) org.yafflelang.runtime.ViewRead.materialize(Cond.view(hex("0100")))));
+    json("{\\"has\\":0}", Cond.toJson((Cond) org.yafflelang.runtime.ViewRead.materialize(Cond.view(hex("00")))));
   `,
   "a field with different types in different branches": `
     for (String h : new String[] {"0105", "0278563412", "036869", "0409", "050201"}) {
       Multi m = Multi.parse(hex(h));
       Object j = Multi.toJson(m);
-      eq(h, hex(Multi.serialize(Multi.fromJson(dev.yaffle.runtime.Json.parse(dev.yaffle.runtime.Json.write(j))))));
-      eq(dev.yaffle.runtime.Json.write(j), dev.yaffle.runtime.Json.write(Multi.toJson((Multi) dev.yaffle.runtime.ViewRead.materialize(Multi.view(hex(h))))));
+      eq(h, hex(Multi.serialize(Multi.fromJson(org.yafflelang.runtime.Json.parse(org.yafflelang.runtime.Json.write(j))))));
+      eq(org.yafflelang.runtime.Json.write(j), org.yafflelang.runtime.Json.write(Multi.toJson((Multi) org.yafflelang.runtime.ViewRead.materialize(Multi.view(hex(h))))));
     }
     json(${J('{"tag":2,"v":305419896}')}, Multi.toJson(Multi.parse(hex("0278563412"))));
     json(${J('{"tag":3,"v":"hi"}')}, Multi.toJson(Multi.parse(hex("036869"))));
-    eq("02ffffffff", hex(Multi.serialize(Multi.fromJson(dev.yaffle.runtime.Json.parse(${J('{"tag":2,"v":4294967295}')})))));
-    fails("RANGE", () -> Multi.serialize(Multi.fromJson(dev.yaffle.runtime.Json.parse(${J('{"tag":1,"v":300}')}))));
+    eq("02ffffffff", hex(Multi.serialize(Multi.fromJson(org.yafflelang.runtime.Json.parse(${J('{"tag":2,"v":4294967295}')})))));
+    fails("RANGE", () -> Multi.serialize(Multi.fromJson(org.yafflelang.runtime.Json.parse(${J('{"tag":1,"v":300}')}))));
   `
 };
 

@@ -1,6 +1,6 @@
-package dev.yaffle.conformance.externs;
+package org.yafflelang.conformance.externs;
 
-import dev.yaffle.runtime.ExternType;
+import org.yafflelang.runtime.ExternType;
 import java.io.ByteArrayOutputStream;
 
 /**
