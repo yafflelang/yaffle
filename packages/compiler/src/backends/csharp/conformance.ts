@@ -106,7 +106,7 @@ export function dotnetEnv(extra: Record<string, string> = {}): NodeJS.ProcessEnv
 
 let dotnetPath: string | null | undefined;
 
-/** The dotnet executable: $YAFFLE_DOTNET, `dotnet` on PATH, or the SDK from `nix shell nixpkgs#dotnet-sdk_9`. */
+/** The dotnet executable: $YAFFLE_DOTNET, `dotnet` on PATH, or the SDK from `nix shell nixpkgs#dotnet-sdk_10`. */
 export function findDotnet(): string | null {
   if (dotnetPath !== undefined) return dotnetPath;
   const works = (p: string): boolean => {
@@ -115,7 +115,7 @@ export function findDotnet(): string | null {
       env: dotnetEnv(),
       timeout: 60_000
     });
-    return r.status === 0 && /^9\.|^1\d\./m.test(r.stdout);
+    return r.status === 0 && /^1\d\./m.test(r.stdout);
   };
   const candidates: string[] = [];
   if (process.env.YAFFLE_DOTNET) candidates.push(process.env.YAFFLE_DOTNET);
@@ -127,7 +127,7 @@ export function findDotnet(): string | null {
   }
   const nix = spawnSync(
     "nix",
-    ["shell", "nixpkgs#dotnet-sdk_9", "--command", "sh", "-c", "command -v dotnet"],
+    ["shell", "nixpkgs#dotnet-sdk_10", "--command", "sh", "-c", "command -v dotnet"],
     {
       encoding: "utf8",
       timeout: 600_000
@@ -176,7 +176,7 @@ function hostProject(): string {
   return `<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>net9.0</TargetFramework>
+    <TargetFramework>net10.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>disable</ImplicitUsings>
     <LangVersion>13.0</LangVersion>

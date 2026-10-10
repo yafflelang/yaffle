@@ -1,8 +1,9 @@
 # C# target
 
-The C# backend (`packages/compiler/src/backends/csharp`) turns the IR into C# 13 source for .NET 9;
-the generated code depends on the runtime library `Yaffle.Runtime`
-(`packages/runtime-csharp`, no dependencies), or carries it inline (`inlineRuntime`).
+The C# backend (`packages/compiler/src/backends/csharp`) turns the IR into C# 13 source for .NET 8
+and later; the generated code depends on the runtime library `Yaffle.Runtime`
+(`packages/runtime-csharp`, no dependencies, built for `net8.0` and `net10.0`), or carries it
+inline (`inlineRuntime`).
 
 ## Generated code
 
@@ -134,10 +135,11 @@ await av.CommitAsync();
 
 ## Tests
 
-.NET comes from `$YAFFLE_DOTNET`, `dotnet` on `PATH`, or `nix shell nixpkgs#dotnet-sdk_9`
+.NET comes from `$YAFFLE_DOTNET`, `dotnet` on `PATH`, or `nix shell nixpkgs#dotnet-sdk_10`
 (the resolved path is cached). Caches and build output go to `$YAFFLE_CSHARP_CACHE` (default
 `$TMPDIR/yaffle-csharp-cache`); runtime builds put bin/obj there through
-`$YAFFLE_CSHARP_ARTIFACTS`.
+`$YAFFLE_CSHARP_ARTIFACTS`. Test projects and the conformance host target `net10.0`; the backend
+tests also build every conformance schema, and an inlined runtime, for `net8.0`.
 
 ```sh
 # Conformance, parse and view mode (csharp and csharp:view)
@@ -146,7 +148,7 @@ node --max-old-space-size=12000 --conditions=development \
 # Backend tests: every schema builds warning-free; the API, views and features end to end
 npx vitest run --project yaffle packages/compiler/test/backends/csharp
 # Runtime unit tests
-nix shell nixpkgs#dotnet-sdk_9 --command dotnet test packages/runtime-csharp/test/Yaffle.Runtime.Tests
+nix shell nixpkgs#dotnet-sdk_10 --command dotnet test packages/runtime-csharp/test/Yaffle.Runtime.Tests
 ```
 
 The conformance adapter (`conformance.ts`) builds one long-running host (`harness/Host.cs`,

@@ -1,6 +1,7 @@
 /**
  * Every conformance schema generates C# that builds with `dotnet build`, warnings as
- * errors at every warning level; an inlined runtime builds without the runtime project.
+ * errors at every warning level, for net10.0 and net8.0; an inlined runtime builds without the
+ * runtime project.
  */
 import { readdirSync } from "node:fs";
 import { join } from "node:path";
@@ -17,6 +18,11 @@ import {
   irOfFiles
 } from "./harness.ts";
 
+const MAIN: GeneratedFile = {
+  path: "Program.cs",
+  contents: "public static class Program { public static void Main() { } }\n"
+};
+
 describe.skipIf(!hasDotnet())("C# output builds warning-free", () => {
   it("every conformance schema", { timeout: 900_000 }, async () => {
     const files: GeneratedFile[] = [];
@@ -32,11 +38,25 @@ describe.skipIf(!hasDotnet())("C# output builds warning-free", () => {
         add([join(dir, "schema.yfl")], dir, `Gen.${`${root}/${d}`.replace(/[^A-Za-z0-9]+/g, "_")}`);
       }
     }
-    files.push({
-      path: "Program.cs",
-      contents: "public static class Program { public static void Main() { } }\n"
-    });
+    files.push(MAIN);
     await build("all-schemas", files, { compile: [...externFiles] });
+    await build("all-schemas-net8", files, {
+      compile: [...externFiles],
+      targetFramework: "net8.0"
+    });
+  });
+
+  it("an inlined runtime, for net8.0", { timeout: 900_000 }, async () => {
+    const files = gen(
+      irOf("export struct Table { u32 count  u16 items[count] }"),
+      "Inline",
+      {},
+      true
+    );
+    await build("inline-runtime-net8", [...files, MAIN], {
+      runtime: false,
+      targetFramework: "net8.0"
+    });
   });
 });
 

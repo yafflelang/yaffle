@@ -73,6 +73,8 @@ export interface ProjectOptions {
   packages?: Record<string, string>;
   /** Reference the runtime project (default true; false for inlined runtimes). */
   runtime?: boolean;
+  /** The project's TargetFramework (default net10.0; the runtime also targets net8.0). */
+  targetFramework?: string;
 }
 
 interface RunResult {
@@ -120,7 +122,7 @@ export async function build(
     `<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>net9.0</TargetFramework>
+    <TargetFramework>${opts.targetFramework ?? "net10.0"}</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>disable</ImplicitUsings>
     <LangVersion>13.0</LangVersion>
