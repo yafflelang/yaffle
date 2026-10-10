@@ -10,7 +10,7 @@ import (
 	"fmt"
 	"math/bits"
 
-	"yaffle.dev/yaffle"
+	yaffle "yafflelang.org/runtime"
 )
 
 type varInt struct{}

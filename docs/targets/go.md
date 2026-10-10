@@ -1,9 +1,14 @@
 # Go target
 
 The Go backend (`packages/compiler/src/backends/go`) turns a yaffle program into one Go package;
-the generated code imports the runtime `yaffle.dev/yaffle` (`packages/runtime-go`, Go 1.22, no
-dependencies). Every IR module becomes one `.go` file of the package: yaffle allows type cycles
-across modules, Go packages can't import each other in cycles.
+the generated code imports the runtime `yafflelang.org/runtime` as `yaffle` (`packages/runtime-go`,
+Go 1.22, no dependencies). Every IR module becomes one `.go` file of the package: yaffle allows
+type cycles across modules, Go packages can't import each other in cycles.
+
+The runtime module lives in the `packages/runtime-go` subdirectory of the repository. The page
+`yafflelang.org/runtime` (`docs/runtime/index.html`) declares it with a `go-import` tag carrying
+that subdirectory, a form `go get` understands from Go 1.25; release tags are prefixed with it
+(`packages/runtime-go/v0.0.1`).
 
 ## Generated API
 

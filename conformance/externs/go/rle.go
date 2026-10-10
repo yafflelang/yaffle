@@ -8,7 +8,7 @@ package externs
 import (
 	"fmt"
 
-	"yaffle.dev/yaffle"
+	yaffle "yafflelang.org/runtime"
 )
 
 func rleDecodePairs(in []byte) ([]byte, error) {

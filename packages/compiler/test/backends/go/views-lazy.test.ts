@@ -19,7 +19,7 @@ import (
 	"sync/atomic"
 
 	kzstd "github.com/klauspost/compress/zstd"
-	"yaffle.dev/yaffle"
+	yaffle "yafflelang.org/runtime"
 )
 
 // Counters read by the tests.

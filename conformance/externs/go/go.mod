@@ -1,7 +1,7 @@
-module yaffle.dev/conformance-externs
+module yafflelang.org/conformance-externs
 
 go 1.22
 
-require yaffle.dev/yaffle v0.0.0
+require yafflelang.org/runtime v0.0.0
 
-replace yaffle.dev/yaffle => ../../../packages/runtime-go
+replace yafflelang.org/runtime => ../../../packages/runtime-go

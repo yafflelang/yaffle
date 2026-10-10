@@ -6,7 +6,7 @@ package externs
 import (
 	"fmt"
 
-	"yaffle.dev/yaffle"
+	yaffle "yafflelang.org/runtime"
 )
 
 type bcd16 struct{}

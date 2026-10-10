@@ -5,7 +5,7 @@ import (
 	"context"
 	"testing"
 
-	"yaffle.dev/yaffle"
+	yaffle "yafflelang.org/runtime"
 )
 
 func ctx(args ...any) *yaffle.CodecCtx {

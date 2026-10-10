@@ -5,7 +5,7 @@ package externs
 import (
 	"fmt"
 
-	"yaffle.dev/yaffle"
+	yaffle "yafflelang.org/runtime"
 )
 
 type xorCodec struct{}

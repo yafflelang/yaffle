@@ -25,7 +25,7 @@ import (
 	"context"
 	"errors"
 
-	"yaffle.dev/yaffle"
+	yaffle "yafflelang.org/runtime"
 )
 
 var counter byte

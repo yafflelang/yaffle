@@ -272,7 +272,7 @@ export struct Packed {
 `;
     const ext = `package ext
 
-import "yaffle.dev/yaffle"
+import yaffle "yafflelang.org/runtime"
 
 // Decodes counts Decode calls.
 var Decodes int
