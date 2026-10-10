@@ -9,6 +9,7 @@ export default defineConfig([
     "**/node_modules/**",
     "conformance/.out/**",
     "packages/runtime-rust/target/**",
+    "packages/runtime-java/target/**",
     "**/*.generated.*"
   ]),
   {
