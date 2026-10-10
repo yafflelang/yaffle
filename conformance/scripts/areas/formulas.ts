@@ -116,10 +116,10 @@ add(
 );
 
 add(
-  parse("chosen reverse", "Flags", w().u32(16).raw("0102"), { n: 16, flags: "0102" }),
-  ser("chosen reverse on write", "Flags", { flags: "ff" }, w().u32(8).raw("ff")),
-  ser("chosen reverse empty", "Flags", { flags: "" }, w().u32(0)),
-  parseOnly("chosen reverse is lossy for other values", "Flags", w().u32(10).raw("0102"), {
+  parse("chosen formula", "Flags", w().u32(16).raw("0102"), { n: 16, flags: "0102" }),
+  ser("chosen formula on write", "Flags", { flags: "ff" }, w().u32(8).raw("ff")),
+  ser("chosen formula empty", "Flags", { flags: "" }, w().u32(0)),
+  parseOnly("chosen formula is lossy for other values", "Flags", w().u32(10).raw("0102"), {
     n: 10,
     flags: "0102"
   }),
@@ -150,6 +150,6 @@ add(
 
 export default area(
   "formulas",
-  "Write formulas: sizeof, offsetof, crc32, adler32, encode, min/max, extern fn, later fields, chosen reverses.",
+  "Computed fields: sizeof, offsetof, crc32, adler32, encode, min/max, extern fn, later fields, chosen formulas for non-derivable fields.",
   cases
 );

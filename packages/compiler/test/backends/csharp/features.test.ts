@@ -199,7 +199,7 @@ return $"{v.Size} {json} {back} {w} [{big}] [{missing}]";`,
         '4294967298 {"hi":1,"lo":2,"size":4294967298,"after":9} 010200000009 129a78563400 [RANGE size] [INPUT size]'
     },
     {
-      name: "virtual fields with a mixed-radix reverse",
+      name: "virtual fields with a mixed-radix inverse",
       body: `var w = H.Hex(Vf.Mr.Serialize(new Vf.Mr { N = 47 }));
 var p = Vf.Mr.Parse(H.X("0407"));
 return $"{w} {p.N}";`,

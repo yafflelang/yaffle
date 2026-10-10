@@ -196,7 +196,7 @@ describe("semantic tokens, inlay hints, quick fixes", () => {
     };
     const shift = fix(
       "struct S { u8 hi  u32 lo  virtual u64 v = (hi << 16) | lo }",
-      "virtual-not-reversible"
+      "virtual-not-invertible"
     )!;
     expect(shift.title).toBe("Shift by 32");
     expect(Object.values(shift.edit.changes)[0]![0]!.newText).toBe("32");

@@ -44,7 +44,7 @@ describe("hover", () => {
     expect(h).toContain("**Size:** 4 bytes");
     expect(h).toContain("inherits `$endian`");
     expect(h).toContain(
-      "**Written as:** `count = entries.length` — derived automatically from the element count of entries. Not in the input type"
+      "**Written as:** `count = entries.length` — derived from the element count of entries. Not in the input type"
     );
   });
 
@@ -62,9 +62,7 @@ describe("hover", () => {
   });
 
   it("size fields show where they come from", () => {
-    expect(hoverAt("compSize\n", 1)).toContain(
-      "derived automatically from the on-disk size of body"
-    );
+    expect(hoverAt("compSize\n", 1)).toContain("derived from the on-disk size of body");
   });
 
   it("fixed and block byte order", () => {
@@ -78,9 +76,9 @@ describe("hover", () => {
     expect(h).toContain("```\n76543210\n····kkkc\n    ^^^\n```");
   });
 
-  it("transforms show the inferred reverse", () => {
+  it("transforms show the inferred inverse", () => {
     expect(hoverAt("angle", 1)).toContain(
-      "**Transform:** reads `it * 360.0 / 65536.0`, writes `round(it * 65536.0 / 360.0)` (reverse worked out by the compiler)"
+      "**Transform:** reads `it * 360.0 / 65536.0`, writes `round(it * 65536.0 / 360.0)` (inverse worked out by the compiler)"
     );
   });
 
@@ -132,7 +130,7 @@ describe("hover", () => {
   it("attributes", () => {
     const h = hoverAt("@via", 1);
     expect(h).toContain("@via(codec)");
-    expect(h).toContain("Byte transform");
+    expect(h).toContain("through a codec");
   });
 
   it("built-in types", () => {

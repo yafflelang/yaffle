@@ -1,5 +1,5 @@
 // Derived arrays: `map`, `filter`, `indicesWhere`, `sortedBy` (with lambdas
-// `x => expr`), `unique` and `concat`, in write formulas (the array leaves the input and its count
+// `x => expr`), `unique` and `concat`, in computed fields (the array leaves the input and its count
 // is derived from its length as usual) and in checks (`where it == sortedBy(it, k => k.name)`).
 // Arrays, strings and bytes compare by value; `x != null` tests a @nullable pointer.
 

@@ -83,7 +83,7 @@ export class JsonEmitter {
   private emitFromJson(s: IrStruct, fields: FieldRef[]): void {
     const code = this.code;
     const name = this.model.className(s.id);
-    // Fields a virtual stream writes (their content comes from the `from` field): not required.
+    // Fields a stream writes (their content comes from the `from` field): not required.
     const streamSources = new Set<string>();
     for (const f of this.model.fields(s)) {
       let st = f.field?.from?.stream;

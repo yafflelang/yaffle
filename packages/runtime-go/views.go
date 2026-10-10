@@ -444,7 +444,7 @@ func (n *Node) Set(field string, enc func(obj any) []byte, apply func(obj any)) 
 		return err
 	}
 	if n.scanner.inSpace {
-		return newErr(INPUT, -1, "not implemented: editing values inside a virtual stream or a codec region through a view (set the enclosing field instead)")
+		return newErr(INPUT, -1, "not implemented: editing values inside a stream or a codec region through a view (set the enclosing field instead)")
 	}
 	if enc != nil {
 		obj, _ := n.Object()

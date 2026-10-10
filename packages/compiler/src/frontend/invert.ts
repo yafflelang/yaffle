@@ -1,8 +1,8 @@
 /**
- * Reverse derivation helpers over IR expressions:
+ * Derivation helpers over IR expressions:
  * - inverting `as` transforms (`it * 360.0 / 65536` ↔ `round(it * 65536 / 360.0)`, `names[it]` ↔
  *   `indexOf(names, it)`),
- * - linear analysis (`a·x + b`) for automatic length/offset/size reverses,
+ * - linear analysis (`a·x + b`) for derived lengths, offsets and sizes,
  * - a small evaluator used to sample formulas against read-side expressions.
  */
 import type { IrBinaryOp, IrExpr, IrValueType } from "../ir/index.ts";

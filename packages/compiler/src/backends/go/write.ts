@@ -97,7 +97,7 @@ export class WriteEmitter extends Emitter<WCtx> {
 
   /**
    * The layout of one instance, for a layout whose item arguments read fields: evaluated like
-   * write formulas, in the struct's write context once its fields are written, and checked by
+   * computed fields, in the struct's write context once its fields are written, and checked by
    * yaffle.InstanceLayout (an alignment below 1 is RANGE).
    */
   private instanceLayout(s: IrStruct, ctx: WCtx): string {
@@ -1231,7 +1231,7 @@ export class WriteEmitter extends Emitter<WCtx> {
     return `w.Region.AlignEnd = yaffle.Lcm(w.Region.AlignEnd, ${to})`;
   }
 
-  // ── virtual streams ───────────────────────────────────────────────────────
+  // ── streams ───────────────────────────────────────────────────────────────
 
   /**
    * `from` fields: encode the value, then hand the bytes to the stream's source fields. Slices of

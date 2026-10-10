@@ -1121,7 +1121,7 @@ export class WriteEmitter extends Emitter<WCtx, WriteState> {
     return `_w.region.end_align(${this.num(l.to, ctx)}${this.alignArgs(l, ctx)})`;
   }
 
-  // ── virtual streams ───────────────────────────────────────────────────────
+  // ── streams ───────────────────────────────────────────────────────────────
 
   /**
    * `from` fields: encode the value, then hand the bytes to the stream's source fields (they are

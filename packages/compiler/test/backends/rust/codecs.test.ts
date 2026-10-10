@@ -1,5 +1,5 @@
 /**
- * Rust backend: byte transforms (codecs), codec reuse for byte-exact rebuilds, virtual streams,
+ * Rust backend: codecs, codec reuse for byte-exact rebuilds, streams,
  * checksums and extern types.
  */
 import { readFileSync } from "node:fs";
@@ -309,7 +309,7 @@ describe.skipIf(!hasRust)("rust backend: codecs and streams", () => {
     expect(await b.value({ op: "rebuild", module: "cod", root: "Recs", bytes })).toBe(bytes);
   });
 
-  it("parses virtual streams joined from pieces and splits them back", async () => {
+  it("parses streams joined from pieces and splits them back", async () => {
     const inner = Buffer.concat([u16(3), u16(10), u16(20), u16(30)]); // 8 bytes
     const p1 = inner.subarray(0, 3);
     const p2 = inner.subarray(3);

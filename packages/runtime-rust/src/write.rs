@@ -62,7 +62,7 @@ enum PadKind {
 
 /// An alignment: pad until `(pos - origin + offset) % to == 0`, where the origin is the base
 /// (default) or, with `file`, the start of the byte space: the file, a codec's decoded region or
-/// a virtual stream.
+/// a stream.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub struct Align {
     pub to: u64,
@@ -136,9 +136,9 @@ pub enum Span {
 pub struct PlaceOpts {
     /// The target's own leading `@align` layers.
     pub align: Vec<Align>,
-    /// `at` with a linear reverse: position ≡ remainder (mod modulus).
+    /// `at` with a derived linear offset: position ≡ remainder (mod modulus).
     pub constraint: Option<(u64, u64)>,
-    /// `at` that could not be reversed: exactly this offset.
+    /// `at` whose offset is not derivable: exactly this offset.
     pub fixed: Option<u64>,
 }
 
@@ -408,7 +408,7 @@ impl<'a> Writer<'a> {
 
     // ─── Bases ───────────────────────────────────────────────────────────────
 
-    /// Starts a byte space: the root, a codec's decoded side, or a virtual stream. `@align(from:
+    /// Starts a byte space: the root, a codec's decoded side, or a stream. `@align(from:
     /// file)` counts from its start.
     pub fn begin_space(&mut self) {
         self.begin_region(Some(0));
@@ -896,7 +896,7 @@ impl<'a> Writer<'a> {
         e.or_path(&self.path)
     }
 
-    // ─── Virtual streams ─────────────────────────────────────────────────────
+    // ─── Streams ─────────────────────────────────────────────────────────────
 
     /// Queues the pieces a stream's source fields will write (in order).
     pub fn push_pieces(&mut self, stream: u32, pieces: Vec<Vec<u8>>) {

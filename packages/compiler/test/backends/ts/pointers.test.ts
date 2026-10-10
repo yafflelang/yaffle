@@ -133,7 +133,7 @@ describe("pointers", () => {
 });
 
 describe("placements", () => {
-  it("`at` with a linear reverse gets a placement constraint", async () => {
+  it("`at` with a derived linear offset gets a placement constraint", async () => {
     const P = program({
       structs: [
         S("Disk", [

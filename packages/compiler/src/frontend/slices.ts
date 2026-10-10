@@ -145,7 +145,7 @@ function readSideRefs(members: IrMember[]): Map<string, string> {
   return out;
 }
 
-/** Phase 1 (before reverse derivation): decide which sliced fields are assembled from their slices. */
+/** Phase 1 (before derivation): decide which sliced fields are assembled from their slices. */
 export function markSliceCarriers(el: Elaborator, ctx: Ctx, result: StructResult): Candidate[] {
   const byName = new Map<string, FieldResult>();
   for (const f of result.fields.values()) if (f.sym.name) byName.set(f.sym.name, f);
@@ -233,7 +233,7 @@ export function markSliceCarriers(el: Elaborator, ctx: Ctx, result: StructResult
   return out;
 }
 
-/** Phase 2 (after reverse derivation): lengths that depend on the carrier, and overlaps. */
+/** Phase 2 (after derivation): lengths that depend on the carrier, and overlaps. */
 export function checkSliceCarriers(
   el: Elaborator,
   ctx: Ctx,

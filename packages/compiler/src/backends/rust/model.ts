@@ -1,7 +1,7 @@
 /**
  * Analysis of an IR program for the Rust backend: Rust shapes of every value, the Rust layout
  * of every struct (fields, optional fields, switch enums), and the write-side analyses (late
- * derived values, measured fields, placeable-bearing types, codec caches, virtual streams).
+ * derived values, measured fields, placeable-bearing types, codec caches, streams).
  */
 import type {
   IrBits,

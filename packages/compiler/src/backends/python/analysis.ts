@@ -297,7 +297,7 @@ export function isNullablePointer(t: IrType): boolean {
   return t.kind === "pointer" && t.nullValue !== undefined && !t.emptyIsNull;
 }
 
-/** A field type that is a transform without a reverse (possibly under layers). */
+/** A field type that is a transform without an inverse (possibly under layers). */
 export function isOneWay(t: IrType): boolean {
   const u = unlayer(t);
   return u.kind === "transform" && !u.write;

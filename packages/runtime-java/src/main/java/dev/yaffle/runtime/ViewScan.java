@@ -236,7 +236,7 @@ public final class ViewScan {
     return inSpace(r.strict, pathOf(fr), make, read);
   }
 
-  /** A field read from a virtual stream (its bytes computed on access). */
+  /** A field read from a stream (its bytes computed on access). */
   public Object lazyStream(Reader r, Supplier<byte[]> stream, Frame fr, Target read) {
     long at = r.at(r.pos);
     return inSpace(r.strict, pathOf(fr), () -> new ViewSpace(root, stream.get(), false, at), read);

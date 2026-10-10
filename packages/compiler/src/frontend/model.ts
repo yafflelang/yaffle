@@ -35,7 +35,7 @@ export interface FieldResult {
   deriveDisplay?: string;
   /** Where the auto derivation comes from ("array length of entries"). */
   deriveSource?: string;
-  /** Inferred reverse of an `as` transform, for hovers. */
+  /** Inferred inverse of an `as` transform, for hovers. */
   inferredWrite?: string;
 }
 

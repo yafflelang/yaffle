@@ -1,4 +1,4 @@
-/** Cases for conformance/cases/streams-hidden: carriers of virtual streams marked @hidden. */
+/** Cases for conformance/cases/streams-hidden: carriers of streams marked @hidden. */
 import { area, parse, ser, w, xorBytes, type Case } from "../lib.ts";
 import { abc, abcContent, content, fit, inner } from "./streams.ts";
 
@@ -32,6 +32,6 @@ const cases: Case[] = [
 
 export default area(
   "streams-hidden",
-  "@hidden carriers of virtual streams: out of the JSON, derived on write from the `from` field.",
+  "@hidden carriers of streams: out of the JSON, derived on write from the `from` field.",
   cases
 );

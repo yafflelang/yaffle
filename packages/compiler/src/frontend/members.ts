@@ -2,7 +2,7 @@
  * Struct body lowering: fields (types, arrays, pointers, transforms, layers, placement, streams,
  * formulas, checks), bitfields, blocks, if/else, switch and layout. Pass A lowers everything the
  * read side needs in declaration order; pass B lowers write-side formulas (which may reference any
- * field) and checks; then derive.ts fills in reverses.
+ * field) and checks; then derive.ts fills in derived fields.
  */
 import type * as A from "./ast.ts";
 import { someExpr, typeRefName, unparen, walkExpr } from "./ast.ts";
@@ -49,7 +49,7 @@ import type {
   IrValueType
 } from "../ir/index.ts";
 import { containsIt } from "../ir/walk.ts";
-import { partRange, reverseVirtual, type PartRange } from "./virtual.ts";
+import { partRange, invertVirtual, type PartRange } from "./virtual.ts";
 import { checkSliceCarriers, markSliceCarriers } from "./slices.ts";
 import type { FieldResult, StructResult } from "./model.ts";
 import { printExpr, printInItems, printIrExpr } from "./printer.ts";
@@ -764,7 +764,7 @@ class BodyLowerer {
           ctx,
           f.clauses.spans.formula ?? f.span,
           "syntax-error",
-          "With `as`, write the reverse after it: `as read = write`."
+          "With `as`, write the inverse after it: `as read = write`."
         );
       }
       if (base) {
@@ -879,7 +879,7 @@ class BodyLowerer {
           "@nullable(empty) needs a pointer to an array (`T[n] *p : u64`)."
         );
     }
-    // @origin may read any field, like a write formula: it is lowered with the write side
+    // @origin may read any field, like a computed field: it is lowered with the write side
     if (flags.origin) this.origins.set(f, { attr: flags.origin, pointer: p });
     const nullable = flags.nullable && !flags.nullable.empty;
     return { ir: p, value: nullable ? { kind: "nullable", inner: target.value } : target.value };
@@ -1023,7 +1023,7 @@ class BodyLowerer {
         byName.set(c.sym.name, c);
       }
       const value: IrExpr = { kind: "field", name: v.sym.name, type: v.value };
-      const res = reverseVirtual(v.ir.virtual.read, value, ranges);
+      const res = invertVirtual(v.ir.virtual.read, value, ranges);
       const formulaSpan = decl.clauses.spans.formula ?? decl.span;
       if (!res.ok) {
         const fixes: Fix[] = [];
@@ -1045,7 +1045,7 @@ class BodyLowerer {
               )
             );
         }
-        el.report(vctx, formulaSpan, "virtual-not-reversible", res.message, { fixes });
+        el.report(vctx, formulaSpan, "virtual-not-invertible", res.message, { fixes });
         continue;
       }
       for (const p of res.parts) {
@@ -1058,7 +1058,7 @@ class BodyLowerer {
           el.report(
             vctx,
             span,
-            "virtual-not-reversible",
+            "virtual-not-invertible",
             `'${p.name}' is a part of the virtual field '${v.sym.name}', which derives it on write: remove its ${pd.clauses.spans.default ? "default" : "formula"}.`,
             clause
               ? {
@@ -1578,7 +1578,7 @@ class BodyLowerer {
     }
   }
 
-  /** The explicit reverse of `as read = write`, or a hint when there is none. */
+  /** The explicit inverse of `as read = write`, or a hint when there is none. */
   private lowerTransformWrite(p: PendingField, fr: FieldResult, rctx: Ctx, wctx: Ctx): void {
     const { el } = this;
     const f = p.decl;
@@ -1596,7 +1596,7 @@ class BodyLowerer {
           "The write side of `as … = …` must use `it` (the value being written)."
         );
       }
-      tr.write = coerce(el, wctx, w, innerValue, f.clauses.asWrite, "The write formula");
+      tr.write = coerce(el, wctx, w, innerValue, f.clauses.asWrite, "The inverse");
       delete tr.writeInferred;
       delete fr.inferredWrite;
     } else if (!tr.write && f.clauses.asRead) {
@@ -1604,7 +1604,7 @@ class BodyLowerer {
         rctx,
         f.clauses.spans.as ?? f.clauses.asRead.span,
         "one-way-transform",
-        `No reverse for this transform: '${p.sym.name}' is read-only in views, and its input stays the raw ${displayValueType(innerValue, el.displayName)}. Add \`= …\` with the reverse to make it writable.`
+        `No inverse for this transform: '${p.sym.name}' is read-only in views, and its input stays the raw ${displayValueType(innerValue, el.displayName)}. Add \`= …\` with the inverse to make it writable.`
       );
     }
   }
@@ -1807,7 +1807,7 @@ class BodyLowerer {
     const items: IrLayoutItem[] = [];
     const seen = new Map<string, A.LayoutItem>();
     for (const it of list) {
-      // item expressions see the struct's fields like write formulas
+      // item expressions see the struct's fields like computed fields
       const lctx: Ctx = { ...ctx, side: "write", position: Number.MAX_SAFE_INTEGER };
       const layers: IrLayer[] = [];
       for (const a of it.attrs) {

@@ -4,7 +4,7 @@ package dev.yaffle.runtime;
 public final class Placeable implements LEntry {
   final Block block;
   LEntry content;
-  /** {@code at} constraint from a linear reverse: position ≡ remainder (mod modulus); modulus 0: none. */
+  /** {@code at} constraint from a derived linear offset: position ≡ remainder (mod modulus); modulus 0: none. */
   long modulus;
   long remainder;
   /** Fixed placement offset, or null. */

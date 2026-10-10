@@ -8,7 +8,7 @@ import java.util.function.IntUnaryOperator;
 import java.util.function.ToIntFunction;
 
 /**
- * Virtual streams ({@code T x from …}): joining and slicing on read; on write, splitting an
+ * Streams ({@code T x from …}): joining and slicing on read; on write, splitting an
  * encoded stream back into its pieces and assembling slice carriers.
  */
 public final class Streams {

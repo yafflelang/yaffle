@@ -3,7 +3,7 @@
 //!
 //! - a file read block by block (`Source`);
 //! - a `@ranged` codec region, decoded slice by slice;
-//! - a virtual stream (`from arr[*].data`), decoded piece by piece, with the piece sizes known
+//! - a stream (`from arr[*].data`), decoded piece by piece, with the piece sizes known
 //!   from size fields without decoding.
 //!
 //! Readers ask a space for byte ranges (`Src::get`); only the chunks a range touches are filled.
@@ -303,7 +303,7 @@ impl fmt::Debug for SpaceData {
     }
 }
 
-/// A decoded codec region or a virtual stream: its own byte space with its own region id (the
+/// A decoded codec region or a stream: its own byte space with its own region id (the
 /// scope of values read in it).
 #[derive(Debug)]
 pub struct Space {

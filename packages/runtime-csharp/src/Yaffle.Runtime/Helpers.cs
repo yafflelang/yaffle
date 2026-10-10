@@ -97,7 +97,7 @@ public static class Check
     }
 }
 
-/// <summary>Write side of joined virtual streams (<c>T x from arr[*].piece</c>).</summary>
+/// <summary>Write side of joined streams (<c>T x from arr[*].piece</c>).</summary>
 public static class StreamSplit
 {
     /// <summary>

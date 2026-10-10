@@ -1,6 +1,6 @@
 /**
  * Derived arrays: the built-ins `map`, `filter`, `indicesWhere`, `sortedBy`, `unique` and
- * `concat` used in write formulas and checks. Inputs are any array-like (plain arrays, array
+ * `concat` used in computed fields and checks. Inputs are any array-like (plain arrays, array
  * views, byte arrays); results are plain arrays.
  */
 import { fail } from "./errors.ts";

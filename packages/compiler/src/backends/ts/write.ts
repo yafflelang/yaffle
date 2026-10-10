@@ -147,7 +147,7 @@ export class WriteEmitter {
 
   /**
    * Layout items that read fields as a TS expression evaluated in the struct's
-   * write context (fields, params, `$index`), like its write formulas; undefined if constant.
+   * write context (fields, params, `$index`), like its computed fields; undefined if constant.
    */
   private dynamicLayout(s: IrStruct, ctx: WCtx): string | undefined {
     if (!s.layout || !s.layout.length || layoutIsConstant(s.layout)) return undefined;
@@ -1306,7 +1306,7 @@ export class WriteEmitter {
     return `(${p}: number) => ${this.x.asNum(body)}`;
   }
 
-  // ── virtual streams ───────────────────────────────────────────────────────
+  // ── streams ───────────────────────────────────────────────────────────────
 
   /**
    * `from` fields: encode the value, then hand the bytes to the stream's source fields (they are

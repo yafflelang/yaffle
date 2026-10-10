@@ -1,4 +1,4 @@
-// Byte transforms: @via with codec arguments, layered @size (decoded size inside, on-disk size
+// Codecs: @via with codec arguments, layered @size (decoded size inside, on-disk size
 // outside, both derived), @streaming codecs that find their own end, async codecs, chains of
 // codecs, @ranged position-dependent codecs, codec failures, and codec reuse on rebuilds.
 

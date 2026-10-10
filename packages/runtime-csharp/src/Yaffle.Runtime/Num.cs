@@ -310,7 +310,7 @@ public static class Values
         return out_;
     }
 
-    /// <summary><c>indexOf(array, value)</c> reverse lookup: a missing value is an INPUT error.</summary>
+    /// <summary><c>indexOf(array, value)</c> inverse lookup: a missing value is an INPUT error.</summary>
     public static long IndexOf<T>(IReadOnlyList<T> xs, object? v)
     {
         for (int i = 0; i < xs.Count; i++) if (Eq(xs[i], v)) return i;

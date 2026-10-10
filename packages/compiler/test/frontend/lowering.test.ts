@@ -257,30 +257,30 @@ describe("virtual fields", () => {
     expect(field(s, "dec")).toMatchObject({ input: "optional", deriveKind: "formula" });
     expect(field(s, "bytes").checks).toHaveLength(1);
   });
-  it("reports what can't be reversed, and misuse", () => {
+  it("reports what can't be inverted, and misuse", () => {
     expectDiag(
       "struct S { u8 a  u8 b  virtual u16 v = a * b }",
-      "virtual-not-reversible",
+      "virtual-not-invertible",
       /multiplied together/
     );
     expectDiag(
       "struct S { u8 a  virtual u16 v = a >> 1 }",
-      "virtual-not-reversible",
-      /`>>` can't be reversed/
+      "virtual-not-invertible",
+      /`>>` can't be inverted/
     );
     expectDiag(
       "struct S { u8 a  u8 b  virtual u16 v = a * 10 + b }",
-      "virtual-not-reversible",
+      "virtual-not-invertible",
       /reaches 10/
     );
     expectDiag(
       "struct S { i8 a  u8 b  virtual i16 v = (b << 8) | a }",
-      "virtual-not-reversible",
+      "virtual-not-invertible",
       /can be negative/
     );
     expectDiag(
       "struct S { u8 a  u8 b = 1  virtual u16 v = (a << 8) | b }",
-      "virtual-not-reversible",
+      "virtual-not-invertible",
       /remove its formula/
     );
     expectDiag("struct S { u8 a  virtual u16 v }", "invalid-virtual", /needs `= expression`/);

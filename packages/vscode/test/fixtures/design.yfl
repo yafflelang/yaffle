@@ -41,7 +41,7 @@ struct Table {
 }
 
 struct Node {
-  u32  n    = flags.length * 8     // you choose the reverse when the compiler can't
+  u32  n    = flags.length * 8     // the formula you choose where n isn't derivable
   u8   flags[(n + 7) / 8]
   u32  size = sizeof(body)
   u32  crc  = crc32(body)
@@ -50,7 +50,7 @@ struct Node {
   Body body
 }
 
-struct Constraints {
+struct Checks {
   u16  magic = 42
   char tag[4] = "ARCV"
   char order[2] in ("II", "MM")

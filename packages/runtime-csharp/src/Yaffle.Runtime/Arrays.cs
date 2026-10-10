@@ -9,7 +9,7 @@ namespace Yaffle.Runtime;
 
 /// <summary>
 /// Derived arrays: <c>map</c>, <c>filter</c>, <c>indicesWhere</c>, <c>sortedBy</c>,
-/// <c>unique</c> and <c>concat</c> in write formulas and checks, and the conversions that store
+/// <c>unique</c> and <c>concat</c> in computed fields and checks, and the conversions that store
 /// their results in typed fields.
 /// </summary>
 public static class Arrays

@@ -7,7 +7,7 @@ checksums and canonical JSON helpers.
 Modules: ``errors``, ``prim`` (primitive encodings), ``ints`` (number semantics), ``strings``,
 ``checksum``, ``arrays`` (array builtins and equality), ``jsonc`` (canonical JSON), ``values``
 (checks of values), ``externs`` (host code), ``codec`` (``@via`` and codec reuse), ``streams``
-(virtual streams), ``reader``, ``writer`` and ``layout`` (parse and serialize), ``api`` (root API
+(streams), ``reader``, ``writer`` and ``layout`` (parse and serialize), ``api`` (root API
 glue and sources), and for views ``store`` (bytes read on demand), ``view``, ``commit`` and
 ``async_view``.
 """

@@ -1,5 +1,6 @@
 // Arrays: counts, `until` terminators, `[]` to the end of the region, derived and shared counts,
-// reversible count arithmetic (with divisibility checks) and irreversible counts (checked inputs).
+// derivable count arithmetic (with divisibility checks) and counts that aren't derivable (checked
+// inputs).
 
 struct P {
   u8 x
@@ -27,15 +28,15 @@ export struct RestStructs { P pts[] }
 // Shared count: both arrays must have the same length on write.
 export struct Shared { u8 n  u16 a[n]  u8 b[n] }
 
-// Reversible arithmetic: the count is derived, and divisibility is checked.
+// Derivable arithmetic: the count is derived, and divisibility is checked.
 export struct Pairs { u8 pairs  u16 ids[pairs * 2] }
 export struct PlusOne { u8 nMinus1  u8 data[nMinus1 + 1] }
 export struct MinusTwo { u8 nPlus2  u8 data[nPlus2 - 2] }
 export struct Shifted { u8 words  u8 data[words << 2] }
 export struct Affine { u16 n  u8 v[n * 3 + 2] }
 
-// Irreversible: the count stays an input and is checked against the array.
-export struct Irreversible { u8 n  u8 flags[(n + 7) / 8] }
+// Not derivable: the count stays an input and is checked against the array.
+export struct NotDerivable { u8 n  u8 flags[(n + 7) / 8] }
 export struct Product { u8 rows  u8 cols  u16 cells[rows * cols] }
 
 // Nested counts.

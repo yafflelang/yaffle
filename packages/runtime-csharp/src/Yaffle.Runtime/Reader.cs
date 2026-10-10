@@ -44,7 +44,7 @@ public sealed class Reader
     private int bufOff;
     private int bufLen;
 
-    /// <summary>Size of the region's data (the file, a decoded codec output or a virtual stream).</summary>
+    /// <summary>Size of the region's data (the file, a decoded codec output or a stream).</summary>
     public readonly int Size;
     public int Pos;
     public int Base;
@@ -107,7 +107,7 @@ public sealed class Reader
         return new ReadOnlySpan<byte>(buf, bufOff + pos - bufStart, n);
     }
 
-    /// <summary>A reader for a fresh region (virtual stream): base 0, end = length.</summary>
+    /// <summary>A reader for a fresh region (stream): base 0, end = length.</summary>
     public Reader Sub(byte[] bytes) => Decoded(bytes, Pos);
 
     /// <summary>A reader over a codec's decoded output (errors report the encoded window's offset).</summary>

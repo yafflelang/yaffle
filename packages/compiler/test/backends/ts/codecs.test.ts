@@ -1,4 +1,4 @@
-/** Byte transforms (sync, async, streaming, ranged), codec reuse, externs and virtual streams. */
+/** Codecs (sync, async, streaming, ranged), codec reuse, externs and streams. */
 import { describe, expect, it } from "vitest";
 import { build, dv, errorOf, load, toHex } from "./harness.ts";
 import * as ir from "./ir.ts";
@@ -202,7 +202,7 @@ describe("externs", () => {
   });
 });
 
-describe("virtual streams", () => {
+describe("streams", () => {
   it("`from` a bytes field", async () => {
     const P = program({
       structs: [

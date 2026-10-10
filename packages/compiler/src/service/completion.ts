@@ -443,11 +443,11 @@ function clauseDoc(k: string): string {
     case "at":
       return "at expr — place the field at an offset from the base";
     case "from":
-      return "from stream — parse from a virtual stream";
+      return "from stream — parse from a stream";
     case "as":
-      return "as expr [= expr] — value transform (it = raw)";
+      return "as expr [= inverse] — transform (it = raw)";
     case "in":
-      return "in (values) / in /regex/ — constraint";
+      return "in (values) / in /regex/ — check";
     case "where":
       return "where cond — check (it = the value)";
   }
@@ -861,7 +861,7 @@ function topSnippets(): CompletionItem[] {
       insertText: 'import { $2 } from "$1"',
       insertTextFormat: "snippet"
     }),
-    item("extern codec …", "snippet", "byte transform implemented by the host", {
+    item("extern codec …", "snippet", "codec implemented by the host", {
       insertText: "extern codec ${1:name}",
       insertTextFormat: "snippet"
     }),

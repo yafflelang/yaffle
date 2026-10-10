@@ -1691,7 +1691,7 @@ export class Elaborator {
     if (write) {
       const wctx: Ctx = { ...ctx, side: ctx.side === "const" ? "const" : "write", it: valueType };
       const w = lowerExpr(this, wctx, write, innerValue);
-      if (!isError(w)) t.write = coerce(this, wctx, w, innerValue, write, "The write formula");
+      if (!isError(w)) t.write = coerce(this, wctx, w, innerValue, write, "The inverse");
     } else {
       const inv = invertTransform(r, innerValue, valueType);
       if (inv) {

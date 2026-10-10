@@ -1,5 +1,5 @@
 /**
- * Reverse derivation and consistency (automatic reverses in DESIGN.md).
+ * Derivation and consistency (derived fields in DESIGN.md).
  *
  * Read-side uses of a field ("sources") let the writer compute it:
  * - array/bytes/string lengths    `Entry e[count]`        → count = e.length
@@ -8,7 +8,7 @@
  * - struct arguments              `Blob(n) b`             → n = (Blob's own derivation of its param)
  * Linear expressions over one field (`+ − ×` and `<<` with constants) are inverted. Explicit
  * formulas are sampled against the read side: contradictions are errors, partial agreement and
- * lossy formulas are warnings, formulas equal to the automatic reverse are hints.
+ * lossy formulas are warnings, formulas equal to what the field would be derived as are hints.
  */
 import type { Ctx } from "./ctx.ts";
 import { removalFix, type Related } from "./diagnostics.ts";
@@ -74,7 +74,7 @@ export function analyzeDerivations(el: Elaborator, ctx: Ctx, result: StructResul
       const src = sources.find(s => fieldRefs(s.expr).has(x.sym.name));
       if (src) analyzeFormula(el, ctx, x, x.ir.derive, src);
     }
-    // reported once every struct is checked (program.ts): a field consumed by a virtual stream
+    // reported once every struct is checked (program.ts): a field consumed by a stream
     // is derived by the writer, and the pieces of `from arr[*].piece` live in other structs
     for (const f of fields) {
       const ir = f.ir as IrField;
@@ -450,7 +450,7 @@ function analyzeFormula(
     );
     return;
   }
-  // consistent: redundant (equal to the automatic reverse) or lossy (read side not injective)
+  // consistent: redundant (equal to the derived value) or lossy (read side not injective)
   if (lin && lin.x && lin.x.name === x.sym.name && lin.a !== 0n) {
     const auto = invertLinear(lin, src.measure);
     const same =
@@ -461,7 +461,7 @@ function analyzeFormula(
         ctx,
         span,
         "redundant-formula",
-        `'${x.sym.name}' is derived automatically from the ${src.describe}; the formula is redundant.`,
+        `'${x.sym.name}' is derived from the ${src.describe}; the formula is redundant.`,
         { tags: ["unnecessary"], fixes: removeFix }
       );
     return;

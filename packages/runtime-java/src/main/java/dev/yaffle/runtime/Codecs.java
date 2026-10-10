@@ -8,7 +8,7 @@ import java.util.concurrent.CompletionException;
 import java.util.concurrent.ExecutionException;
 
 /**
- * Byte transforms ({@code @via}): calling host codecs and codec reuse for byte-exact rebuilds
+ * Codecs ({@code @via}): calling host codecs and codec reuse for byte-exact rebuilds
  * (docs/IR.md §3.6).
  *
  * <p>A value read from a codec's decoded side remembers the original encoded bytes and a private

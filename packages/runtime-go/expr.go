@@ -372,7 +372,7 @@ func Lengths[T any](s [][]T) []int64 {
 	return out
 }
 
-// IndexOf is the reverse of `names[it]`: the first index of v (INPUT if absent).
+// IndexOf is the inverse of `names[it]`: the first index of v (INPUT if absent).
 func IndexOf[T comparable](s []T, v T) int64 {
 	for i, e := range s {
 		if e == v {

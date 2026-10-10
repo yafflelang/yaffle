@@ -1,4 +1,4 @@
-// Virtual streams: `from` a bytes field, `from arr[*].field` (pieces joined in order),
+// Streams: `from` a bytes field, `from arr[*].field` (pieces joined in order),
 // write-side splitting from the pieces' size fields or the @split(fit) policy (a miniature
 // fragmented stream: 8-byte blocks, fragment k at max(k * 8, 1)). @hidden pieces are in ../streams-hidden,
 // slices in ../streams-slices.

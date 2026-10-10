@@ -1,4 +1,4 @@
-"""Byte transforms (``@via``): calling host codecs, and codec reuse.
+"""Codecs (``@via``): calling host codecs, and codec reuse.
 
 Codec reuse (docs/IR.md §3.6): a value read from a codec's decoded side remembers the original
 encoded bytes and a copy of the decoded bytes. When the same object is serialized and its plain

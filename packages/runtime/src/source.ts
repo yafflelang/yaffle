@@ -93,7 +93,7 @@ export interface ByteStore {
   /** If the whole store is one array, that array (fast path). */
   readonly whole?: Uint8Array | undefined;
   /**
-   * True if `size` is expensive (a virtual stream whose pieces' sizes are discovered in order).
+   * True if `size` is expensive (a stream whose pieces' sizes are discovered in order).
    * Readers over such a store keep their region end unresolved (`UNKNOWN_END`) until an
    * expression or a rest read needs it, and check bounds with `covers` instead.
    */

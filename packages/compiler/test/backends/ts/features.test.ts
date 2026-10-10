@@ -1,6 +1,6 @@
 /**
  * Lengths with `before` / `until <predicate>`, `@nullable(empty)`, pointer `@origin`, `this`,
- * aggregates, cycles and identity of inline elements, normalize-on-write formulas,
+ * aggregates, cycles and identity of inline elements, normalizing `= it …` formulas,
  * position-dependent lengths, `@split(fit)`, base `@alignEnd` and `inlineRuntime`.
  */
 import { readdirSync } from "node:fs";
@@ -284,7 +284,7 @@ describe("identity and cycles", () => {
   });
 });
 
-describe("write formulas", () => {
+describe("computed fields", () => {
   it("`u8 flags = it | 0x80` normalizes the input on write", async () => {
     const P = program({
       structs: [

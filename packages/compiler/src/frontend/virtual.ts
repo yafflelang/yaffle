@@ -1,5 +1,5 @@
 /**
- * Reverses of virtual fields: `virtual u40 size = (sizeHigh << 32) | sizeLow`.
+ * Inverting virtual fields: `virtual u40 size = (sizeHigh << 32) | sizeLow`.
  *
  * The read expression is flattened into a sum of terms `field · multiplier` plus a constant,
  * distributing `<<` and `*` by constants over `+`, `|` and `-`:
@@ -30,7 +30,7 @@ export interface PartRange {
   display: string;
 }
 
-export type VirtualReverse =
+export type VirtualInverse =
   | { ok: true; parts: { name: string; derive: IrExpr }[] }
   | {
       ok: false;
@@ -101,7 +101,7 @@ function flatten(e: IrExpr, m: bigint, parts: Map<string, PartRange>, out: Flat)
         return { fail: "A virtual field is built from integers." };
       return flatten(e.operand, m, parts, out);
     case "unary":
-      if (e.op !== "-") return { fail: `${opText(e)} can't be reversed.` };
+      if (e.op !== "-") return { fail: `${opText(e)} can't be inverted.` };
       return flatten(e.operand, -m, parts, out);
     case "binary": {
       switch (e.op) {
@@ -119,7 +119,7 @@ function flatten(e: IrExpr, m: bigint, parts: Map<string, PartRange>, out: Flat)
           if (l !== undefined) return flatten(e.right, m * l, parts, out);
           if (noFields(e.left) || noFields(e.right))
             return { fail: "Multiply parts by constants only (a literal or a `const`)." };
-          return { fail: "Two parts multiplied together can't be reversed." };
+          return { fail: "Two parts multiplied together can't be inverted." };
         }
         case "<<": {
           const k = literalInt(e.right);
@@ -132,13 +132,13 @@ function flatten(e: IrExpr, m: bigint, parts: Map<string, PartRange>, out: Flat)
         }
         default:
           return {
-            fail: `${opText(e)} can't be reversed: build a virtual field from its parts with \`<<\`, \`*\`, \`+\`, \`|\` and \`-\` by constants.`
+            fail: `${opText(e)} can't be inverted: build a virtual field from its parts with \`<<\`, \`*\`, \`+\`, \`|\` and \`-\` by constants.`
           };
       }
     }
     default:
       return {
-        fail: `${opText(e)} can't be reversed: build a virtual field from its parts with \`<<\`, \`*\`, \`+\`, \`|\` and \`-\` by constants.`
+        fail: `${opText(e)} can't be inverted: build a virtual field from its parts with \`<<\`, \`*\`, \`+\`, \`|\` and \`-\` by constants.`
       };
   }
 }
@@ -177,17 +177,17 @@ function bin(op: "+" | "-" | "*" | "/" | "%" | ">>" | "&", l: IrExpr, r: IrExpr)
  * Derives each part of `read` from the virtual field's value `value` (a field reference).
  * `parts`: the fields that may be parts, with their static ranges.
  */
-export function reverseVirtual(
+export function invertVirtual(
   read: IrExpr,
   value: IrExpr,
   parts: Map<string, PartRange>
-): VirtualReverse {
+): VirtualInverse {
   const flat: Flat = { terms: new Map(), constant: 0n, constExprs: [], usesOr: false };
   const f = flatten(read, 1n, parts, flat);
   if (f) return { ok: false, message: f.fail, ...(f.badField ? { badField: f.badField } : {}) };
   const terms = [...flat.terms].filter(([, m]) => m !== 0n);
   if (!terms.length)
-    return { ok: false, message: "A virtual field must be computed from earlier fields." };
+    return { ok: false, message: "A virtual field must be built from earlier fields." };
   // W = value - constant
   let w: IrExpr = convertTo(value, BIGINT);
   if (flat.constant !== 0n)
@@ -208,7 +208,7 @@ export function reverseVirtual(
   if (flat.usesOr && (flat.constant !== 0n || flat.constExprs.length))
     return {
       ok: false,
-      message: "Constants combined with `|` can't be reversed reliably; write them with `+`."
+      message: "Constants combined with `|` can't be inverted reliably; write them with `+`."
     };
   const sorted = terms.sort((a, b) => (a[1] < b[1] ? -1 : a[1] > b[1] ? 1 : 0));
   for (const [name, m] of sorted)

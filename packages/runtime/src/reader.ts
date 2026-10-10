@@ -66,7 +66,7 @@ export class Reader {
     this.dv = new DataView(this.buf.buffer, this.buf.byteOffset, this.buf.byteLength);
   }
 
-  /** A reader for a fresh region (virtual stream): base 0, end = length. */
+  /** A reader for a fresh region (stream): base 0, end = length. */
   sub(bytes: Uint8Array | ByteStore): Reader {
     return this.inner(bytes, this.pos, this.copy);
   }
@@ -107,7 +107,7 @@ export class Reader {
   }
 
   /**
-   * Absolute end of the current region. Over a lazy-size store (a virtual stream whose pieces
+   * Absolute end of the current region. Over a lazy-size store (a stream whose pieces
    * are decoded on demand) reading it resolves the store's size, so code that only needs bounds
    * checks uses `covers` and `rawEnd` instead.
    */

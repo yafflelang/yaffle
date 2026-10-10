@@ -136,7 +136,7 @@ inline std::vector<std::int64_t> lengths(const std::vector<T>& v) {
   return out;
 }
 
-/// `indexOf(array, value)`: the first index, or INPUT (reverse of `names[it]`).
+/// `indexOf(array, value)`: the first index, or INPUT (inverse of `names[it]`).
 template <class C, class V>
 inline std::int64_t index_of(const C& c, const V& v) {
   const auto& a = obj(c);
@@ -192,7 +192,7 @@ struct Sleb128 {
 inline const Uleb128 uleb128{};
 inline const Sleb128 sleb128{};
 
-// ── virtual streams (write side) ────────────────────────────────────────────────
+// ── streams (write side) ────────────────────────────────────────────────────────
 
 /// Split policy of `T x from arr[*].piece`: how to measure an element for `@split(fit)`.
 template <class E>

@@ -4,7 +4,7 @@ using System.Collections.Generic;
 namespace Yaffle.Runtime;
 
 // Lazy byte stores for views: the decoded side of a @ranged codec region (decoded block by block
-// as it is read), windows of other stores, and virtual streams joined from pieces whose lengths
+// as it is read), windows of other stores, and streams joined from pieces whose lengths
 // are known without decoding them (IR.md §2.8).
 
 /// <summary>Bytes <c>[start, start + length)</c> of another store.</summary>
@@ -100,7 +100,7 @@ public sealed class RangedCodecStore : ByteStore
 }
 
 /// <summary>
-/// A virtual stream joined from pieces (<c>from arr[*].field</c>): each piece's length is known
+/// A stream joined from pieces (<c>from arr[*].field</c>): each piece's length is known
 /// up front, and its bytes are opened only when a read touches it.
 /// </summary>
 public sealed class PieceStore : ByteStore

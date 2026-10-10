@@ -1,5 +1,5 @@
 // Layout items that read fields: attribute arguments of `layout { … }` items are
-// evaluated like write formulas, in the struct whose layout it is. An archive entry's data, for
+// evaluated like computed fields, in the struct whose layout it is. An archive entry's data, for
 // example, is aligned to the entry's own `align` field.
 
 export struct AlignByField {

@@ -78,7 +78,7 @@ def at(arr: Any, i: int) -> Any:
 
 
 def index_of(arr: Sequence[Any], v: Any) -> int:
-    """``indexOf(array, value)`` reverse lookup: a missing value is an INPUT error on write."""
+    """``indexOf(array, value)`` inverse lookup: a missing value is an INPUT error on write."""
     for i, x in enumerate(arr):
         if equals(x, v):
             return i

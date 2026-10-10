@@ -104,7 +104,7 @@ class Reader:
         return r
 
     def sub(self, data: Any) -> Reader:
-        """A reader for a virtual stream: base 0, end = length."""
+        """A reader for a stream: base 0, end = length."""
         return self._derived(data, self.pos)
 
     def decoded(self, data: Any, at: int) -> Reader:

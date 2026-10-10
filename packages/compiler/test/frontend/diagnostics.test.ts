@@ -278,7 +278,7 @@ const CASES: Record<string, { bad: string; good: string; message?: string | RegE
     bad: "struct S { u8 a  virtual ⟦f32⟧ v = a }",
     good: "struct S { u8 a  virtual u16 v = a }"
   },
-  "virtual-not-reversible": {
+  "virtual-not-invertible": {
     bad: "struct S { u8 hi  u32 lo  virtual u64 v ⟦= (hi << 16) | lo⟧ }",
     good: "struct S { u8 hi  u32 lo  virtual u64 v = (hi << 32) | lo }",
     message: "Shift 'hi' by at least 32"
@@ -602,7 +602,7 @@ describe("diagnostics: quick fixes and details", () => {
     const d = expectDiag("struct S { u32 a @hidden }", "hidden-not-derivable");
     expect(d.fixes?.[0]?.title).toBe("Remove @hidden");
   });
-  it("@hidden derived automatically is fine", () => {
+  it("a derived @hidden field is fine", () => {
     expectNoDiag("struct S { u32 n @hidden  u8 d[n] }", "hidden-not-derivable");
   });
   it("recursive-struct through another struct", () => {

@@ -1,4 +1,4 @@
-"""Virtual streams (``T x from …``) outside views: joining pieces and slicing on read, and on
+"""Streams (``T x from …``) outside views: joining pieces and slicing on read, and on
 write handing the encoded stream back to the fields it comes from (pieces of array elements, or
 slice carriers)."""
 

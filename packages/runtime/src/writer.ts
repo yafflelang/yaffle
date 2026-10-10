@@ -56,7 +56,7 @@ export class LArray {
 }
 
 export interface PlaceOptions {
-  /** `at` constraint from a linear reverse: position ≡ remainder (mod modulus). */
+  /** `at` constraint from a derived linear offset: position ≡ remainder (mod modulus). */
   constraint?: { modulus: number; remainder: number };
   /** Fixed placement: exactly this base-relative offset. */
   fixed?: number;
@@ -349,7 +349,7 @@ export class Region {
   /**
    * Where this region's bytes go in the enclosing region, when it is a nested `@base` written
    * inline (`Writer.base`): `at` bytes into `block`. Undefined for a region that starts its own
-   * byte space (the root, a codec's decoded side, a virtual stream, a temporary encoding).
+   * byte space (the root, a codec's decoded side, a stream, a temporary encoding).
    */
   anchor: { block: Block; at: number } | undefined;
   /**
@@ -703,7 +703,7 @@ export class Writer {
   /**
    * `align(to, from: …, offset: …)`: pads until `(position + offset) % to == 0`, where the
    * position counts from the nearest base (`file` false) or from the start of the current byte
-   * space (`file` true: the root, a codec's decoded side or a virtual stream; nested `@base`
+   * space (`file` true: the root, a codec's decoded side or a stream; nested `@base`
    * regions count from where they are written). Block starts that are not known yet are required
    * to be multiples of `to`, and the padding is computed from the known part.
    */

@@ -51,7 +51,7 @@ export function isDeferred(model: Model, s: IrStruct, name: string): boolean {
 /**
  * True if a value of type t is complete after a view's shallow scan: pointer and `at` targets are
  * not followed there, and codec regions of lazy fields are skipped. Nested `@base` structs,
- * decoded regions and virtual streams are read completely.
+ * decoded regions and streams are read completely.
  */
 function shallowComplete(model: Model, t: IrType, seen = new Set<string>()): boolean {
   switch (t.kind) {

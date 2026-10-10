@@ -385,7 +385,7 @@ export function inlayHints(an: Analysis, mod: ModuleInfo, range: Range): InlayHi
       const f = fr.sym;
       if (!f.name) continue;
       const decl = f.decl;
-      // derived formula after the field declaration (where an explicit `= …` would go)
+      // a derived field's value after the field declaration (where an explicit `= …` would go)
       if (fr.ir.derive && fr.ir.deriveKind === "auto") {
         const lastArray = decl.arrays[decl.arrays.length - 1];
         const at = file.positionAt(
@@ -395,7 +395,7 @@ export function inlayHints(an: Analysis, mod: ModuleInfo, range: Range): InlayHi
           out.push({
             position: at,
             label: `= ${deriveLabel(fr)}`,
-            tooltip: `Written automatically from the ${fr.deriveSource ?? "read side"}; \`${f.name}\` is not in the input type.`,
+            tooltip: `Derived from the ${fr.deriveSource ?? "read side"}; \`${f.name}\` is not in the input type.`,
             paddingLeft: true
           });
         }
@@ -415,14 +415,14 @@ export function inlayHints(an: Analysis, mod: ModuleInfo, range: Range): InlayHi
             paddingLeft: true
           });
       }
-      // inferred transform reverse
+      // inferred transform inverse
       if (fr.inferredWrite && decl.clauses.asRead) {
         const at = file.positionAt(decl.clauses.asRead.span.end);
         if (inRange(range, at))
           out.push({
             position: at,
             label: `= ${fr.inferredWrite}`,
-            tooltip: "Reverse worked out by the compiler.",
+            tooltip: "Inverse worked out by the compiler.",
             paddingLeft: true
           });
       }

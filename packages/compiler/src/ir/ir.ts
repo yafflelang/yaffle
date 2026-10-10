@@ -12,7 +12,7 @@
  *   `$endian` is the implicit `endian` parameter. So expressions only ever reference the current
  *   struct's fields, its parameters, `it`, lambda parameters and the built-ins `$offset`, `$end`
  *   and `$index`.
- * - **Reverses resolved.** Every value the writer must compute (derived lengths, offsets, sizes,
+ * - **Derivation resolved.** Every value the writer must compute (derived lengths, offsets, sizes,
  *   constants, explicit `=` formulas) is an explicit `derive` expression. Backends never invert
  *   expressions themselves.
  * - **Checked.** Names resolve, types agree, every path that needs a bound value has one, and
@@ -130,7 +130,7 @@ export type IrMember = IrField | IrBlock | IrSwitch | IrBits;
  *
  * Inline fields occupy bytes at the current position. A field with `placement` (`at expr`) or
  * `from` occupies no inline bytes. `placement` puts it at an offset from the base, and `from`
- * parses it from a virtual stream.
+ * parses it from a stream.
  */
 export interface IrField {
   kind: "field";
@@ -144,8 +144,8 @@ export interface IrField {
   from?: IrFrom;
   /**
    * The raw value the writer stores, ignoring any input value. Present for constants
-   * (`u16 magic = 42`), explicit formulas (`u32 size = sizeof(body)`) and compiler-derived
-   * reverses (`count` from `entries[count]`). Evaluated in the *write context* (IR.md §3.2).
+   * (`u16 magic = 42`), explicit formulas (`u32 size = sizeof(body)`) and derived
+   * fields (`count` from `entries[count]`). Evaluated in the *write context* (IR.md §3.2).
    */
   derive?: IrExpr;
   deriveKind?: "constant" | "formula" | "auto";
@@ -189,7 +189,7 @@ export interface IrField {
 }
 
 /**
- * An anonymous block: `{ … }` with layers, `if (…) { … } else { … }`, or both.
+ * A block: `{ … }` with layers, `if (…) { … } else { … }`, or both.
  * Members flatten into the enclosing struct's value. Fields of a conditional block without an
  * else branch are optional in the output and input types. Fields in both branches of an if/else
  * produce a union of the two shapes (IR.md §7).
@@ -379,7 +379,7 @@ export interface IrPointerType {
   emptyIsNull?: true;
   /**
    * `@origin(expr)`: target = base + origin + stored value (instead of base + value). Evaluated in
-   * the struct holding the pointer, like a write formula: it may use `offsetof` of any field of
+   * the struct holding the pointer, like a computed field: it may use `offsetof` of any field of
    * that struct (also later ones) and `offsetof(this)` (the struct's own start).
    */
   origin?: IrExpr;
@@ -431,12 +431,12 @@ export interface IrLayeredType {
 export type IrLayer =
   /** Exactly N bytes. The inner content is read within this window; bytes after it are padding (fill 0, checked in strict mode). */
   | { kind: "size"; size: IrExpr }
-  /** A byte transform. The inner bytes are the codec's decoded side, the outer bytes its encoded side. */
+  /** A codec (`@via`). The inner bytes are the codec's decoded side, the outer bytes its encoded side. */
   | { kind: "via"; codec: ExternId; args: IrExpr[] }
   /**
    * Pad before until (position - origin + offset) % to == 0. The origin is the current base
    * (default) or, with `from: "file"`, the start of the current byte space: the root source, a
-   * codec's decoded region, or a virtual stream. `offset` defaults to 0
+   * codec's decoded region, or a stream. `offset` defaults to 0
    * (`@align(4, offset: 0x19)` aligns the position 0x19 bytes ahead).
    * `strict`: this padding's fill is checked on read even outside strict mode.
    */
@@ -475,12 +475,12 @@ export interface IrPlacement {
   /** Offset from the current base. */
   offset: IrExpr;
   /**
-   * Write side: the placement constraint implied by a linear reverse (`at sector * 0x800` → the
+   * Write side: the placement constraint implied by a derived linear offset (`at sector * 0x800` → the
    * target's offset must be ≡ 0 mod 0x800). The layout engine must pick a position satisfying it.
    */
   constraint?: { modulus: string; remainder: string };
   /**
-   * True if the offset expression could not be reversed: the offset comes from input fields, and
+   * True if the offset expression is not derivable: the offset comes from input fields, and
    * the target must be written exactly there (overlaps are an error).
    */
   fixed: boolean;
@@ -667,9 +667,9 @@ export type IrBuiltinFn =
   /** max(a, b, …) or max(array). */
   | "max"
   | "abs"
-  /** Float → integer, rounding half away from zero (used by inferred reverses of float transforms). */
+  /** Float → integer, rounding half away from zero (used by inferred inverses of float transforms). */
   | "round"
-  /** indexOf(array, value): first index, or a write error if absent (reverse of `names[it]`). */
+  /** indexOf(array, value): first index, or a write error if absent (inverse of `names[it]`). */
   | "indexOf"
   /** len(array | string | bytes): element count / code units / bytes. */
   | "len"
@@ -679,7 +679,7 @@ export type IrBuiltinFn =
   | "sum"
   /**
    * lengths(array): the element count of each element of an array of arrays (pointer targets are
-   * transparent), as an array. Reverse of element-wise lengths: `lens = lengths(lists)` for
+   * transparent), as an array. Derives element-wise lengths: `lens = lengths(lists)` for
    * `u16[lens[$index]] *lists[9] : u64`.
    */
   | "lengths"

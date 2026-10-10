@@ -1,5 +1,5 @@
 {
-  "description": "`as`/`=` transforms: inferred integer/float reverses, lookups, extern fn reverses, one-way, normalization.",
+  "description": "`as`/`=` transforms: inferred integer/float inverses, lookups, extern fn inverses, one-way, normalization.",
   "generatedBy": "conformance/scripts/areas/transforms.ts",
   "cases": [
     { "name": "angle quarter turn", "root": "Angle", "bytes": "0040", "json": { "angle": 90 } },
@@ -17,13 +17,13 @@
       "json": { "angle": 359.9945068359375 }
     },
     {
-      "name": "angle inferred reverse",
+      "name": "angle inferred inverse",
       "root": "Angle",
       "input": { "angle": 180 },
       "bytes": "0080"
     },
     {
-      "name": "angle inferred reverse of the max",
+      "name": "angle inferred inverse of the max",
       "root": "Angle",
       "input": { "angle": 359.9945068359375 },
       "bytes": "ffff"
@@ -35,21 +35,21 @@
       "error": { "phase": "serialize", "code": "RANGE", "path": ["angle"] }
     },
     { "name": "offset transform", "root": "Offset", "bytes": "05", "json": { "v": 105 } },
-    { "name": "offset reverse", "root": "Offset", "input": { "v": 150 }, "bytes": "32" },
+    { "name": "offset inverse", "root": "Offset", "input": { "v": 150 }, "bytes": "32" },
     {
-      "name": "offset reverse below the raw range",
+      "name": "offset inverse below the raw range",
       "root": "Offset",
       "input": { "v": 99 },
       "error": { "phase": "serialize", "code": "RANGE", "path": ["v"] }
     },
     {
-      "name": "offset reverse above the raw range",
+      "name": "offset inverse above the raw range",
       "root": "Offset",
       "input": { "v": 356 },
       "error": { "phase": "serialize", "code": "RANGE", "path": ["v"] }
     },
     { "name": "affine transform", "root": "Affine", "bytes": "03", "json": { "v": 8 } },
-    { "name": "affine reverse", "root": "Affine", "input": { "v": 8 }, "bytes": "03" },
+    { "name": "affine inverse", "root": "Affine", "input": { "v": 8 }, "bytes": "03" },
     {
       "name": "affine value that doesn't round trip",
       "root": "Affine",
@@ -57,16 +57,16 @@
       "error": { "phase": "serialize", "code": "INPUT", "path": ["v"] }
     },
     {
-      "name": "affine reverse negative",
+      "name": "affine inverse negative",
       "root": "Affine",
       "input": { "v": 0 },
       "error": { "phase": "serialize", "code": "RANGE", "path": ["v"] }
     },
     { "name": "fixed point positive", "root": "Fixed", "bytes": "8001", "json": { "x": 1.5 } },
     { "name": "fixed point negative", "root": "Fixed", "bytes": "00ff", "json": { "x": -1 } },
-    { "name": "fixed point reverse", "root": "Fixed", "input": { "x": -0.5 }, "bytes": "80ff" },
+    { "name": "fixed point inverse", "root": "Fixed", "input": { "x": -0.5 }, "bytes": "80ff" },
     {
-      "name": "fixed point reverse max",
+      "name": "fixed point inverse max",
       "root": "Fixed",
       "input": { "x": 127.99609375 },
       "bytes": "ff7f"
@@ -78,19 +78,19 @@
       "json": { "n": 3, "names": ["zero", "one", "two"], "pick": "two" }
     },
     {
-      "name": "lookup reverse is indexOf",
+      "name": "lookup inverse is indexOf",
       "root": "Names",
       "input": { "names": ["zero", "one", "two"], "pick": "one" },
       "bytes": "037a65726f006f6e650074776f0001"
     },
     {
-      "name": "lookup reverse takes the first match",
+      "name": "lookup inverse takes the first match",
       "root": "Names",
       "input": { "names": ["a", "a"], "pick": "a" },
       "bytes": "026100610000"
     },
     {
-      "name": "lookup reverse of a missing value",
+      "name": "lookup inverse of a missing value",
       "root": "Names",
       "input": { "names": ["zero"], "pick": "four" },
       "error": { "phase": "serialize", "code": "INPUT", "path": ["pick"] }
@@ -102,18 +102,18 @@
       "error": { "phase": "parse", "code": "RANGE", "path": ["pick"] }
     },
     {
-      "name": "explicit reverse via extern fn",
+      "name": "explicit inverse via extern fn",
       "root": "Explicit",
       "bytes": "3412",
       "json": { "v": 13330 }
     },
     {
-      "name": "explicit reverse on write",
+      "name": "explicit inverse on write",
       "root": "Explicit",
       "input": { "v": 13330 },
       "bytes": "3412"
     },
-    { "name": "explicit reverse zero", "root": "Explicit", "input": { "v": 255 }, "bytes": "00ff" },
+    { "name": "explicit inverse zero", "root": "Explicit", "input": { "v": 255 }, "bytes": "00ff" },
     {
       "name": "one-way transform JSON is the raw value",
       "root": "OneWay",
@@ -165,7 +165,7 @@
       "json": { "n": 2, "vals": [20, 40] }
     },
     {
-      "name": "transformed elements reverse",
+      "name": "transformed elements inverse",
       "root": "DegList",
       "input": { "vals": [4, 6] },
       "bytes": "02 0203"

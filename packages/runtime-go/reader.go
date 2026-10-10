@@ -73,7 +73,7 @@ func NewReader(data []byte, strict bool) *Reader {
 	}
 }
 
-// child is a reader over another byte space (a decoded region, a virtual stream) whose errors
+// child is a reader over another byte space (a decoded region, a stream) whose errors
 // report offset at, or the offset this reader's errors report.
 func (r *Reader) child(data []byte, at int) *Reader {
 	if r.outer >= 0 {
@@ -93,7 +93,7 @@ func (r *Reader) childStore(src Store, at int) *Reader {
 	return c
 }
 
-// Sub is a reader for a fresh region (a virtual stream): base 0, end its length.
+// Sub is a reader for a fresh region (a stream): base 0, end its length.
 func (r *Reader) Sub(s Stream) *Reader {
 	if s.store != nil {
 		return r.childStore(s.store, r.Pos)

@@ -196,7 +196,7 @@ function fieldOffsets(an: Analysis, r: StructResult): Map<string, string> {
             continue;
           }
           if (m.from) {
-            out.set(m.name, "in a virtual stream (takes no space here)");
+            out.set(m.name, "in a stream (takes no space here)");
             continue;
           }
           if (m.virtual) {
@@ -422,7 +422,7 @@ function fieldHover(an: Analysis, f: FieldSym, path: readonly Node[]): string {
   while (t.kind === "layered") t = t.inner;
   if (t.kind === "transform") {
     lines.push(
-      `**Transform:** reads \`${printIrExpr(t.read)}\`${t.write ? `, writes \`${printIrExpr(t.write)}\`${t.writeInferred ? " (reverse worked out by the compiler)" : ""}` : " (one-way: read-only in views)"}`
+      `**Transform:** reads \`${printIrExpr(t.read)}\`${t.write ? `, writes \`${printIrExpr(t.write)}\`${t.writeInferred ? " (inverse worked out by the compiler)" : ""}` : " (one-way: read-only in views)"}`
     );
   }
   const ir = fr.ir;
@@ -447,12 +447,14 @@ function fieldHover(an: Analysis, f: FieldSym, path: readonly Node[]): string {
   if (ir.derive) {
     const how =
       ir.deriveKind === "auto"
-        ? `derived automatically from the ${fr.deriveSource ?? "read side"}`
+        ? `derived from the ${fr.deriveSource ?? "read side"}`
         : ir.deriveKind === "constant"
           ? "a constant (checked on read)"
           : ir.input === "required"
             ? "normalized on write"
-            : "an explicit formula";
+            : ir.input === "optional"
+              ? "the default"
+              : "a computed field";
     const input =
       ir.input === "absent"
         ? "Not in the input type: the writer computes it."
@@ -549,16 +551,13 @@ const KEYWORD_DOCS: Record<string, [string, string]> = {
     "extern fn / codec / type",
     "Implemented by the host: functions, byte codecs (`@via`) or value types."
   ],
-  codec: ["extern codec name(params)", "A byte transform used with `@via(name(…))`."],
+  codec: ["extern codec name(params)", "A codec used with `@via(name(…))`."],
   fn: ["extern fn name(params) -> T", "A host function callable in expressions."],
   import: ['import { A, B as C } from "./file.yfl"', "Brings declarations of another file in."],
   export: ["export …", "Visible to importers; exported structs become roots of the generated API."],
-  from: [
-    "T x from stream",
-    'Parses the field from a virtual stream (in imports: `from "./file.yfl"`).'
-  ],
+  from: ["T x from stream", 'Parses the field from a stream (in imports: `from "./file.yfl"`).'],
   at: ["T x at offset", "Places the field at an offset from the nearest `@base`."],
-  as: ["T x as read = write", "A value transform: `it` is the raw value."],
+  as: ["T x as read = write", "A transform: `it` is the raw value, and `= write` is its inverse."],
   where: ["T x where condition", "A check on the value (`it`) after reading."],
   in: ["T x in (a, b, lo..hi) / in /regex/", "The value must be one of these."],
   until: [
@@ -579,7 +578,7 @@ const KEYWORD_DOCS: Record<string, [string, string]> = {
   this: ["this", "In `layout`: the struct's own inline bytes. In arguments: the current struct."],
   virtual: [
     "virtual u40 size = (sizeHigh << 32) | sizeLow",
-    "A field with no bytes: read as the formula over earlier fields. On write its value is an input and the compiler derives the parts (bit concatenation `(a << k) | b`, `a * K + b`, linear forms)."
+    "A field with no bytes: read as the formula over earlier fields. On write it is inverted: its value is an input and its parts are derived (invertible forms: bit concatenation `(a << k) | b`, `a * K + b`, linear forms)."
   ],
   null: [
     "x == null  /  x != null",
@@ -591,7 +590,7 @@ const KEYWORD_DOCS: Record<string, [string, string]> = {
 const ATTR_ARG_DOCS: Record<string, [string, string]> = {
   from: [
     "@align(n, from: file | base)",
-    "Where the alignment is measured from: `base` (the nearest @base, the default) or `file` (the start of the file, of a codec's decoded region, or of a virtual stream)."
+    "Where the alignment is measured from: `base` (the nearest @base, the default) or `file` (the start of the file, of a codec's decoded region, or of a stream)."
   ],
   offset: [
     "@align(n, offset: k)",

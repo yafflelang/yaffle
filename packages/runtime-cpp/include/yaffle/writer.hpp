@@ -101,7 +101,7 @@ struct Constraint {
 };
 
 struct PlaceOptions {
-  /// `at` constraint from a linear reverse: position ≡ remainder (mod modulus).
+  /// `at` constraint from a derived linear offset: position ≡ remainder (mod modulus).
   std::optional<Constraint> constraint;
   /// Fixed placement: exactly this base-relative offset.
   std::optional<std::int64_t> fixed;

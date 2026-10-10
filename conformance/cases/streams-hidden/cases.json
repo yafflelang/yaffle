@@ -1,5 +1,5 @@
 {
-  "description": "@hidden carriers of virtual streams: out of the JSON, derived on write from the `from` field.",
+  "description": "@hidden carriers of streams: out of the JSON, derived on write from the `from` field.",
   "generatedBy": "conformance/scripts/areas/streams-hidden.ts",
   "cases": [
     {

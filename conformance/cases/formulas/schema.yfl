@@ -1,5 +1,5 @@
-// Write formulas (`= expr`): sizeof, offsetof, crc32, adler32, min/max, an extern fn, formulas over
-// later fields, and formulas that choose a reverse the compiler can't infer.
+// Computed fields (`= expr`): sizeof, offsetof, crc32, adler32, min/max, an extern fn, formulas
+// over later fields, and a formula you choose where the field isn't derivable.
 
 extern fn sum8(u8 data[]) -> u8
 
@@ -49,7 +49,7 @@ export struct SumEncoded {
   u8   s = sum8(encode(body))
 }
 
-// You choose the reverse when the compiler can't.
+// The formula you choose where n isn't derivable.
 export struct Flags {
   u32 n = flags.length * 8
   u8  flags[(n + 7) / 8]

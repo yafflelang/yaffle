@@ -818,7 +818,7 @@ def lazy_region(
 
 
 def lazy_stream(stream: Callable[[], Any], strict: bool, read: Callable[[Reader], Any]) -> Any:
-    """A field read from a virtual stream, on access. The stream is bytes or a lazy store
+    """A field read from a stream, on access. The stream is bytes or a lazy store
     (:func:`stream_each`, :func:`stream_field`, :func:`stream_slice`)."""
     c = _current()
     root = c.root
@@ -945,7 +945,7 @@ class ViewRoot:
         self.region_versions: dict[Any, int] = {}
         #: Outputs of async codecs, (space id, offset, slot) -> (decoded, consumed).
         self.async_decoded: dict[Any, tuple[bytes, int]] = {}
-        #: Spaces of virtual streams read so far (in-place edits in them need a re-encode).
+        #: Spaces of streams read so far (in-place edits in them need a re-encode).
         self.streams: list[Space] = []
         #: id(value) -> (value, pos, size, space): where targets were read.
         self.origins: dict[int, tuple[Any, int, int, Space]] = {}

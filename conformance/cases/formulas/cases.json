@@ -1,5 +1,5 @@
 {
-  "description": "Write formulas: sizeof, offsetof, crc32, adler32, encode, min/max, extern fn, later fields, chosen reverses.",
+  "description": "Computed fields: sizeof, offsetof, crc32, adler32, encode, min/max, extern fn, later fields, chosen formulas for non-derivable fields.",
   "generatedBy": "conformance/scripts/areas/formulas.ts",
   "cases": [
     {
@@ -119,25 +119,25 @@
       "json": { "body": { "a": 1, "b": "cc" }, "s": 205 }
     },
     {
-      "name": "chosen reverse",
+      "name": "chosen formula",
       "root": "Flags",
       "bytes": "100000000102",
       "json": { "n": 16, "flags": "0102" }
     },
     {
-      "name": "chosen reverse on write",
+      "name": "chosen formula on write",
       "root": "Flags",
       "input": { "flags": "ff" },
       "bytes": "08000000ff"
     },
     {
-      "name": "chosen reverse empty",
+      "name": "chosen formula empty",
       "root": "Flags",
       "input": { "flags": "" },
       "bytes": "00000000"
     },
     {
-      "name": "chosen reverse is lossy for other values",
+      "name": "chosen formula is lossy for other values",
       "root": "Flags",
       "roundtrip": false,
       "bytes": "0a0000000102",

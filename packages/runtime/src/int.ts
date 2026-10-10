@@ -164,7 +164,7 @@ export function inRange<T extends Int>(v: T, lo: Int, hi: Int, what: string): T 
   return v;
 }
 
-/** `indexOf(array, value)` reverse lookup: missing values are an INPUT error on write. */
+/** `indexOf(array, value)` inverse lookup: missing values are an INPUT error on write. */
 export function indexOf(arr: readonly unknown[], v: unknown): number {
   for (let i = 0; i < arr.length; i++) if (equals(arr[i], v)) return i;
   return fail("INPUT", `value ${String(v)} is not in the table`);

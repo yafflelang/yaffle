@@ -223,7 +223,7 @@ describe("unions", () => {
 });
 
 describe("transforms", () => {
-  it("float transform with inferred reverse and half-step tolerance", async () => {
+  it("float transform with inferred inverse and half-step tolerance", async () => {
     const angle = transform(
       u16,
       div(mul(convert(itE(vt.int(16)), vt.float()), float(360)), float(65536)),

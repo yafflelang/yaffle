@@ -356,7 +356,7 @@ describe("parser: members", () => {
     expect(ms.map(m => m.kind)).toEqual(["FieldDecl", "StructDecl", "FieldDecl"]);
   });
 
-  it("parses anonymous blocks", () => {
+  it("parses blocks", () => {
     const ms = members("@padUntil(0x80) {\n  u32 a\n}");
     expect(ms[0]!.kind).toBe("BlockMember");
   });

@@ -93,7 +93,7 @@ export class WriteEmitter extends Emitter<WCtx> {
 
   /**
    * The layout of one instance when item arguments read fields: a `yaffle::Layout` initializer
-   * whose arguments are evaluated like write formulas, or undefined (static layout).
+   * whose arguments are evaluated like computed fields, or undefined (static layout).
    */
   private instanceLayout(s: IrStruct, ctx: WCtx): string | undefined {
     if (!s.layout || !s.layout.length || !dynamicLayout(s.layout)) return undefined;
@@ -1222,7 +1222,7 @@ export class WriteEmitter extends Emitter<WCtx> {
     }
   }
 
-  // ── virtual streams ───────────────────────────────────────────────────────
+  // ── streams ───────────────────────────────────────────────────────────────
 
   /** `from` fields: encode the value, then hand the bytes to the stream's source fields. */
   private emitStreamPrepass(s: IrStruct, ctx: WCtx): void {

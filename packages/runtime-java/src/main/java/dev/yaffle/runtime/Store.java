@@ -10,7 +10,7 @@ import java.util.function.IntFunction;
 
 /**
  * The bytes of a lazy byte space of a view, loaded on demand: a random-access source read in
- * blocks, a {@code @ranged} codec region decoded in blocks, or a virtual stream whose pieces are
+ * blocks, a {@code @ranged} codec region decoded in blocks, or a stream whose pieces are
  * decoded when touched.
  *
  * <p>{@link #buf} has the space's full length and is filled as readers {@link #ensure} ranges.
@@ -210,10 +210,10 @@ abstract class Store {
     }
   }
 
-  // ── virtual streams of pieces ───────────────────────────────────────────────────
+  // ── streams of pieces ───────────────────────────────────────────────────────────
 
   /**
-   * A virtual stream joining pieces whose decoded lengths are known up front (from size fields):
+   * A stream joining pieces whose decoded lengths are known up front (from size fields):
    * a piece is decoded only when a read touches it.
    */
   static final class Pieces extends Store {

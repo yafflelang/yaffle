@@ -37,7 +37,7 @@ export struct T {
     ]);
   });
 
-  it("inferred transform reverses", () => {
+  it("inferred transform inverses", () => {
     const { ls, path } = open(SRC);
     const h = ls.getInlayHints(path, ALL).find(x => x.label.startsWith("= round"))!;
     expect(h.label).toBe("= round(it * 65536.0 / 360.0)");

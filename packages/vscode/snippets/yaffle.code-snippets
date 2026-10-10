@@ -101,7 +101,7 @@
   },
   "extern codec": {
     "prefix": "codec",
-    "description": "Host-implemented byte transform",
+    "description": "Host-implemented codec",
     "body": ["extern ${1|codec,async codec|} ${2:name}$0"]
   },
   "extern fn": {

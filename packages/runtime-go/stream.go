@@ -5,7 +5,7 @@ import (
 	"container/list"
 )
 
-// Virtual streams (`T x from …`): on read, the bytes a `from` field is read from; on write, the
+// Streams (`T x from …`): on read, the bytes a `from` field is read from; on write, the
 // encoding handed back to the stream's source fields.
 //
 // Views read streams lazily through a Store:
@@ -20,7 +20,7 @@ import (
 // Readers over a store (Reader.src) keep a window of the store's bytes and fetch the next one
 // when a read leaves it.
 
-// Stream is a virtual stream: bytes, or a store whose bytes are produced on demand.
+// Stream is what a `from` field reads: bytes, or a store whose bytes are produced on demand.
 type Stream struct {
 	data  []byte
 	store Store
@@ -343,7 +343,7 @@ func (s *sliceStore) Window(pos, min int) []byte {
 	return w
 }
 
-// PieceStore is a virtual stream over pieces decoded on demand.
+// PieceStore is a stream over pieces decoded on demand.
 type PieceStore struct {
 	src    []*LazyPiece
 	starts []int

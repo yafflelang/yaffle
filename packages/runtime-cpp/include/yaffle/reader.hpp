@@ -57,7 +57,7 @@ class Reader {
   Reader(const Reader&) = delete;
   Reader& operator=(const Reader&) = delete;
 
-  /// A reader for a fresh region (virtual stream or codec output): base 0, end = length. Errors
+  /// A reader for a fresh region (stream or codec output): base 0, end = length. Errors
   /// inside report `at` (the encoded window in this region), or this reader's own outer offset.
   Reader sub(StorePtr store, std::int64_t at) const { return Reader(std::move(store), strict, outer >= 0 ? outer : at); }
   Reader sub(std::shared_ptr<const Bytes> bytes, std::int64_t at) const {

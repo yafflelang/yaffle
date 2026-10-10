@@ -1,6 +1,6 @@
 // Byte stores: where readers get their bytes.
 //
-// Every byte space a view reads (the source, a codec's decoded side, a virtual stream) is a Store.
+// Every byte space a view reads (the source, a codec's decoded side, a stream) is a Store.
 // Readers keep a window (a Chunk) and refill it from the store, so a view over a file reads only
 // the blocks it touches, a `from arr[*].piece` stream decodes only the pieces it touches, and a
 // `@ranged` codec region decodes only the blocks it touches.
@@ -149,7 +149,7 @@ class OverlayStore final : public Store {
   std::shared_ptr<const Bytes> merged_;
 };
 
-/// The pieces of a `from arr[*].piece` stream (virtual streams in views). The stream is not
+/// The pieces of a `from arr[*].piece` stream (streams in views). The stream is not
 /// joined: an offset maps to a piece through the prefix sums of piece lengths, learned in piece
 /// order only as far as needed, from the pieces' size fields when they state them (no decoding)
 /// or by decoding. Decoded pieces are kept in a small LRU.

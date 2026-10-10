@@ -127,7 +127,7 @@ describe("bytes and arrays", () => {
     expect(odd.error.path).toEqual(["tail", 0]);
   });
 
-  it("non-reversible lengths stay inputs and are checked (DERIVE)", async () => {
+  it("non-derivable lengths stay inputs and are checked (DERIVE)", async () => {
     const P = program({
       structs: [S("Flags", [f("n", u32), f("flags", bytes(count(ir.div(ir.add(fr("n"), 7), 8))))])],
       roots: ["Flags"]
@@ -274,7 +274,7 @@ describe("bitfields", () => {
   });
 });
 
-describe("constraints and checks", () => {
+describe("constants and checks", () => {
   it("in, ranges, regex and where", async () => {
     const P = program({
       structs: [

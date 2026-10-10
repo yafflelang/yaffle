@@ -1,5 +1,5 @@
 /**
- * Lazy virtual streams and ranged codecs in views: a view decodes only the pieces and codec blocks
+ * Lazy streams and ranged codecs in views: a view decodes only the pieces and codec blocks
  * a read touches. Schemas are compiled from yaffle source with the frontend; codec calls are
  * counted by the externs.
  */
@@ -89,7 +89,7 @@ async function buildCounting(
   return [m, (await load<{ stats: Stats }>(m.$gen, "externs.ts")).stats];
 }
 
-// ── virtual streams ────────────────────────────────────────────────────────────
+// ── streams ────────────────────────────────────────────────────────────────────
 
 const BODY = `
 export struct Body { u32 count  Item items[count] }

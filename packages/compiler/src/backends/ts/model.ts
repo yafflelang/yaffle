@@ -497,7 +497,7 @@ export function stripType(t: IrType): IrType {
   return t;
 }
 
-/** A transform without a reverse (possibly under layers). */
+/** A transform without an inverse (possibly under layers). */
 export function isOneWay(t: IrType): boolean {
   const x = stripLayers(t);
   return x.kind === "transform" && !x.write;

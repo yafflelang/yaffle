@@ -222,7 +222,7 @@ public static class Views
     }
 
     /// <summary>
-    /// A field read from a virtual stream on access: a fresh region over a store of the stream
+    /// A field read from a stream on access: a fresh region over a store of the stream
     /// (pieces are opened, and decoded, only when a read reaches them).
     /// </summary>
     public static T LoadStream<T>(ViewNode node, ByteStore stream, Func<Reader, ViewNode, T> read)

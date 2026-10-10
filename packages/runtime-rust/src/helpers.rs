@@ -157,7 +157,7 @@ impl<K: Hash + Eq> IdentMap<K> {
     }
 }
 
-/// A one-way transform (`as` without a reverse): the transformed value plus the raw value it
+/// A one-way transform (`as` without an inverse): the transformed value plus the raw value it
 /// was read from. Writers use `raw`; JSON shows the raw value too, so it stays lossless.
 #[derive(Debug, Clone, PartialEq, Default)]
 pub struct OneWay<V, R> {
@@ -185,7 +185,7 @@ pub fn sum_int(mut it: impl Iterator<Item = i128>) -> Result<i128> {
     it.try_fold(0i128, |s, x| s.checked_add(x)).ok_or_else(|| YaffleError::range("integer overflow"))
 }
 
-/// Splits a virtual stream's bytes into pieces of the given sizes (`@split` by sizes).
+/// Splits a stream's bytes into pieces of the given sizes (`@split` by sizes).
 pub fn split_sizes(data: &[u8], sizes: &[usize]) -> Result<Vec<Vec<u8>>> {
     let total: usize = sizes.iter().sum();
     if total != data.len() {
@@ -205,7 +205,7 @@ pub fn split_sizes(data: &[u8], sizes: &[usize]) -> Result<Vec<Vec<u8>>> {
         .collect())
 }
 
-/// Splits a virtual stream's bytes by the `@split(fit)` policy: piece `k` is the longest prefix
+/// Splits a stream's bytes by the `@split(fit)` policy: piece `k` is the longest prefix
 /// of the remaining content whose encoded element (`size(k, piece)` bytes), placed at
 /// `bounds(k).0`, ends at or before the next element's offset `bounds(k).1`. Encoded sizes are
 /// assumed to grow with the piece (a binary search). No content gives no pieces; a piece that

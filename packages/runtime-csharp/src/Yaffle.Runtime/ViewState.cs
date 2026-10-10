@@ -9,7 +9,7 @@ namespace Yaffle.Runtime;
 // A view's root is an object of the regular generated class, filled by the generated `Scan_X`
 // functions instead of `Read_X`: scalars are read right away (and their byte ranges and original
 // values recorded in a ViewNode), while pointer and `at` targets, byte arrays, fixed-size-element
-// arrays, codec regions and virtual streams are deferred in the field's Slot and read on first
+// arrays, codec regions and streams are deferred in the field's Slot and read on first
 // access. Inline structs are scanned (shallowly) as child nodes.
 //
 // Commit compares every scanned node with what was read: same-size edits of patchable scalars
@@ -95,7 +95,7 @@ public sealed class StructInfo
     public required Func<object, int, bool, object?> Get { get; init; }
 }
 
-/// <summary>A byte space: the view's source, a codec's decoded output, or a virtual stream.</summary>
+/// <summary>A byte space: the view's source, a codec's decoded output, or a stream.</summary>
 public sealed class Space(ByteStore store)
 {
     public ByteStore Store { get; } = store;
@@ -129,7 +129,7 @@ public sealed class ViewNode
     internal readonly (int Pos, int Size)[] TargetOrigin;
     /// <summary>The deferred read of each lazy field (to find where an original target was after the field was replaced).</summary>
     internal readonly Func<object?>?[] OriginalLoad;
-    /// <summary>Deferred bytes fields whose length is known without reading them (virtual stream pieces).</summary>
+    /// <summary>Deferred bytes fields whose length is known without reading them (stream pieces).</summary>
     internal readonly LazyBytes?[] LazyBytesOf;
 
     internal ViewNode(ViewRoot root, Space space, StructInfo info, int pos, bool strict, object[] args, object[] path, ViewNode? parent)
@@ -158,7 +158,7 @@ public sealed class ViewNode
 
     /// <summary>
     /// Records how to read deferred bytes field <paramref name="i"/> without loading it: its length
-    /// and a store over its bytes (so a virtual stream decodes only the pieces a read touches).
+    /// and a store over its bytes (so a stream decodes only the pieces a read touches).
     /// </summary>
     public void Bytes(int i, long length, Func<ByteStore> open) => LazyBytesOf[i] = new LazyBytes(length, open);
 

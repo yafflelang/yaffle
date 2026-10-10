@@ -492,7 +492,7 @@ function measureCall(ctx: ExprCtx, n: string, args: IrExpr[]): CExpr {
     if (n === "offsetof" && ctx.sm.ir.base) return int("0_i128");
     if (ctx.mode === "read" || ctx.mode === "json") {
       if (n === "offsetof") return int("__this_o");
-      throw new BackendError(`${n}(this) is only available in write formulas`);
+      throw new BackendError(`${n}(this) is only available in computed fields`);
     }
     if (n === "sizeof" && ctx.sm.ir.base && ctx.mode === "late") return int("__r.region_len()");
   }

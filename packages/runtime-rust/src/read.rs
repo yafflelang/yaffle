@@ -34,12 +34,12 @@ impl Fill<'_> {
 /// A value's position and type: the region, the address and a type key.
 type IdKey = (u32, usize, &'static str);
 
-/// The key of a region (a codec's decoded side or a virtual stream): the region it is in, the
+/// The key of a region (a codec's decoded side or a stream): the region it is in, the
 /// position it starts at, and a tag (1 for codec regions, a hash of the field for streams).
 pub type RegionKey = (u32, usize, u32);
 
 /// The cell readers borrow the shared state through, briefly per operation: lazily filled
-/// spaces (virtual streams in views) read other bytes while a reader of them is active.
+/// spaces (streams in views) read other bytes while a reader of them is active.
 pub type SharedCell = RefCell<Shared>;
 
 /// State shared by every region of one parse (or of one view: views keep it for their whole
@@ -494,7 +494,7 @@ impl<'a> Reader<'a> {
         Ok((sp, &window[..used]))
     }
 
-    /// A virtual stream's bytes as a region keyed by `tag` at the current position (identity of
+    /// A stream's bytes as a region keyed by `tag` at the current position (identity of
     /// values read from it is stable). Views keep it.
     pub fn stream(&mut self, tag: u32, bytes: impl FnOnce() -> Result<Vec<u8>>) -> Result<Rc<Space>> {
         let key: RegionKey = (self.region, self.pos, tag);

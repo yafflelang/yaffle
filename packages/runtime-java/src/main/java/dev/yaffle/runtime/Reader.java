@@ -81,7 +81,7 @@ public final class Reader {
     return regions != null;
   }
 
-  /** A reader for a fresh region (virtual stream): base 0, end = length. */
+  /** A reader for a fresh region (stream): base 0, end = length. */
   public Reader sub(byte[] bytes) {
     return decoded(bytes, pos);
   }

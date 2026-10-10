@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
- * A byte space of a view: the view's source, a codec's decoded output, or a virtual stream.
+ * A byte space of a view: the view's source, a codec's decoded output, or a stream.
  *
  * <p>A space is either fully present (an array) or lazy: a {@link Store} loads its bytes on
  * demand (blocks of a random-access source, blocks of a {@code @ranged} codec region, the pieces

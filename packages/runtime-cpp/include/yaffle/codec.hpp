@@ -1,4 +1,4 @@
-// Byte transforms (`@via`): calling host codecs, codec reuse for byte-exact rebuilds
+// Codecs (`@via`): calling host codecs, codec reuse for byte-exact rebuilds
 // (docs/IR.md §3.6), and virtual-stream helpers.
 //
 // Host shape (docs/targets/cpp.md): an object with
@@ -146,7 +146,7 @@ class Meta {
 /// A reuse key: the slot plus the array indices of the frame.
 std::string slot_key(const char* slot, const Frame& f);
 
-// ── virtual streams ─────────────────────────────────────────────────────────────
+// ── streams ─────────────────────────────────────────────────────────────────────
 
 /// `raw[a..b]` (end exclusive; -1 = to the end). EOF when outside the stream.
 Bytes slice_stream(const Bytes& s, i128 start, std::optional<i128> stop);

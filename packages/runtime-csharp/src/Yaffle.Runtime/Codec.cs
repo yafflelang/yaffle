@@ -39,7 +39,7 @@ public sealed class CodecContext
 }
 
 /// <summary>
-/// A byte transform (<c>extern codec</c>). Async codecs (<c>extern async codec</c>) override the
+/// A codec (<c>extern codec</c>). Async codecs (<c>extern async codec</c>) override the
 /// async methods; generated code calls those for them.
 /// </summary>
 public interface ICodec
@@ -75,7 +75,7 @@ public interface IExternType<T>
     byte[] Write(T value, object[] args);
 }
 
-/// <summary>Calling codecs, codec reuse (docs/IR.md §3.6), virtual streams.</summary>
+/// <summary>Calling codecs, codec reuse (docs/IR.md §3.6), streams.</summary>
 public static class Codecs
 {
     private static YaffleException Fail(string name, string op, Exception e, long offset) =>
@@ -197,7 +197,7 @@ public static class Codecs
         return o.Encoded.Value;
     }
 
-    // ── virtual streams ───────────────────────────────────────────────────────
+    // ── streams ───────────────────────────────────────────────────────────────
 
     /// <summary>Joins pieces into one stream.</summary>
     public static byte[] Join(IReadOnlyList<byte[]> pieces)

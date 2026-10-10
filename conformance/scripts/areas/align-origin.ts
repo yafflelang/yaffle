@@ -93,7 +93,7 @@ add(
 // InStream: pre at 0, raw at 1..8. In the stream, a at 0, b at 4 (aligned from the stream's
 // start, not the file's: that would be stream offset 3), c at 5..7.
 add(
-  parse("from: file is the start of a virtual stream", "InStream", "ff aa000000bb010203", {
+  parse("from: file is the start of a stream", "InStream", "ff aa000000bb010203", {
     pre: 0xff,
     raw: "aa000000bb010203",
     s: { a: 0xaa, b: 0xbb, c: "010203" }
@@ -138,6 +138,6 @@ add(
 
 export default area(
   "align-origin",
-  "Alignment origin and offset: `@align(n, offset: k)`, offsets from fields, `@alignEnd` with an offset, `from: file` inside a @base, a struct-level `@alignEnd(…, from: file)`, a virtual stream as the file, layout items, and both together.",
+  "Alignment origin and offset: `@align(n, offset: k)`, offsets from fields, `@alignEnd` with an offset, `from: file` inside a @base, a struct-level `@alignEnd(…, from: file)`, a stream as the file, layout items, and both together.",
   cases
 );

@@ -107,7 +107,7 @@ export class WriteEmitter extends Emitter<WCtx> {
   }
 
   /**
-   * The layout of one instance whose item arguments read fields: evaluated like write formulas,
+   * The layout of one instance whose item arguments read fields: evaluated like computed fields,
    * in the owning struct's write context.
    */
   private instanceLayout(s: IrStruct, ctx: WCtx): string {
@@ -1294,7 +1294,7 @@ export class WriteEmitter extends Emitter<WCtx> {
     return `__w.RegionAlignEnd(${to}, ${l.from === "file"}, ${off})`;
   }
 
-  // ── virtual streams ───────────────────────────────────────────────────────
+  // ── streams ───────────────────────────────────────────────────────────────
 
   /**
    * `from` fields: encode the value, then hand the bytes to the stream's source fields. Fields

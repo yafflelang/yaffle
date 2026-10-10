@@ -33,7 +33,7 @@ export function stripLayers(t: IrType): IrType {
   return t;
 }
 
-/** A field type that is a transform without a reverse (possibly under layers). */
+/** A field type that is a transform without an inverse (possibly under layers). */
 export function isOneWay(t: IrType): boolean {
   const x = stripLayers(t);
   return x.kind === "transform" && !x.write;

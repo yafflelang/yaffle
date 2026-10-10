@@ -872,7 +872,7 @@ export class WriteEmitter extends Emitter<WCtx> {
     }
   }
 
-  /** A transform with a reverse: the raw value, checked to read back as the value. */
+  /** A transform with an inverse: the raw value, checked to read back as the value. */
   private transform(
     t: Extract<IrType, { kind: "transform" }>,
     value: string,
@@ -1263,7 +1263,7 @@ export class WriteEmitter extends Emitter<WCtx> {
     return `$w.regionAlignEnd(${this.num(l.to, ctx)}, ${l.from === "file"}, ${off});`;
   }
 
-  // ── virtual streams ─────────────────────────────────────────────────────────
+  // ── streams ─────────────────────────────────────────────────────────────────
 
   /**
    * `from` fields: encode the value, then hand the bytes to the stream's source fields (they are

@@ -67,7 +67,7 @@ func (a *LArray) Push(e LEntry) {
 
 // PlaceOpts are the options of a placeable.
 type PlaceOpts struct {
-	// Modulus/Remainder: `at` constraint from a linear reverse (Modulus 0 = none).
+	// Modulus/Remainder: `at` constraint from a derived linear offset (Modulus 0 = none).
 	Modulus, Remainder int
 	// Fixed: exactly this base-relative offset (HasFixed).
 	Fixed    int
@@ -349,7 +349,7 @@ type Region struct {
 	alignEnds []alignEnd
 	// anchor is where a nested @base written inline lands in the enclosing region: anchorAt
 	// bytes into that block. nil for a region that starts its own byte space (the root, a
-	// codec's decoded side, a virtual stream, a temporary encoding).
+	// codec's decoded side, a stream, a temporary encoding).
 	anchor   *Block
 	anchorAt int
 	// escalate: @ref pointers this region can't resolve are left in unresolved for the

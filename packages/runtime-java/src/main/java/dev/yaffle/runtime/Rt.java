@@ -258,7 +258,7 @@ public final class Rt {
     return Objects.equals(a, b);
   }
 
-  /** {@code indexOf(array, value)} reverse lookup: a missing value is an INPUT error. */
+  /** {@code indexOf(array, value)} inverse lookup: a missing value is an INPUT error. */
   public static long indexOf(List<?> arr, Object v) {
     for (int i = 0; i < arr.size(); i++) if (equals(arr.get(i), v)) return i;
     throw new YaffleException(ErrorCode.INPUT, "value " + Json.describe(v) + " is not in the table");

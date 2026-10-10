@@ -1,6 +1,6 @@
 /**
  * The workspace of the integration tests: a small multi-file project (name → text) with imports,
- * pointers, layout rules, parameters, bit fields, externs and virtual streams, and its yaffle.json.
+ * pointers, layout rules, parameters, bit fields, externs and streams, and its yaffle.json.
  */
 
 /** The project's format files (name → text). */

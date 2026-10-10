@@ -1,5 +1,5 @@
 {
-  "description": "Alignment origin and offset: `@align(n, offset: k)`, offsets from fields, `@alignEnd` with an offset, `from: file` inside a @base, a struct-level `@alignEnd(…, from: file)`, a virtual stream as the file, layout items, and both together.",
+  "description": "Alignment origin and offset: `@align(n, offset: k)`, offsets from fields, `@alignEnd` with an offset, `from: file` inside a @base, a struct-level `@alignEnd(…, from: file)`, a stream as the file, layout items, and both together.",
   "generatedBy": "conformance/scripts/areas/align-origin.ts",
   "cases": [
     {
@@ -106,7 +106,7 @@
       "bytes": "000000 01 00000000 02"
     },
     {
-      "name": "from: file is the start of a virtual stream",
+      "name": "from: file is the start of a stream",
       "root": "InStream",
       "bytes": "ff aa000000bb010203",
       "json": { "pre": 255, "raw": "aa000000bb010203", "s": { "a": 170, "b": 187, "c": "010203" } }

@@ -6,7 +6,7 @@ import static dev.yaffle.runtime.Assert.fails;
 
 import java.util.concurrent.CompletableFuture;
 
-/** Codec calls, reuse and virtual streams. */
+/** Codec calls, reuse and streams. */
 public final class CodecsTest {
   private CodecsTest() {}
 

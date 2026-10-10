@@ -34,7 +34,7 @@ describe("DESIGN.md examples → IR", () => {
     expect(g.p.roots).toEqual([{ struct: "Entry", name: "Entry", module: "main.yfl" }]);
   });
 
-  it("anonymous blocks flatten into the parent", () => {
+  it("blocks flatten into the parent", () => {
     const p = ok("export struct S { u8 a  @align(4) { u32 b  u32 c }  u8 d[b] }");
     const s = struct(p, "S");
     expect(s.members[1]).toMatchObject({ kind: "block", layers: [{ kind: "align" }] });
@@ -69,7 +69,7 @@ describe("DESIGN.md examples → IR", () => {
     expect(s.usesEndian).toBe(false);
   });
 
-  it("arrays, automatic reverses, shared counts", async () => {
+  it("arrays, derived lengths, shared counts", async () => {
     const g = golden(
       "arrays",
       `struct Entry { u32 x }
@@ -93,7 +93,7 @@ export struct Table {
     expect(field(t, "rest").type).toMatchObject({ kind: "bytes", length: { kind: "rest" } });
   });
 
-  it("non-reversible lengths stay inputs", () => {
+  it("non-derivable lengths stay inputs", () => {
     const p = ok(
       "export struct S { u32 n  u32 rows  u32 cols  u8 flags[(n + 7) / 8]  u8 grid[rows * cols] }"
     );
@@ -101,13 +101,13 @@ export struct Table {
     for (const n of ["n", "rows", "cols"]) expect(field(s, n).input).toBe("required");
   });
 
-  it("write formulas and externs", async () => {
+  it("computed fields and externs", async () => {
     const g = golden(
       "formulas",
       `extern fn pathHash(char path[]) -> u32
 struct Body { u32 v }
 export struct Node {
-  u32  n    = flags.length * 8     // you choose the reverse when the compiler can't
+  u32  n    = flags.length * 8     // the formula you choose where n isn't derivable
   u8   flags[(n + 7) / 8]
   u32  size = sizeof(body)
   u32  crc  = crc32(body)
@@ -140,7 +140,7 @@ export struct Node {
     ]);
   });
 
-  it("constants and constraints", async () => {
+  it("constants and checks", async () => {
     const g = golden(
       "constants",
       `export struct C {
@@ -204,7 +204,7 @@ export struct Node {
     });
   });
 
-  it("attributes, padding, alignment", async () => {
+  it("padding and alignment", async () => {
     const g = golden(
       "attributes",
       `export struct Header @padUntil(0x80) {          // struct attributes go between the name and \`{\`
@@ -330,7 +330,7 @@ export struct U { Node n }`
     });
   });
 
-  it("value transforms and enums", async () => {
+  it("transforms and enums", async () => {
     const g = golden(
       "transforms",
       `enum MemKind : u16 { Sys = 0, Gpu = 1 }
@@ -343,9 +343,9 @@ export struct Entry {
   char    names[count][8]
   MemKind kind
   Open    open
-  u16     angle as it * 360.0 / 65536              // reverse worked out
-  u8      name  as names[it]                       // reverse: names.indexOf(it)
-  u32     tag   as decodeTag(it) = encodeTag(it)   // explicit reverse
+  u16     angle as it * 360.0 / 65536              // the inverse is worked out
+  u8      name  as names[it]                       // inverse: names.indexOf(it)
+  u32     tag   as decodeTag(it) = encodeTag(it)   // explicit inverse
   u32     hash  as hex(it)                         // one-way: input stays u32, read-only in views
   u32     flags = it | 0x80                        // normalize on write
   i16     neg as -it + 3
@@ -369,7 +369,7 @@ export struct Entry {
     expect(g.p.enums.find(x => x.id === "Open")!.open).toBe(true);
   });
 
-  it("byte transforms", async () => {
+  it("sizes and codecs", async () => {
     const g = golden(
       "byte-transforms",
       `struct Chunk { u32 a }
@@ -421,7 +421,7 @@ export struct Stream {
     ]);
   });
 
-  it("parameters, nesting, bound values", async () => {
+  it("parameters, nesting and bound values", async () => {
     const g = golden(
       "parameters",
       `struct Blob(u32 n) { u8 data[n] }          // explicit parameters, for reusable structs
@@ -709,7 +709,7 @@ export struct Chunk @base @alignEnd(0x10) {
     expect(a.layers).toMatchObject([{ kind: "alignEnd" }]);
   });
 
-  it("virtual streams", async () => {
+  it("streams", async () => {
     const g = golden(
       "streams",
       `extern codec zstd
@@ -843,7 +843,7 @@ export struct Slices {
     });
   });
 
-  it("IR.md §8.5 example: at with a linear reverse", () => {
+  it("IR.md §8.5 example: at with a derived linear offset", () => {
     const p = ok("export struct S @base { u32 size  u32 sector  u8 data[size] at sector * 0x800 }");
     const s = struct(p, "S");
     expect(field(s, "sector").derive).toEqual({

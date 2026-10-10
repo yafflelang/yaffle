@@ -111,7 +111,7 @@ const arrays = program(
       f("a", t.array(t.u8, len.count(e.f("n", vt.u8)))),
       f("b", t.array(t.u8, len.count(e.f("n", vt.u8))))
     ]),
-    // Non-reversible length: stays an input and is checked.
+    // Non-derivable length: stays an input and is checked.
     S("Bitmap", [
       f("n", t.u8),
       f("flags", t.bytes(len.count(e.div(e.add(e.f("n", vt.u8), e.int(7)), e.int(8)))))
@@ -826,7 +826,7 @@ describe.skipIf(!hasRust)("rust backend: values and layers", () => {
     expect(eof).toMatchObject({ code: "EOF", path: ["list", 1] });
   });
 
-  it("checks shared and non-reversible counts", async () => {
+  it("checks shared and non-derivable counts", async () => {
     await roundtrip("arrays", "Shared", "02010203" + "04", { n: 2, a: [1, 2], b: [3, 4] });
     const e1 = await b.error({
       op: "serialize",

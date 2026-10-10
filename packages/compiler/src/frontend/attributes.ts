@@ -51,14 +51,14 @@ const DEFINITIONS: Record<string, AttrDefinition> = {
     args: [{ name: "n", kind: "int" }],
     layer: true,
     repeatable: true,
-    doc: "Exactly `n` bytes. Measures whatever it wraps: inside `@via` it is the decoded size, outside it the size on disk. A size field used here is derived automatically. On an `extern type`, declares a fixed size."
+    doc: "Exactly `n` bytes. Measures whatever it wraps: inside `@via` it is the decoded size, outside it the size on disk. A size field used here is derived. On an `extern type`, declares a fixed size."
   },
   via: {
     targets: ["field", "block", "struct", "alias"],
     args: [{ name: "codec", kind: "codec" }],
     layer: true,
     repeatable: true,
-    doc: "Byte transform through an `extern codec`. The wrapped content is the codec's decoded side."
+    doc: "Runs the wrapped content through a codec (`extern codec`): the wrapped content is the codec's decoded side."
   },
   align: {
     targets: ["field", "block", "struct", "alias", "layoutItem"],
@@ -130,7 +130,7 @@ const DEFINITIONS: Record<string, AttrDefinition> = {
   hidden: {
     targets: ["field"],
     args: [],
-    doc: "Not in the input or output types. The writer must be able to derive it."
+    doc: "Not in the input or output types. The field must be derived or computed (`= …`)."
   },
   relative: {
     targets: ["field"],

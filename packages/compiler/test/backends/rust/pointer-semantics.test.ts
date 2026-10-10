@@ -47,7 +47,7 @@ export struct Shared {
 // When layout reaches a fixed placement, the running position moves to its end.
 export struct Fixed {
   u8 ofs
-  u8 fixedData[2] at ofs % 64   // irreversible: fixed
+  u8 fixedData[2] at ofs % 64   // not derivable: fixed
   u8 *after : u8
 }
 `;

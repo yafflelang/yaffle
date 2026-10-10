@@ -346,7 +346,7 @@ export class ReadEmitter extends Emitter<RCtx> {
     return addr;
   }
 
-  /** A field read from a virtual stream; views may defer the read to a getter. */
+  /** A field read from a stream; views may defer the read to a getter. */
   private emitFrom(f: IrField, g: GoField, ctx: RCtx): void {
     const c = this.code;
     const readFrom = (view: boolean): string => {

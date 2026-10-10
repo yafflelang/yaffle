@@ -29,7 +29,7 @@ export function structUnder(t: IrType): string | undefined {
   return u.kind === "struct" ? u.struct : undefined;
 }
 
-/** A field type that is a transform without a reverse (possibly under layers). */
+/** A field type that is a transform without an inverse (possibly under layers). */
 export function isOneWay(t: IrType): boolean {
   const u = unlayer(t);
   return u.kind === "transform" && !u.write;

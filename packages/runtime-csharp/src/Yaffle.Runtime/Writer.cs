@@ -197,7 +197,7 @@ public sealed class Writer
     /// <summary>
     /// <c>@align(to, from: …, offset: …)</c>: pads until <c>(position + offset) % to == 0</c>,
     /// the position counting from the nearest base, or from the start of the current byte space
-    /// (<paramref name="file"/>: the root, a codec's decoded side or a virtual stream; nested
+    /// (<paramref name="file"/>: the root, a codec's decoded side or a stream; nested
     /// <c>@base</c> regions count from where they are written). Block starts not known yet are
     /// required to be multiples of <paramref name="to"/>, and the padding comes from the known part.
     /// </summary>

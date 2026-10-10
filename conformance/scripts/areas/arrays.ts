@@ -103,7 +103,7 @@ add(
   serr("shared counts disagree", "Shared", { a: [1, 2], b: "0a0b0c" }, "DERIVE")
 );
 
-// ── Reversible arithmetic ───────────────────────────────────────────────────────────────────────
+// ── Derivable arithmetic ────────────────────────────────────────────────────────────────────────
 add(
   parse("pairs * 2", "Pairs", "02 0100 0200 0300 0400", { pairs: 2, ids: [1, 2, 3, 4] }),
   ser("pairs derived by halving", "Pairs", { ids: [5, 6] }, "01 0500 0600"),
@@ -127,13 +127,13 @@ add(
   serr("affine not divisible", "Affine", { v: hexOf(4) }, "DERIVE")
 );
 
-// ── Irreversible counts ─────────────────────────────────────────────────────────────────────────
+// ── Counts that aren't derivable ────────────────────────────────────────────────────────────────
 add(
-  parse("irreversible count", "Irreversible", "0a 0102", { n: 10, flags: "0102" }),
-  parse("irreversible count zero", "Irreversible", "00", { n: 0, flags: "" }),
-  ser("irreversible count is an input", "Irreversible", { n: 9, flags: "ff01" }, "09 ff01"),
-  serr("irreversible count disagrees", "Irreversible", { n: 10, flags: "01" }, "DERIVE"),
-  serr("irreversible count missing", "Irreversible", { flags: "01" }, "INPUT", ["n"]),
+  parse("non-derivable count", "NotDerivable", "0a 0102", { n: 10, flags: "0102" }),
+  parse("non-derivable count zero", "NotDerivable", "00", { n: 0, flags: "" }),
+  ser("non-derivable count is an input", "NotDerivable", { n: 9, flags: "ff01" }, "09 ff01"),
+  serr("non-derivable count disagrees", "NotDerivable", { n: 10, flags: "01" }, "DERIVE"),
+  serr("non-derivable count missing", "NotDerivable", { flags: "01" }, "INPUT", ["n"]),
   parse("product count", "Product", "02 03 0100 0200 0300 0400 0500 0600", {
     rows: 2,
     cols: 3,
@@ -166,6 +166,6 @@ add(
 
 export default area(
   "arrays",
-  "Counts, until, rest, derived/shared counts, reversible count arithmetic with divisibility, irreversible counts.",
+  "Counts, until, rest, derived/shared counts, derivable count arithmetic with divisibility, non-derivable counts.",
   cases
 );

@@ -11,7 +11,7 @@ import { formatSource } from "../../src/frontend/format.ts";
 const valueType = (src: string, name: string) =>
   (field(struct(ok(src), "S"), name).type as Extract<IrType, { kind: "transform" }>).valueType;
 
-describe("virtual stream carriers", () => {
+describe("stream carriers", () => {
   it("a `from field` carrier is derived on write but stays in the output", () => {
     const s = struct(ok("struct P { u8 x }\nexport struct S { u8 raw[4]  P p from raw }"), "S");
     expect(field(s, "raw")).toMatchObject({ input: "absent", output: true });
@@ -340,7 +340,7 @@ describe("optional inputs with defaults", () => {
 });
 
 describe("pointer origins", () => {
-  it("@origin is evaluated like a write formula", () => {
+  it("@origin is evaluated like a computed field", () => {
     const s = struct(
       ok("export struct S @base { str *name : i32 @ref @origin(offsetof(values))  u8 values[4] }"),
       "S"

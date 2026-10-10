@@ -681,7 +681,7 @@ export struct Records { u8 count  Rec recs[count]  layout { recs[*].body @align(
         bytes: "02 01 08 02 0c 000000 aa 000000 bbcc"
       },
       {
-        // The arguments are evaluated per instance, like write formulas, even when the item
+        // The arguments are evaluated per instance, like computed fields, even when the item
         // places nothing.
         name: "an alignment of 0 with nothing to place",
         root: "Records",

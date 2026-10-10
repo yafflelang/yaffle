@@ -44,7 +44,7 @@ export interface TargetInfo {
 
 /**
  * Depth of transient evaluations (`Lazy.peek`): while positive, lazy helpers compute values
- * without registering decoded spaces or codec origins, so a virtual stream can decode a piece
+ * without registering decoded spaces or codec origins, so a stream can decode a piece
  * without keeping it alive (its own LRU cache bounds the memory).
  */
 let transient = 0;
@@ -1189,7 +1189,7 @@ function lazyIn<T>(
 }
 
 /**
- * A field read from a virtual stream (`T x from …`), on access. The stream is a byte store
+ * A field read from a stream (`T x from …`), on access. The stream is a byte store
  * (`viewPieces`, `streamOf`, `streamSlice`), so only the bytes the read touches are decoded. The
  * stream's space stays the same object while it has edits.
  */
@@ -1313,7 +1313,7 @@ export class ViewRoot {
   readonly regions = new Map<string, Space>();
   /** Number of parent patches when each region space was created (later ones may stale it). */
   readonly regionPatches = new Map<string, number>();
-  /** Spaces of virtual streams read so far. */
+  /** Spaces of streams read so far. */
   readonly streams = new Map<string, { space: Space; parentPatches: number }>();
   readonly asyncDecoded = new Map<string, Uint8Array>();
   origins = new WeakMap<object, { pos: number; size: number; space: Space }>();

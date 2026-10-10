@@ -138,7 +138,7 @@ class Doc {
 
   // ── byte spaces ─────────────────────────────────────────────────────────────
 
-  /// A byte space views read (decoded codec regions, virtual streams), created on first use.
+  /// A byte space views read (decoded codec regions, streams), created on first use.
   struct Space {
     StorePtr store;
     std::function<StorePtr(Doc&)> make;

@@ -1,7 +1,7 @@
 /**
  * Lazily decoded byte stores used by views:
  *
- * - `PieceStore`: a virtual stream joined from pieces (`T x from arr[*].data`). An offset maps to
+ * - `PieceStore`: a stream joined from pieces (`T x from arr[*].data`). An offset maps to
  *   a piece through the pieces' decoded lengths, taken from the data where the schema states them
  *   (`@size(exp) @via(zstd)`: no decoding needed) and otherwise learned by decoding the pieces in
  *   order until the offset is reached. Only the pieces a read touches are decoded, and decoded
@@ -45,7 +45,7 @@ class Lru<K, V> {
   }
 }
 
-/** The pieces of a virtual stream. */
+/** The pieces of a stream. */
 interface PieceSource {
   /** Number of pieces. */
   readonly count: number;
@@ -55,7 +55,7 @@ interface PieceSource {
   bytes(i: number): Uint8Array;
 }
 
-/** A virtual stream over pieces decoded on demand. Its size is lazy (see `ByteStore.lazySize`). */
+/** A stream over pieces decoded on demand. Its size is lazy (see `ByteStore.lazySize`). */
 export class PieceStore implements ByteStore {
   readonly lazySize = true;
   readonly chunk = 0x4000;

@@ -125,7 +125,7 @@ function holdsStructs(t: IrType): boolean {
 export class WriteGen {
   private measured: Map<string, Set<Level>>;
   private slotVars = new Map<string, string>();
-  /** Carrier fields of virtual streams: the variable holding the piece (`&'a Vec<u8>`). */
+  /** Carrier fields of streams: the variable holding the piece (`&'a Vec<u8>`). */
   private sources = new Map<string, string>();
   /** Stream arrays whose elements were synthesized: the variable holding them (`&'a Vec<E>`). */
   private overrides = new Map<string, string>();
@@ -344,7 +344,7 @@ export class WriteGen {
     return out;
   }
 
-  // ─── Virtual streams ───────────────────────────────────────────────────────
+  // ─── Streams ───────────────────────────────────────────────────────────────
 
   private streams(env: WEnv): void {
     const froms = allFields(this.sm.ir.members).filter(f => f.from);
@@ -521,7 +521,7 @@ export class WriteGen {
     );
   }
 
-  /** Carrier fields of virtual streams in this struct: their content is the stream's piece. */
+  /** Carrier fields of streams in this struct: their content is the stream's piece. */
   private takeSources(): void {
     for (const f of allFields(this.sm.ir.members)) {
       const sid = this.m.streamIds.get(`${this.sm.ir.id}.${f.name}`);
@@ -1409,7 +1409,7 @@ export class WriteGen {
     const lines: string[] = [];
     const tinner = effectiveLayers(this.m, t.target).inner;
     const identTarget = tinner.kind === "struct" && this.m.identStructs.has(tinner.struct);
-    // `@origin(expr)`: evaluated after layout, like a write formula.
+    // `@origin(expr)`: evaluated after layout, like a computed field.
     let origin = "None";
     if (t.origin) {
       const want = asInt(compile(this.ctx(env, "late"), t.origin));

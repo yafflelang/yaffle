@@ -1,5 +1,5 @@
 /**
- * Byte transforms (`@via`): calling host codecs, and codec reuse for byte-exact rebuilds
+ * Codecs (`@via`): calling host codecs, and codec reuse for byte-exact rebuilds
  * (docs/IR.md §3.6). A value read from a codec's decoded side remembers the original encoded
  * bytes and a private copy of the decoded bytes. When the same object is serialized and its plain
  * encoding is unchanged, the original encoded bytes are reused instead of re-encoding.
@@ -170,7 +170,7 @@ export function reuseCodec(
   return o.encoded;
 }
 
-// ── virtual streams ───────────────────────────────────────────────────────────
+// ── streams ───────────────────────────────────────────────────────────────────
 
 /** Joins pieces into one stream. */
 export function joinStream(pieces: readonly Uint8Array[]): Uint8Array {

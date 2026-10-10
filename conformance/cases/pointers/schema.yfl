@@ -1,6 +1,6 @@
 // Pointers and placements: owned pointers, @relative, @nullable, arrays of pointers, shared targets
 // (JSON $ref), recursion and cycles, `at` with derived offsets, linear `at` with placement
-// constraints, fixed (irreversible) placements and overlaps, and @base.
+// constraints, fixed (not derivable) placements and overlaps, and @base.
 
 struct Pt {
   u16 x
@@ -37,7 +37,7 @@ export struct AtBytes { u16 len  u16 ofs  u8 data[len] at ofs }
 export struct Linear { u8 sector  u8 data[4] at sector * 8 }
 export struct LinearRem { u8 n  u8 slot  u8 data[n] at slot * 16 + 4 }
 
-// Irreversible `at`: the offset fields are inputs; the target goes exactly there.
+// Not derivable `at`: the offset fields are inputs; the target goes exactly there.
 export struct FixedAt { u8 a  u8 b  u8 x[2] at a * b }
 export struct FixedTwo { u8 k  u8 o1  u8 o2  u8 p1[2] at o1 * k  u8 p2[2] at o2 * k }
 

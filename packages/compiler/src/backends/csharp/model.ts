@@ -520,7 +520,7 @@ export class Model {
   }
 }
 
-/** A transform without a reverse (possibly under layers): canonical JSON shows its raw value. */
+/** A transform without an inverse (possibly under layers): canonical JSON shows its raw value. */
 function isOneWay(t: IrType): boolean {
   const x = stripLayers(t);
   return x.kind === "transform" && !x.write;

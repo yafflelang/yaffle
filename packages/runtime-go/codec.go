@@ -7,7 +7,7 @@ import (
 	"strings"
 )
 
-// Byte transforms (`@via`): calling host codecs, and codec reuse for byte-exact rebuilds
+// Codecs (`@via`): calling host codecs, and codec reuse for byte-exact rebuilds
 // (docs/IR.md §3.6).
 
 func ctxOf(c context.Context) context.Context {

@@ -1,7 +1,7 @@
 //! Views: lazy access to a document, in-place patches, and commits.
 //!
 //! A view of a struct is opened by *scanning* it: its inline members are read, but pointer and
-//! `at` targets, codec regions and virtual streams are not (they get default placeholders), and
+//! `at` targets, codec regions and streams are not (they get default placeholders), and
 //! every field's location and read context is kept in a field span. Those fields are read, or
 //! opened as views of their own, on demand.
 //!
@@ -356,7 +356,7 @@ impl ViewRoot {
         }
     }
 
-    /// A virtual stream of pieces (`from arr[*].field`) as a kept region keyed by `key`. With
+    /// A stream of pieces (`from arr[*].field`) as a kept region keyed by `key`. With
     /// `sizes` (every piece's decoded size, known without decoding), pieces are decoded on first
     /// access by `piece(k)`; otherwise `all()` gives the joined bytes now.
     pub fn stream(

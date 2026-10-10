@@ -1,5 +1,5 @@
 {
-  "description": "Counts, until, rest, derived/shared counts, reversible count arithmetic with divisibility, irreversible counts.",
+  "description": "Counts, until, rest, derived/shared counts, derivable count arithmetic with divisibility, non-derivable counts.",
   "generatedBy": "conformance/scripts/areas/arrays.ts",
   "cases": [
     {
@@ -883,32 +883,32 @@
       "error": { "phase": "serialize", "code": "DERIVE" }
     },
     {
-      "name": "irreversible count",
-      "root": "Irreversible",
+      "name": "non-derivable count",
+      "root": "NotDerivable",
       "bytes": "0a 0102",
       "json": { "n": 10, "flags": "0102" }
     },
     {
-      "name": "irreversible count zero",
-      "root": "Irreversible",
+      "name": "non-derivable count zero",
+      "root": "NotDerivable",
       "bytes": "00",
       "json": { "n": 0, "flags": "" }
     },
     {
-      "name": "irreversible count is an input",
-      "root": "Irreversible",
+      "name": "non-derivable count is an input",
+      "root": "NotDerivable",
       "input": { "n": 9, "flags": "ff01" },
       "bytes": "09 ff01"
     },
     {
-      "name": "irreversible count disagrees",
-      "root": "Irreversible",
+      "name": "non-derivable count disagrees",
+      "root": "NotDerivable",
       "input": { "n": 10, "flags": "01" },
       "error": { "phase": "serialize", "code": "DERIVE" }
     },
     {
-      "name": "irreversible count missing",
-      "root": "Irreversible",
+      "name": "non-derivable count missing",
+      "root": "NotDerivable",
       "input": { "flags": "01" },
       "error": { "phase": "serialize", "code": "INPUT", "path": ["n"] }
     },

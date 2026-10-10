@@ -1,7 +1,7 @@
 // Alignment origin and offset: `@align(n, from: file | base, offset: k)` pads
 // before until (position - origin + k) % n == 0, where the origin is the nearest @base (default)
 // or the start of the current byte space (`file`: the source, a codec's decoded region or a
-// virtual stream). `@alignEnd` takes the same arguments for the end position.
+// stream). `@alignEnd` takes the same arguments for the end position.
 
 // offset: the 3-byte tail ends on a multiple of 4 (pad until (pos + 3) % 4 == 0).
 export struct Offset {
@@ -56,7 +56,7 @@ export struct UsesEndFile {
   u8      post
 }
 
-// In a virtual stream, `file` is the start of the stream (offset 1 of the real file here).
+// In a stream, `file` is the start of the stream (offset 1 of the real file here).
 struct Streamed {
   u8 a
   u8 b @align(4, from: file)

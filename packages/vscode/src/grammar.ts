@@ -736,7 +736,7 @@ export const grammar: Grammar = {
     },
 
     wildcard: {
-      comment: "arr[*] in layout paths and virtual streams",
+      comment: "arr[*] in layout paths and streams",
       match: s(/(\[)\s*(\*)\s*(\])/),
       captures: {
         "1": { name: "punctuation.definition.brackets.begin.yaffle" },

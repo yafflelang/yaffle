@@ -1,4 +1,4 @@
-// Virtual streams whose carrier fields are @hidden: they leave the JSON entirely and the writer
+// Streams whose carrier fields are @hidden: they leave the JSON entirely and the writer
 // derives them from the `from` field.
 
 extern codec xor(u8 key) @ranged

@@ -43,7 +43,7 @@ public sealed class LArray : LEntry
 /// <summary>Options of a placed target.</summary>
 public sealed class PlaceOptions
 {
-    /// <summary><c>at</c> constraint from a linear reverse: position ≡ remainder (mod modulus).</summary>
+    /// <summary><c>at</c> constraint from a derived linear offset: position ≡ remainder (mod modulus).</summary>
     public (long Modulus, long Remainder)? Constraint { get; init; }
 
     /// <summary>Fixed placement: exactly this base-relative offset.</summary>
@@ -355,7 +355,7 @@ public sealed class Region
     /// <summary>
     /// Where this region's bytes go in the enclosing region, when it is a nested <c>@base</c> written
     /// inline: <c>At</c> bytes into <c>Block</c>. Null for a region that starts its own byte space
-    /// (the root, a codec's decoded side, a virtual stream, a temporary encoding).
+    /// (the root, a codec's decoded side, a stream, a temporary encoding).
     /// </summary>
     public (Block Block, int At)? Anchor;
     /// <summary>A nested @base struct's region: unresolved @ref pointers go to the enclosing base.</summary>

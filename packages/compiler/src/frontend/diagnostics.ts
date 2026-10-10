@@ -114,17 +114,20 @@ export const DIAGNOSTIC_CODES = {
   // ── derivation and consistency ─────────────────────────────────────────────
   "contradictory-formula": [
     "error",
-    "A write formula that can never agree with the read-side expression using it."
+    "A computed field whose formula can never agree with the read-side expression using it."
   ],
   "formula-mismatch": [
     "warning",
-    "A write formula that agrees with the read side only for some values."
+    "A computed field whose formula agrees with the read side only for some values."
   ],
   "lossy-formula": [
     "warning",
-    "A consistent formula that breaks byte-exact rebuilds of files with other values."
+    "A computed field whose formula breaks byte-exact rebuilds of files with other values."
   ],
-  "redundant-formula": ["hint", "A write formula the compiler would derive automatically."],
+  "redundant-formula": [
+    "hint",
+    "A computed field whose formula equals what the field would be derived as."
+  ],
   "size-inside-codec": [
     "error",
     "@size inside a non-streaming codec without an outer @size: the codec needs its on-disk size."
@@ -142,17 +145,17 @@ export const DIAGNOSTIC_CODES = {
   ],
   "one-way-transform": [
     "hint",
-    "An `as` transform without a reverse: the value is read-only in views."
+    "An `as` transform without an inverse: the value is read-only in views."
   ],
-  "not-invertible": ["error", "A transform write formula without `it`."],
+  "not-invertible": ["error", "An explicit transform inverse (`as … = …`) without `it`."],
   // ── virtual fields, derived arrays, slices ─────────────────────────────────
   "invalid-virtual": [
     "error",
     "A `virtual` field that isn't an integer with `= expression` over earlier fields."
   ],
-  "virtual-not-reversible": [
+  "virtual-not-invertible": [
     "error",
-    "A virtual field whose parts the writer can't derive from its value."
+    "A virtual field that can't be inverted: its parts can't be derived from its value."
   ],
   "invalid-lambda": [
     "error",

@@ -9,7 +9,7 @@ bytes stay available for the commit diff (:class:`SourceBytes`).
 
 - :class:`BlockStore`: a random-access source (``size``, ``read(offset, length)``), sync or async,
   in fixed blocks (64 KiB × 256 by default).
-- :class:`PieceStore`: a virtual stream joined from pieces (``T x from arr[*].data``). An offset
+- :class:`PieceStore`: a stream joined from pieces (``T x from arr[*].data``). An offset
   maps to a piece through the pieces' decoded lengths, taken from size fields where the schema
   states them (``@size(exp) @via(zstd)``: no decoding needed) and otherwise learned by decoding
   the pieces. Only the pieces a read touches are decoded (16 pieces / 64 MiB kept).
@@ -365,7 +365,7 @@ class BlockStore(_FixedUnits):
 
 
 class PieceStore(LazyStore):
-    """A virtual stream joined from pieces decoded on demand.
+    """A stream joined from pieces decoded on demand.
 
     ``lengths[k]`` is piece k's decoded length when the schema states it (None: learned by
     decoding the piece), ``piece(k)`` decodes piece k.
