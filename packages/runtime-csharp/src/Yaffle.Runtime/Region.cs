@@ -1,6 +1,7 @@
 using System;
 using System.Buffers.Binary;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Yaffle.Runtime;
 
@@ -23,13 +24,53 @@ public sealed class LStruct : LEntry
 {
     /// <summary>The struct's layout items; set per instance when their arguments read fields.</summary>
     public LayoutItem[]? Layout;
-    public readonly OrderedDictionary<string, LEntry> Fields = new();
+    public readonly LFields Fields = new();
 
     public LStruct(LayoutItem[]? layout = null) => Layout = layout;
 
     public void Set(string name, LEntry? e)
     {
         if (e is not null) Fields[name] = e;
+    }
+}
+
+/// <summary>
+/// A struct's layout entries by field name, in insertion order (setting an existing name keeps
+/// its position). A small stand-in for <c>OrderedDictionary</c>, which needs .NET 9.
+/// </summary>
+public sealed class LFields
+{
+    private readonly Dictionary<string, int> _index = new();
+    private readonly List<LEntry> _values = new();
+
+    public LEntry this[string name]
+    {
+        get => _values[_index[name]];
+        set
+        {
+            if (_index.TryGetValue(name, out int i)) _values[i] = value;
+            else
+            {
+                _index.Add(name, _values.Count);
+                _values.Add(value);
+            }
+        }
+    }
+
+    public int Count => _values.Count;
+
+    /// <summary>The entries in insertion order.</summary>
+    public IReadOnlyList<LEntry> Values => _values;
+
+    public bool TryGetValue(string name, [MaybeNullWhen(false)] out LEntry entry)
+    {
+        if (_index.TryGetValue(name, out int i))
+        {
+            entry = _values[i];
+            return true;
+        }
+        entry = null;
+        return false;
     }
 }
 

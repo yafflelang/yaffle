@@ -53,7 +53,12 @@ public static class Checksum
 /// <summary>Lowercase hex encoding of bytes (canonical JSON).</summary>
 public static class Hex
 {
-    public static string Encode(ReadOnlySpan<byte> b) => Convert.ToHexStringLower(b);
+    public static string Encode(ReadOnlySpan<byte> b) =>
+#if NET9_0_OR_GREATER
+        Convert.ToHexStringLower(b);
+#else
+        Convert.ToHexString(b).ToLowerInvariant(); // ToHexStringLower is .NET 9+
+#endif
 
     /// <summary>Decodes hex (whitespace allowed); invalid input is an INPUT error.</summary>
     public static byte[] Decode(string s)
