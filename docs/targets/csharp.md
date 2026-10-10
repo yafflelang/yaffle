@@ -13,8 +13,8 @@ warning level.
 - **One class per struct**, `public sealed partial class X`, used both as the parse result and
   as the serialize input: `Serialize(Parse(bytes))` and `Serialize(FromJson(ToJson(x)))` work
   directly. Fields are PascalCase properties (`entry_count` → `EntryCount`; collisions get a
-  `_2` suffix; the class name and the root API names are reserved). Derived and constant fields
-  are properties too: `Parse` sets them, `Serialize` computes them.
+  `_2` suffix; the class name and the root API names are reserved). Derived, computed and
+  constant fields are properties too: `Parse` sets them, `Serialize` recomputes them.
 - **Hidden fields** (`@hidden`) are `internal` members named `Hidden_x`.
 - **One-way transforms** (`as` without an inverse): the property holds the transformed value and
   a public `XxxRaw` property the raw value, which `Parse` and `FromJson` set, `Serialize` writes

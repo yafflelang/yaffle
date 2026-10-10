@@ -96,8 +96,8 @@ Each struct gives an output type `X` and an input type `XInput`:
 | constants, `in (…)` literals   | literal types                                                      |
 | extern types                   | the declared value type                                            |
 
-`XInput` leaves out derived and computed fields and constants; fields whose derive also accepts an
-input are optional. Expressions compute in `number` where interval analysis proves they stay within
+`XInput` leaves out derived, computed and constant fields, and makes `?=` defaults and stream split
+points optional. Expressions compute in `number` where interval analysis proves they stay within
 ±2^53, otherwise in `bigint`; conversions to lengths and offsets are range-checked. User types named
 like a global the generated code uses (`Record`, `Map`, `Error`, …) get a `_` suffix.
 
@@ -136,12 +136,12 @@ targets, byte fields, codec regions and stream fields are read on first access.
 `Inner.view(outer.$source("file"))` nests a view over decoded or joined bytes through the same
 caches.
 
-**Edits.** Setting a scalar to a value of the same encoded size that nothing derived depends on
-patches the bytes in place. Anything else (array mutators, size changes, fields that later reads
-depend on, replacing a struct or target) materializes the node; `$commit` then re-encodes the
-root with the generated writer, passing unchanged byte arrays through, reusing the encoded bytes
-of unchanged codec regions, and keeping placeables where they were. The result is diffed into
-patches. `$commit({ rewrite: true })` takes this path without edits.
+**Edits.** Setting a scalar to a value of the same encoded size that no derived or computed field
+depends on patches the bytes in place. Anything else (array mutators, size changes, fields that
+later reads depend on, replacing a struct or target) materializes the node; `$commit` then
+re-encodes the root with the generated writer, passing unchanged byte arrays through, reusing the
+encoded bytes of unchanged codec regions, and keeping placeables where they were. The result is
+diffed into patches. `$commit({ rewrite: true })` takes this path without edits.
 
 **Grow policies** (`$commit({ grow })`):
 

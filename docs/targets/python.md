@@ -126,11 +126,12 @@ Any exception from host code is a `CODEC` error. An extern without an implementa
   go to a copy-on-write map); other sync sources are read through a block cache (64 KiB × 256).
   `@ranged` codec regions decode only the 4 KiB blocks a read touches, and `from arr[*].field`
   streams decode only the pieces it touches.
-- **Edits:** a same-size scalar edit that no derive depends on is patched in place; anything else
-  marks the view structural, and `_commit` re-encodes with the generated writer: unchanged bytes
-  keep their provenance, unchanged codec regions reuse their encoded bytes, and placeables keep
-  their positions where the grow policy allows. Writable sources (`file_source(path,
-writable=True)`, or any source with `write`/`truncate`) get the commit written back.
+- **Edits:** a same-size scalar edit that no derived or computed field depends on is patched in
+  place; anything else marks the view structural, and `_commit` re-encodes with the generated
+  writer: unchanged bytes keep their provenance, unchanged codec regions reuse their encoded bytes,
+  and placeables keep their positions where the grow policy allows. Writable sources
+  (`file_source(path, writable=True)`, or any source with `write`/`truncate`) get the commit
+  written back.
 - **Async:** `parse_async`, `serialize_async` and `safe_parse_async` accept async sources (a
   `read` returning an awaitable) and async codecs. `X.view(async_source)`, `X.view_async(any)`
   and the views of async roots are async views: attribute and item chains are awaitable and

@@ -13,9 +13,9 @@
   parser with full control over recovery and ranges. See [compiler.md](compiler.md).
 - **IR** (`packages/compiler/src/ir`, [IR.md](IR.md)): a JSON-serializable, language-neutral
   program. Generics are monomorphized and aliases inlined. Bound `$values` and references to
-  enclosing structs' fields become implicit parameters passed at every use site, and every
-  write-side value is an explicit `derive` expression. Every semantic question is answered here;
-  backends only translate.
+  enclosing structs' fields become implicit parameters passed at every use site, and every value
+  the writer computes (derived, computed and constant fields) is an explicit `derive` expression.
+  Every semantic question is answered here; backends only translate.
 - **Backends** (`packages/compiler/src/backends/<target>`): `generate(program, options)` returns
   source files. They emit imperative code, Kaitai-style, rather than schema objects for an
   interpreter. Each target has a small runtime (streams, views, commit, codecs) that the generated

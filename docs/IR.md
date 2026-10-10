@@ -25,7 +25,7 @@ Both sides must follow it.
     A use site passes a field of the current struct if it binds the value before the use (or _is_
     the enclosing struct), and the current struct's own implicit parameter otherwise.
 - **Resolved derivation.** Every value the writer computes (derived, computed and constant
-  fields) has a `derive` expression.
+  fields) has a `derive` expression, except the bytes of streams and slice carriers (§3.7).
 - **Normalized expressions.**
   - Constants are folded where the operands are literals, including enum and const references and
     `sizeof(Type)` of fixed-size types.
@@ -174,9 +174,11 @@ The writer takes an _input value_ shaped like the generated input type: every fi
 
 The field kinds of DESIGN.md §1 map to these properties: an **input** field is
 `input: "required"` (with a `derive` only when it is normalized); a **derived** field has
-`deriveKind: "auto"` (stream split points are also `input: "optional"`); a **computed** field has
-`deriveKind: "formula"` and `input: "absent"`; a **constant** has `deriveKind: "constant"`; an
-**optional** field has its default as `derive` and `input: "optional"`.
+`deriveKind: "auto"` (stream split points are also `input: "optional"`), except that fields
+consumed by a stream and slice carriers are `input: "absent"` without a `derive` (§3.7); a
+**computed** field has `deriveKind: "formula"` and `input: "absent"`; a **constant** has
+`deriveKind: "constant"` and `input: "absent"`; an **optional** field has its default as
+`derive` and `input: "optional"`.
 
 - A `derive` that uses `it` normalizes the input (`u32 flags = it | 0x80`): `it` is the field's
   input value, the field stays `input: "required"`, and the writer stores the value of `derive`. A
@@ -231,10 +233,11 @@ element may satisfy it. A `before` terminator is not written.
   holds for the offset of a `placement` with `emptyIsNull`.
 - **Identity:** two pointers to the _same object_ (reference identity in the input) share one
   target. Deduplicating equal values happens only for `ref` pointers.
-- **ref:** the pointer gets the offset of an already-placed, _equal_ value of the same type in the
-  same base: an element of an inline array, a field, or another target. Equality is equality of
-  encodings. If no such value exists, that's a `REF` write error. When several match, the first
-  placed wins.
+- **ref:** the pointer gets the offset of the input object itself if it was placed, otherwise of an
+  already-placed, _equal_ value of the same type: an element of an inline array, a field, or
+  another target. Equality is equality of encodings. The current base is searched first, then the
+  enclosing ones. If no such value exists, that's a `REF` write error. When several match, the
+  first placed wins.
 
 ### 3.5 Layers on write
 
@@ -327,9 +330,9 @@ implements. The other runtimes port it, and the language service's layout simula
 
 **Layout items that read fields.** Arguments of a layout item's layers (`@align(align)`, `@align(1
 << shift)`) are evaluated in the **write context of the struct that owns the layout**: its fields
-(input or derived values), its parameters and `$index` where applicable, the same as its computed
+(input values, or their `derive`), its parameters and `$index` where applicable, the same as its computed
 fields. They never see fields of the placed target, so `recs[*].body @align(count * 2)` uses the
-container's `count`. Any alignment, constant or computed, must be at least 1; 0 or a negative value
+container's `count`. Any alignment, constant or not, must be at least 1; 0 or a negative value
 is a `RANGE` error, even when the item places nothing (arguments are evaluated per instance, like
 computed fields). Arguments can't depend on sizes or positions (`sizeof`, `offsetof`). Conformance:
 `conformance/cases/layout-fields`.

@@ -200,8 +200,6 @@ modules under `$YAFFLE_GO_TEST_DIR` (default the system temp directory).
 - Rejected at generation ("not implemented"): a field declared in several branches with
   different Go types, union-valued transforms, and layout item arguments that read sizes,
   positions or encodings.
-- A computed layout alignment below 1 is `RANGE` even when its item places nothing (IR.md §4.4
-  leaves this open; the conformance suite doesn't cover it).
 - `from: file` alignment of a block whose position is only known after layout aligns the block
   itself; it is exact when the enclosing positions are known or aligned.
 - Views: arrays are read whole by a scan, so a stream or ranged region whose struct has a large

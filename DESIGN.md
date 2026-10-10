@@ -78,7 +78,8 @@ struct Table {
 - **Not derivable** (`(n + 7) / 8`, `rows * cols`): the field stays an input and is checked
   against the array. A computed field (§4.1) can supply the formula instead.
 - **Shared counts:** several arrays using the same count must agree on write.
-- **`T x[]` with struct elements** repeats until the region ends. Combined with `at`, see §6.2.
+- **`T x[]` with struct elements** repeats until the region ends. With an `at` over `$index`, each
+  element goes at its own offset (§6.4).
 - **`until`** takes a terminator value, or a boolean expression over `it` (the element just read).
 
 ### 2.3 Strings
@@ -202,24 +203,24 @@ struct Node {
 - **`async codec`** makes every schema containing it async.
 - **`@ranged`:** lazy views decode only what they read. Other codecs decode the whole region once.
 - **Stable re-encoding:** a codec is re-run only if its decoded content changed.
-- **Partial transforms** (e.g. one that unmasks only `[0, 0x800)`) are codec parameters on a
+- **Partial codecs** (e.g. one that unmasks only `[0, 0x800)`) take the range as parameters of a
   struct-level `@via`.
 
 ### 3.5 Other attributes
 
-| Attribute                        | On                   | Meaning                                             | See |
-| -------------------------------- | -------------------- | --------------------------------------------------- | --- |
-| `@strict`                        | field, block, struct | fills, reserved bits and `bool` are checked on read | 3.3 |
-| `@hidden`                        | field                | not in the input or output; derived or computed     | 6.4 |
-| `@encoding("latin1" \| "ascii")` | `char` fields        | text encoding                                       | 2.3 |
-| `@open`                          | enum                 | unknown values pass through as numbers              | 4.2 |
-| `@bitorder(msb)`                 | `bits`, struct       | bit order within the storage unit                   | 5.3 |
-| `@base`                          | struct               | offsets inside it count from its start              | 6.1 |
-| `@relative`                      | pointer              | the offset counts from the pointer itself           | 6.1 |
-| `@nullable`, `@nullable(empty)`  | pointer, `at` field  | a null value; an empty array as null                | 6.1 |
-| `@ref`                           | pointer              | points at an equal value placed elsewhere           | 6.3 |
-| `@origin(expr)`                  | pointer              | the offset counts from base + origin                | 6.1 |
-| `@split(fit)`                    | `from` field         | how a stream is cut into pieces on write            | 6.4 |
+| Attribute                        | On                            | Meaning                                             | See |
+| -------------------------------- | ----------------------------- | --------------------------------------------------- | --- |
+| `@strict`                        | field, block, struct, `bits`  | fills, reserved bits and `bool` are checked on read | 3.3 |
+| `@hidden`                        | field                         | not in the input or output; derived or computed     | 6.4 |
+| `@encoding("latin1" \| "ascii")` | `char` fields, aliases        | text encoding                                       | 2.3 |
+| `@open`                          | enum                          | unknown values pass through as numbers              | 4.2 |
+| `@bitorder(msb)`                 | `bits`, struct                | bit order within the storage unit                   | 5.3 |
+| `@base`                          | struct                        | offsets inside it count from its start              | 6.1 |
+| `@relative`                      | pointer                       | the offset counts from the pointer itself           | 6.1 |
+| `@nullable`, `@nullable(empty)`  | pointer, `at` array (`empty`) | a null value; an empty array as null                | 6.1 |
+| `@ref`                           | pointer                       | points at an equal value placed elsewhere           | 6.3 |
+| `@origin(expr)`                  | pointer                       | the offset counts from base + origin                | 6.1 |
+| `@split(fit \| sizes)`           | `from` field                  | how a stream is cut into pieces on write            | 6.4 |
 
 ## 4. Values
 
@@ -241,10 +242,12 @@ struct Node {
 ```
 
 - `=` gives the **raw value written**, always computed. Without `it` the field leaves the input;
-  with `it` it's a transform (§4.2). Formulas are not checked on read, except constants.
-- A formula equal to what the field would be derived as is redundant. A formula that agrees with
-  the read side only for some values is lossy: it breaks byte-exact rebuilds of files with other
-  values.
+  with `it` it normalizes the input on write, and the field stays an input (§4.2). Formulas are
+  not checked on read, except constants.
+- A formula that never agrees with the read side is an error, and one that agrees only for some
+  values is a warning. A formula equal to what the field would be derived as is redundant. A
+  consistent formula can still be lossy: a file with `n = 5` above has one byte of `flags` and is
+  rebuilt with `n = 8`, so it doesn't rebuild byte-exact (§8).
 - **Externs** are declared in yaffle and implemented once per target language. Their failures are
   `CODEC` errors.
 
@@ -353,7 +356,7 @@ struct Strict(u32 $version) { … }          // optional: pins the type, so the 
 ```c
 type Fixed16 = i16 as it / 256.0
 type Fixed(u8 bits) = i32 as it * 1.0 / (1 << bits)   // `* 1.0` makes it float division
-type EncRec  = Record @via(xor(0x5a))        // per-element transform: `EncRec recs[n]`
+type EncRec  = Record @via(xor(0x5a))        // a codec per element: `EncRec recs[n]`
 type Name    = char[0x20]
 
 struct Span<T> { u64 n  u64 ofs  T items[n] at ofs }   // generics: Span<Point>
@@ -494,9 +497,9 @@ struct Overlay {
   `arr[*].field`, or a slice `raw[a..b]`. Decoded bytes the struct doesn't read are dropped.
 - **A field consumed by `from`** is derived on write and leaves the input; it stays in the output
   unless `@hidden`. `@hidden` fields must be derived or computed.
-- **Write-side split:** the pieces' size fields, when given in the input, win (byte-exact);
-  otherwise the `@split` policy decides. `fit` means the largest piece whose encoded form fits its
-  block, and overlap checks enforce the fit.
+- **Splitting on write:** the pieces' size fields, when given in the input, win (byte-exact);
+  otherwise the `@split` policy decides. `sizes` (the default) requires them. `fit` means the
+  largest piece whose encoded form fits its block, and overlap checks enforce the fit.
 - **Slice writes:** the sliced field is assembled from every `from` slice of it, zero-filled
   elsewhere. Overlapping slices must agree (a warning when they provably overlap). It stays an
   input when it is also read directly, when its slices don't provably cover it and it isn't
@@ -509,7 +512,7 @@ struct Overlay {
 | `sizeof(x)`, `offsetof(x)`             | size on disk, position (from the nearest base)                          |
 | `bytesof(x)`                           | bytes on disk (after codecs)                                            |
 | `encode(x)`                            | plain encoding (before codecs)                                          |
-| `crc32(x)`, `adler32(x)`               | checksums (of a struct: its plain encoding)                             |
+| `crc32(x)`, `adler32(x)`               | checksums (of a field: its bytes on disk, like `bytesof`)               |
 | `min`, `max`, `sum`                    | of values, or over one array (`max(probes[*].total)`)                   |
 | `sizeof(this)`, `offsetof(this)`       | the current struct; for a `@base` struct, its whole region (write side) |
 | `x.length`                             | element count; code units for strings                                   |

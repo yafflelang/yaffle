@@ -41,8 +41,9 @@ the runtime's own JSON type (ordered objects, parser and printer).
 
 ### Types
 
-One Rust struct per IR struct serves as both parse output and serialize input. Derived, constant
-and optional-input fields stay in the struct; the writer ignores what the IR says is not an input.
+One Rust struct per IR struct serves as both parse output and serialize input. Derived, computed,
+constant and optional-input fields stay in the struct; the writer ignores what the IR says is not
+an input.
 
 | IR                                    | Rust                                                                         |
 | ------------------------------------- | ---------------------------------------------------------------------------- |
@@ -137,8 +138,9 @@ Also `loc()`, `shallow()`, `span(field)`, `refresh()`, `patches()`, `params()`, 
 - **Scans** read inline members only; pointer and `at` targets, `from` fields and non-streaming
   codec regions are read when asked for. `@ranged` codec regions decode block by block, file
   sources load in 64 KiB blocks, and `from arr[*].field` streams fill piece by piece.
-- **`set_<field>`** patches in place when the field was scanned, keeps its encoded size, and no
-  derived value or layout item argument reads it; otherwise it records a structural edit.
+- **`set_<field>`** patches in place when the field was scanned, keeps its encoded size, and
+  neither a derived or computed field nor a layout item argument reads it; otherwise it records a
+  structural edit.
 - **`commit_with`**: `Splice` re-serializes the materialized value. `Append` keeps every placeable
   where it was when it still fits and is still aligned, and puts the rest at the end; it falls
   back to `Splice` when the original document doesn't rebuild byte-exact. `Error` is `Append` that
