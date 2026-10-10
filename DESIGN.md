@@ -207,19 +207,19 @@ struct Node {
 
 ### 3.5 Other attributes
 
-| Attribute                        | On                  | Meaning                                             | See |
-| -------------------------------- | ------------------- | --------------------------------------------------- | --- |
-| `@strict`                        | field, block        | fills, reserved bits and `bool` are checked on read | 3.3 |
-| `@hidden`                        | field               | not in the input or output; must be derivable       | 6.4 |
-| `@encoding("latin1" \| "ascii")` | `char` fields       | text encoding                                       | 2.3 |
-| `@open`                          | enum                | unknown values pass through as numbers              | 4.2 |
-| `@bitorder(msb)`                 | `bits`              | bit order within the storage unit                   | 5.3 |
-| `@base`                          | struct              | offsets inside it count from its start              | 6.1 |
-| `@relative`                      | pointer             | the offset counts from the pointer itself           | 6.1 |
-| `@nullable`, `@nullable(empty)`  | pointer, `at` field | a null value; an empty array as null                | 6.1 |
-| `@ref`                           | pointer             | points at an equal value placed elsewhere           | 6.3 |
-| `@origin(expr)`                  | pointer             | the offset counts from base + origin                | 6.1 |
-| `@split(fit)`                    | `from` field        | how a stream is cut into pieces on write            | 6.4 |
+| Attribute                        | On                   | Meaning                                             | See |
+| -------------------------------- | -------------------- | --------------------------------------------------- | --- |
+| `@strict`                        | field, block, struct | fills, reserved bits and `bool` are checked on read | 3.3 |
+| `@hidden`                        | field                | not in the input or output; derived or computed     | 6.4 |
+| `@encoding("latin1" \| "ascii")` | `char` fields        | text encoding                                       | 2.3 |
+| `@open`                          | enum                 | unknown values pass through as numbers              | 4.2 |
+| `@bitorder(msb)`                 | `bits`, struct       | bit order within the storage unit                   | 5.3 |
+| `@base`                          | struct               | offsets inside it count from its start              | 6.1 |
+| `@relative`                      | pointer              | the offset counts from the pointer itself           | 6.1 |
+| `@nullable`, `@nullable(empty)`  | pointer, `at` field  | a null value; an empty array as null                | 6.1 |
+| `@ref`                           | pointer              | points at an equal value placed elsewhere           | 6.3 |
+| `@origin(expr)`                  | pointer              | the offset counts from base + origin                | 6.1 |
+| `@split(fit)`                    | `from` field         | how a stream is cut into pieces on write            | 6.4 |
 
 ## 4. Values
 
@@ -279,7 +279,7 @@ struct Node {
   so the parts it combines are derived and leave the input.
 - **Invertible forms:** bit concatenation `(a << k) | b` (where `b` fits in `k` bits),
   `a * K + b` (with `0 ≤ b < K`), and linear forms, nested. Anything else is the error
-  `virtual-not-reversible`.
+  `virtual-not-invertible`.
 - Virtual fields take `where`/`in` checks and `?=` defaults, but no attributes, `at`, `from` or
   `as`. A part may be a bit field, and an `in (lo..hi)` check narrows its range.
 
@@ -493,7 +493,7 @@ struct Overlay {
 - **`from <stream>`** takes no space where it's declared. A stream is a byte field,
   `arr[*].field`, or a slice `raw[a..b]`. Decoded bytes the struct doesn't read are dropped.
 - **A field consumed by `from`** is derived on write and leaves the input; it stays in the output
-  unless `@hidden`. `@hidden` fields must be fully derivable on write.
+  unless `@hidden`. `@hidden` fields must be derived or computed.
 - **Write-side split:** the pieces' size fields, when given in the input, win (byte-exact);
   otherwise the `@split` policy decides. `fit` means the largest piece whose encoded form fits its
   block, and overlap checks enforce the fit.
@@ -556,6 +556,6 @@ struct Overlay {
 
 | Layer                | yaffle                                                          | Implemented by                  |
 | -------------------- | --------------------------------------------------------------- | ------------------------------- |
-| 1. Value transforms  | `as expr`, `= expr`, enums, `type X = T as …`                   | yaffle expressions, `extern fn` |
-| 2. Byte transforms   | `@via(codec)`, `extern codec`, `async`, `@ranged`, `@streaming` | host                            |
+| 1. Transforms        | `as expr`, `= expr`, enums, `type X = T as …`                   | yaffle expressions, `extern fn` |
+| 2. Codecs            | `@via(codec)`, `extern codec`, `async`, `@ranged`, `@streaming` | host                            |
 | 3. Custom primitives | `extern type X(args) : T` with `size`/`read`/`write`            | host                            |

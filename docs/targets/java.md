@@ -37,9 +37,9 @@ and `serialize`. `parse` and `serialize` without options use the defaults. Error
 (-1 on write).
 
 Struct classes are `public final` with public fields: one class is both the parse result and the
-serialize input (derived fields are filled by `parse` and ignored by `serialize`). They implement
-`YValue` (`toJsonValue()`, what `==` on composite values compares) and have a nested `View` class.
-`@hidden` fields are package-private `$name` fields.
+serialize input (derived and computed fields are filled by `parse` and ignored by `serialize`). They
+implement `YValue` (`toJsonValue()`, what `==` on composite values compares) and have a nested
+`View` class. `@hidden` fields are package-private `$name` fields.
 
 ### Type mapping
 
@@ -175,8 +175,8 @@ the harness reads every field through the view (`ViewRead.materialize`) and comm
   access.
 - A `from` stream over a single bytes field forces the whole field (a `@ranged` source region is
   still decoded block by block, but all of it).
-- Derived fields of an edited view node are stale until `commit()`; write formulas can't read
-  derived fields of array elements.
+- Derived and computed fields of an edited view node are stale until `commit()`; computed fields
+  can't read derived fields of array elements.
 - Fields of the same Java type but different JSON rules in different branches (`u32` and `u64`,
   both `long`) use the first branch's JSON rule.
 - In views, edits inside codec regions and streams are always structural, and getters of eagerly

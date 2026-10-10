@@ -117,8 +117,8 @@ never edited by hand: change the generator and run `node conformance/scripts/gen
 Rules the cases pin beyond §3 and §4:
 
 - Bytes after the root struct are ignored by parse.
-- Write formulas are not checked on read (a wrong crc32 or size parses; the rebuild recomputes
-  it), except formulas that fold to a constant.
+- Computed fields are not checked on read (a wrong crc32 or size parses; the rebuild recomputes
+  it), except constants.
 - A count larger than the remaining data is `EOF`, whatever its magnitude.
 - `@ref` resolves by identity first (the input object itself, e.g. restored by `$ref`), then by
   equal encoding (the first placed value wins).
@@ -173,8 +173,8 @@ present, so `fromJson(toJson(x))` works. `$ref` restores object identity; a dang
 | `RANGE`   | an integer out of range for its destination, division by zero, a negative length, an index out of range                                                                                                                                                                                                                     |
 | `UNION`   | no union variant matched                                                                                                                                                                                                                                                                                                    |
 | `CODEC`   | a codec failed                                                                                                                                                                                                                                                                                                              |
-| `INPUT`   | invalid input value on write: wrong JSON type, missing required field, string too long (or containing NUL), content larger than `@padUntil`, an element equal to an `until` terminator, unknown enum name or union variant, value missing from an `indexOf` reverse, a transform that doesn't round-trip, a dangling `$ref` |
-| `DERIVE`  | a derived value contradicts the data: shared counts disagree, an indivisible reversible count, an irreversible count or a constant length that doesn't match the array, a size mismatch, piece sizes that don't cover a stream                                                                                              |
+| `INPUT`   | invalid input value on write: wrong JSON type, missing required field, string too long (or containing NUL), content larger than `@padUntil`, an element equal to an `until` terminator, unknown enum name or union variant, value missing from an `indexOf` inverse, a transform that doesn't round-trip, a dangling `$ref` |
+| `DERIVE`  | a derived value contradicts the data: shared counts disagree, an indivisible derived count, a non-derivable count or a constant length that doesn't match the array, a size mismatch, piece sizes that don't cover a stream                                                                                                 |
 | `REF`     | a `@ref` pointer has no equal placed value                                                                                                                                                                                                                                                                                  |
 | `OVERLAP` | fixed placements overlap (each other or inline bytes), or a stream piece doesn't fit its block                                                                                                                                                                                                                              |
 
@@ -279,5 +279,5 @@ with `mode: "view"` and skips serialize-only cases. For every other case, the ad
 4. report errors raised while reading through the view (same `code` and `path` as parse mode).
 
 The runner judges view results exactly like parse results. View mode exists because views have
-their own code paths (lazy offsets, decoded regions, virtual streams) that parse-mode cases never
+their own code paths (lazy offsets, decoded regions, streams) that parse-mode cases never
 exercise.

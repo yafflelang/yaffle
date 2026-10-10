@@ -24,7 +24,8 @@ Both sides must follow it.
     field `count` is the parameter `count` (origin `outer`), suffixed with `_outer` on a collision.
     A use site passes a field of the current struct if it binds the value before the use (or _is_
     the enclosing struct), and the current struct's own implicit parameter otherwise.
-- **Resolved reverses.** Every value the writer computes has a `derive` expression.
+- **Resolved derivation.** Every value the writer computes (derived, computed and constant
+  fields) has a `derive` expression.
 - **Normalized expressions.**
   - Constants are folded where the operands are literals, including enum and const references and
     `sizeof(Type)` of fixed-size types.
@@ -46,7 +47,7 @@ Both sides must follow it.
   expression's own `type` stays `bigint`. Untyped constants (`const N = 4`) get a type the same way.
 - **Complete bit units.** Every `IrBits` unit's fields cover the whole storage unit: bits not
   declared become an implicit reserved field (`name: null`), so strict checks are well defined.
-- **Checked:** names, types, bindings on every path, layout paths, reversibility, and layout
+- **Checked:** names, types, bindings on every path, layout paths, invertibility, and layout
   cycles. A program that reaches a backend is valid.
 
 ## 2. Reading
@@ -79,7 +80,7 @@ a frontend error unless the expression is guarded. The frontend guarantees this.
 - **`placement`:** evaluate `offset` and read the type at `base + offset` without moving `pos`. The
   region's `end` stays the same. With `emptyIsNull` (an array target), a stored offset of 0 reads
   as an empty array.
-- **`from`:** build the virtual stream (§2.8) and read the type from it as a fresh region
+- **`from`:** build the stream (§2.8) and read the type from it as a fresh region
   (base = 0, end = stream length). `pos` doesn't move.
 - **`virtual`:** the field occupies no bytes. Evaluate `virtual.read` (type `bigint`, earlier
   fields only) and range-check the value against the field's declared type, which is an integer
@@ -89,20 +90,20 @@ a frontend error unless the expression is guarded. The frontend guarantees this.
 
 ### 2.3 Types
 
-| Type        | Read                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
-| ----------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `prim`      | little/big endian per `endian` (`inherit` = the `endian` param). `u24`…`i56` are N-byte integers; signed values are two's complement and sign-extended. `f16` is IEEE half.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
-| `bool`      | one byte; nonzero → true (strict: anything other than 0 or 1 is a `CHECK` error).                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
-| `string`    | see the doc comment in ir.ts. Invalid UTF-8/16/32 is a `CHECK` error. `ascii` rejects bytes ≥ 0x80. `latin1` maps bytes 1:1 to U+0000–U+00FF.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
-| `bytes`     | `count` bytes, bytes until a terminator byte, or bytes up to `end`.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
-| `array`     | elements per `length`. `until`: read an element, stop if it equals the terminator (compared as values). `before`: stop before an element that would equal the terminator; the terminator is not consumed. `untilPredicate`: read an element, stop if the predicate holds for it (`it` = the element); that element is included. `rest`: read elements while `pos < end`. If an element would cross `end`, that's an `EOF` error. With `elementPlacement`, element _i_ is read at `base + elementPlacement($index = i)`, and with `rest`, reading stops when that offset is ≥ `$end`. Elsewhere, `$index` is the index in the nearest enclosing array.                                                                                   |
-| `struct`    | evaluate `args` in the caller's context, then read the struct's members. If the struct is `base`, set `base = pos` (or the placement address) for its contents. Struct-level `layers` wrap the struct (they apply inside any use-site layers).                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
-| `enum`      | read the storage prim. An unknown value is a `CHECK` error unless `open`; open unknowns are returned as plain integers.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
-| `pointer`   | read `storage`. Equal to `nullValue` → null. Otherwise target address = `base + offset` (owned and ref alike), or `fieldAddress + offset` if `relative`, where the offset is signed; with `origin`, it is `base + origin + offset`, where `origin` is evaluated like a write formula (§3.2: it may use `offsetof` of any field of the struct, also later ones, and `offsetof(this)`). Read the target there without moving `pos`. The target may be an array (`T[n] *p`). With `emptyIsNull` (always with `nullValue: "0"`), the target is an array and a stored 0 reads as an empty array, so the value is never null. **Identity:** within one parse, the same target address _and_ the same target type yield the same value object. |
-| `extern`    | call host `size(view, ...args)` with a view starting at `pos`. `undefined` means "need more bytes": give a longer view, and at `end` that's an `EOF` error. Then `read(bytes[0..size], ...args)`. With `fixedSize`, skip `size()`.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
-| `union`     | try each variant at `pos`. The first that reads without error (checks included) wins. If none does, that's a `UNION` error listing each variant's error.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |
-| `transform` | read `inner`, then evaluate `read` with `it` = the inner value.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
-| `layered`   | apply the layers from outermost (last) to innermost (first) around reading `inner` (§2.4).                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| Type        | Read                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
+| ----------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `prim`      | little/big endian per `endian` (`inherit` = the `endian` param). `u24`…`i56` are N-byte integers; signed values are two's complement and sign-extended. `f16` is IEEE half.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| `bool`      | one byte; nonzero → true (strict: anything other than 0 or 1 is a `CHECK` error).                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
+| `string`    | see the doc comment in ir.ts. Invalid UTF-8/16/32 is a `CHECK` error. `ascii` rejects bytes ≥ 0x80. `latin1` maps bytes 1:1 to U+0000–U+00FF.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
+| `bytes`     | `count` bytes, bytes until a terminator byte, or bytes up to `end`.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
+| `array`     | elements per `length`. `until`: read an element, stop if it equals the terminator (compared as values). `before`: stop before an element that would equal the terminator; the terminator is not consumed. `untilPredicate`: read an element, stop if the predicate holds for it (`it` = the element); that element is included. `rest`: read elements while `pos < end`. If an element would cross `end`, that's an `EOF` error. With `elementPlacement`, element _i_ is read at `base + elementPlacement($index = i)`, and with `rest`, reading stops when that offset is ≥ `$end`. Elsewhere, `$index` is the index in the nearest enclosing array.                                                                                    |
+| `struct`    | evaluate `args` in the caller's context, then read the struct's members. If the struct is `base`, set `base = pos` (or the placement address) for its contents. Struct-level `layers` wrap the struct (they apply inside any use-site layers).                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
+| `enum`      | read the storage prim. An unknown value is a `CHECK` error unless `open`; open unknowns are returned as plain integers.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
+| `pointer`   | read `storage`. Equal to `nullValue` → null. Otherwise target address = `base + offset` (owned and ref alike), or `fieldAddress + offset` if `relative`, where the offset is signed; with `origin`, it is `base + origin + offset`, where `origin` is evaluated like a computed field (§3.2: it may use `offsetof` of any field of the struct, also later ones, and `offsetof(this)`). Read the target there without moving `pos`. The target may be an array (`T[n] *p`). With `emptyIsNull` (always with `nullValue: "0"`), the target is an array and a stored 0 reads as an empty array, so the value is never null. **Identity:** within one parse, the same target address _and_ the same target type yield the same value object. |
+| `extern`    | call host `size(view, ...args)` with a view starting at `pos`. `undefined` means "need more bytes": give a longer view, and at `end` that's an `EOF` error. Then `read(bytes[0..size], ...args)`. With `fixedSize`, skip `size()`.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
+| `union`     | try each variant at `pos`. The first that reads without error (checks included) wins. If none does, that's a `UNION` error listing each variant's error.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
+| `transform` | read `inner`, then evaluate `read` with `it` = the inner value.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
+| `layered`   | apply the layers from outermost (last) to innermost (first) around reading `inner` (§2.4).                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
 
 ### 2.4 Layers on read
 
@@ -121,7 +122,7 @@ Processed from the outermost layer inwards:
 
 - **Alignment origin.** `align` and `alignEnd` measure from the current base by default. With
   `from: "file"` they measure from the start of the current byte space: the root source, a
-  codec's decoded region, or a virtual stream, i.e. whatever `$offset` would count from if there
+  codec's decoded region, or a stream, i.e. whatever `$offset` would count from if there
   were no `@base` in between. `offset` (default 0) aligns the position that many bytes ahead. The
   frontend emits `from` only as `"file"` and `offset` only when it isn't 0.
 - **Strict padding.** A padding layer (`align`, `alignEnd`, `padBefore`, `padAfter`, `padUntil`)
@@ -152,7 +153,7 @@ zero in strict mode.
 Every error carries a **path** (field names and array indices from the root) and an **absolute
 offset**. Codes are in CONFORMANCE.md.
 
-### 2.8 Virtual streams
+### 2.8 Streams
 
 - **`field`:** that bytes field's value (the decoded bytes).
 - **`each`:** the bytes field of every element of the array field, joined. `from.split` is present
@@ -171,23 +172,29 @@ The writer takes an _input value_ shaped like the generated input type: every fi
 `input: "absent"`. If an `absent` field is present in the value, it is ignored. That way
 `serialize(parse(bytes))` works directly.
 
+The field kinds of DESIGN.md §1 map to these properties: an **input** field is
+`input: "required"` (with a `derive` only when it is normalized); a **derived** field has
+`deriveKind: "auto"` (stream split points are also `input: "optional"`); a **computed** field has
+`deriveKind: "formula"` and `input: "absent"`; a **constant** has `deriveKind: "constant"`; an
+**optional** field has its default as `derive` and `input: "optional"`.
+
 - A `derive` that uses `it` normalizes the input (`u32 flags = it | 0x80`): `it` is the field's
-  input value, the field stays `input: "required"`, and the writer stores the derived value. A
+  input value, the field stays `input: "required"`, and the writer stores the value of `derive`. A
   `derive` without `it` comes with `input: "absent"` or `"optional"`.
 - A default (`u32 align ?= 0x100`) is `input: "optional"` with the default as `derive`,
   `deriveKind: "formula"` and no check.
 - A virtual field's value comes from the input (`required`, or `optional` with its default as
-  `derive`). Its parts are derived from it: their `derive` expressions use `>>`, `&`, `/`, `%`, `+`
-  and `-` on the virtual field's value, with `deriveKind: "auto"` and `input: "absent"` (parts may
-  be bit fields). A virtual field is never a part of another one. After writing, `virtual.read`
-  must give back the input value, otherwise it's a `DERIVE` error.
+  `derive`). It is inverted on write, so its parts are derived from it: their `derive` expressions
+  use `>>`, `&`, `/`, `%`, `+` and `-` on the virtual field's value, with `deriveKind: "auto"` and
+  `input: "absent"` (parts may be bit fields). A virtual field is never a part of another one. After
+  writing, `virtual.read` must give back the input value, otherwise it's a `DERIVE` error.
 
 ### 3.2 The write context and `derive`
 
 `derive` expressions are evaluated in the **write context**:
 
-- `field` references read the input value, or the derived value for derived fields. Derived fields
-  may reference each other as long as there is no cycle (the frontend checks this).
+- `field` references read the input value, or the value of `derive` for fields that have one. Such
+  fields may reference each other as long as there is no cycle (the frontend checks this).
 - `sizeof` / `encodedSize` / `bytesof` / `encode` take the field's final encoding.
 - `offsetof` takes the field's final position (from the base).
 - `$index` is the element index, and params are as on read.
@@ -273,8 +280,8 @@ declaration order, recursively, i.e. pre-order depth-first). A nested `@base` st
 self-contained: its placeables are laid out inside its own region.
 
 A placement is `fixed: false` exactly when its offset expression only uses fields that the writer
-derives (automatically or by formula); constants, parameters and input fields make it `fixed`.
-`constraint` comes from linear reverses (`at sector * 0x800` → modulus 2048, remainder 0).
+computes (derived or computed fields); constants, parameters and input fields make it `fixed`.
+`constraint` comes from derived linear offsets (`at sector * 0x800` → modulus 2048, remainder 0).
 
 ### 4.2 Base region
 
@@ -318,14 +325,14 @@ implements. The other runtimes port it, and the language service's layout simula
   position forward to the next value ≡ remainder mod modulus.
 - **Gaps** are filled with zero.
 
-**Layout items that read fields.** Arguments of a layout item's layers (`@align(align)`,
-`@align(1 << shift)`) are evaluated in the **write context of the struct that owns the layout**: its
-fields (input or derived values), its parameters and `$index` where applicable, the same as its
-write formulas. They never see fields of the placed target, so `recs[*].body @align(count * 2)` uses
-the container's `count`. Any alignment, constant or computed, must be at least 1; 0 or a negative
-value is a `RANGE` error, even when the item places nothing (arguments are evaluated per
-instance, like write formulas). Arguments can't depend on sizes or positions (`sizeof`,
-`offsetof`). Conformance: `conformance/cases/layout-fields`.
+**Layout items that read fields.** Arguments of a layout item's layers (`@align(align)`, `@align(1
+<< shift)`) are evaluated in the **write context of the struct that owns the layout**: its fields
+(input or derived values), its parameters and `$index` where applicable, the same as its computed
+fields. They never see fields of the placed target, so `recs[*].body @align(count * 2)` uses the
+container's `count`. Any alignment, constant or computed, must be at least 1; 0 or a negative value
+is a `RANGE` error, even when the item places nothing (arguments are evaluated per instance, like
+computed fields). Arguments can't depend on sizes or positions (`sizeof`, `offsetof`). Conformance:
+`conformance/cases/layout-fields`.
 
 ### 4.5 Fixed placements and overlaps
 
@@ -393,7 +400,7 @@ Built-ins beyond the obvious:
   **`min`/`max` with one array argument** give its smallest/largest element (the element type); an
   empty array is a `RANGE` error.
 - **`lengths(arr)`** is the element count of each element of an array of arrays (pointer targets
-  are transparent), as an array: the reverse of `u16[lens[$index]] *lists[9] : u64`, where
+  are transparent), as an array: the derivation of `u16[lens[$index]] *lists[9] : u64`, where
   `$index` inside the element type is the index in `lists`.
 - **`isNull(x)`** takes one argument of a `nullable` type.
 - **Derived arrays.** `map`, `filter`, `indicesWhere` and `sortedBy` take an array and a
@@ -477,7 +484,7 @@ struct Motion { if ($version >= 144) { u32 extra } }
 - In `Asset`, the field `r` has type `{ kind: "struct", struct: "Record", args: [endian, field version] }`.
 - In `Record`, `m` passes `param version`.
 
-### 8.5 `at` with a linear reverse
+### 8.5 `at` with a derived linear offset
 
 ```c
 u32 sector  u8 data[size] at sector * 0x800

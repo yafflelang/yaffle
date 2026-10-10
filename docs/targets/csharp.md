@@ -16,7 +16,7 @@ warning level.
   `_2` suffix; the class name and the root API names are reserved). Derived and constant fields
   are properties too: `Parse` sets them, `Serialize` computes them.
 - **Hidden fields** (`@hidden`) are `internal` members named `Hidden_x`.
-- **One-way transforms** (`as` without a reverse): the property holds the transformed value and
+- **One-way transforms** (`as` without an inverse): the property holds the transformed value and
   a public `XxxRaw` property the raw value, which `Parse` and `FromJson` set, `Serialize` writes
   and canonical JSON shows.
 - **Fields of different types in different branches** are `object?`.
@@ -126,7 +126,7 @@ await av.CommitAsync();
 | `Arrays.cs`                                          | derived arrays (`map`, `filter`, `indicesWhere`, `sortedBy`, `unique`, `concat`)                                                                                                         |
 | `Reader.cs`                                          | the read context: primitives, counts, strings, padding, windows, targets with identity, unions, extern types                                                                             |
 | `Region.cs`, `Writer.cs`, `Layout.cs`                | the relocation-style writer: blocks, placeables, fixups and base regions (`@ref` resolution), the writer generated code calls, and the layout engine of docs/IR.md §4 with sticky layout |
-| `Codec.cs`                                           | codec interfaces and calls, codec reuse, virtual streams, LEB128                                                                                                                         |
+| `Codec.cs`                                           | codec interfaces and calls, codec reuse, streams, LEB128                                                                                                                                 |
 | `Helpers.cs`                                         | write-side checks, stream splitting                                                                                                                                                      |
 | `Json.cs`                                            | canonical JSON (`$ref` sharing, a writer without length limits)                                                                                                                          |
 | `Stores.cs`, `Streams.cs`                            | byte stores for views: arrays, block-cached sources, windows, ranged codec regions, joined pieces                                                                                        |

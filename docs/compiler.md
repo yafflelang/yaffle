@@ -49,15 +49,15 @@ record language-service information.
 
 `members.ts` lowers a struct body in two passes. Pass A lowers what the read side needs, in
 declaration order: types, arrays, pointers, transforms, layers, placements, streams, bitfields,
-blocks, `if` and `switch`. Pass B lowers what may reference any field: write formulas, defaults,
-explicit transform reverses, pointer origins and checks. Then:
+blocks, `if` and `switch`. Pass B lowers what may reference any field: computed fields, defaults,
+explicit transform inverses, pointer origins and checks. Then:
 
-- `virtual.ts` derives the parts of each `virtual` field by flattening its formula into a mixed
-  radix (`(hi << 32) | lo`, `a * 1000 + b`).
+- `virtual.ts` inverts each `virtual` field, deriving its parts by flattening its formula into a
+  mixed radix (`(hi << 32) | lo`, `a * 1000 + b`).
 - `slices.ts` decides which bytes fields are assembled from their `from` slices on write.
 - `derive.ts` derives fields from their read-side uses: array/string lengths, `@size` layers,
   `at` offsets (with placement constraints) and struct arguments, inverting expressions linear in
-  one field (`invert.ts`). Explicit formulas are sampled against the read side to find
+  one field (`invert.ts`). The formulas of computed fields are sampled against the read side to find
   contradictory, partial, lossy and redundant ones. It also decides which placements are `fixed`
   and reports layout cycles.
 - The layout block is lowered last, with its paths resolved through arrays and pointer targets.
@@ -105,7 +105,7 @@ program they produce.
   model by declaration and position. Project sources are found by expanding the `sources` globs
   through `ProjectHost.readDirectory` when the host has it.
 - **Locating** (`locate.ts`): the path of AST nodes at an offset.
-- **Features**: hover (`describe.ts`: field types, offsets, sizes, byte order, layers, reverses,
+- **Features**: hover (`describe.ts`: field types, offsets, sizes, byte order, layers, inverses,
   checks, bit diagrams, binding sites, keyword and attribute docs), completion and signature help
   (`completion.ts`: context from the AST refined by lexing the text before the cursor),
   navigation, references and rename (`index.ts`), and document symbols, semantic tokens, folding,
@@ -178,5 +178,5 @@ and are passed to the backends relative to the output directory.
 - **`suggestLayout`** doesn't infer layout groups (a sample only a group can explain is reported
   as inexpressible), assumes every instance of a struct follows one order, and models placement
   constraints only as explicit `@align`.
-- **Samples** annotate fields read from virtual streams at their position in the stream, not in
+- **Samples** annotate fields read from streams at their position in the stream, not in
   the file.

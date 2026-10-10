@@ -51,9 +51,9 @@ v._patches(); v._commit(grow="append")               # "default" | "append" | "s
 | one-way transform       | the transformed value (canonical JSON shows the raw value) |
 
 - **Dataclass fields** are in declaration order (blocks, switches and bits flattened). Inputs the
-  caller must give have no default; derived fields, constants, optional inputs and fields of
-  conditional branches have defaults (`0`, `""`, the constant, `None`, …), so `X(...)` takes only
-  the inputs. A field declared in several branches gets the union of its types.
+  caller must give have no default; derived and computed fields, constants, optional inputs and
+  fields of conditional branches have defaults (`0`, `""`, the constant, `None`, …), so `X(...)`
+  takes only the inputs. A field declared in several branches gets the union of its types.
 - **Absent fields:** readers and `from_json` create objects with `cls.__new__` and only assign
   the fields they read, so an untaken branch's field is absent (the class default shows through)
   and a missing required input is reported as `INPUT` with the field's path.
@@ -81,7 +81,7 @@ v._patches(); v._commit(grow="append")               # "default" | "append" | "s
 | `values`     | enums, bitfields, input validation, after-layout checks                           |
 | `externs`    | loading and calling host code, built-in LEB128 types                              |
 | `codec`      | `@via` codec calls and codec reuse                                                |
-| `streams`    | virtual streams outside views: joining and slicing, splitting on write            |
+| `streams`    | streams outside views: joining and slicing, splitting on write                    |
 | `reader`     | `Reader`: the read context, targets with identity, unions                         |
 | `writer`     | `Writer`, regions, blocks, placeables, fixups, `@ref` resolution                  |
 | `layout`     | the layout engine, including sticky layout for view commits                       |

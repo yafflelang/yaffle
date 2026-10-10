@@ -7,7 +7,7 @@
 ```
 
 - **Frontend** (`packages/compiler/src/frontend`): a hand-written lexer, an error-tolerant
-  recursive-descent parser, binder, checker and reverse derivation. yaffle's grammar is
+  recursive-descent parser, binder, checker and derivation. yaffle's grammar is
   newline-sensitive (optional semicolons, `@` lines continuing the previous field, `<` for both
   generics and comparisons, C declarators like `T *name[n] : u64`), which suits a hand-written
   parser with full control over recovery and ranges. See [compiler.md](compiler.md).

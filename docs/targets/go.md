@@ -36,25 +36,25 @@ runtime's sources into `yaffle/`), `views` (default true), `materialize` (adds
 
 ### Type mapping
 
-| yaffle                                    | Go                                                                                           |
-| ----------------------------------------- | -------------------------------------------------------------------------------------------- |
-| u8/u16/u32/u64, i…                        | uint8…uint64, int8…int64                                                                     |
-| u24, i24 / u40…u56, i40…i56               | uint32, int32 / uint64, int64 (range-checked on write)                                       |
-| f16 / f32 / f64                           | float32 (exact) / float32 / float64                                                          |
-| bool, char/str…                           | bool, string (UTF-8; other encodings are converted)                                          |
-| `u8[n]` (bytes)                           | `[]byte` (aliases the input after a parse; decoded regions are copies)                       |
-| arrays                                    | `[]T`                                                                                        |
-| structs                                   | `*S` (pointers: shared targets and cycles are the same object)                               |
-| enums                                     | `type E uint16` with constants `EMember`, `IsKnown()`, `String()`; open enums hold any value |
-| unions                                    | `*AOrB` with `Type string` and one field per variant                                         |
-| pointers                                  | the target's type; nullable scalars and strings `*T`, nullable structs and slices nil        |
-| conditional fields, optional inputs       | `*T` for scalars and strings, nil slices and pointers                                        |
-| one-way transforms (`as` without reverse) | the transformed value `F` plus the raw value `FRaw` (written, and shown in JSON)             |
-| `@hidden` fields                          | unexported fields                                                                            |
-| extern types                              | their value type                                                                             |
+| yaffle                                       | Go                                                                                           |
+| -------------------------------------------- | -------------------------------------------------------------------------------------------- |
+| u8/u16/u32/u64, i…                           | uint8…uint64, int8…int64                                                                     |
+| u24, i24 / u40…u56, i40…i56                  | uint32, int32 / uint64, int64 (range-checked on write)                                       |
+| f16 / f32 / f64                              | float32 (exact) / float32 / float64                                                          |
+| bool, char/str…                              | bool, string (UTF-8; other encodings are converted)                                          |
+| `u8[n]` (bytes)                              | `[]byte` (aliases the input after a parse; decoded regions are copies)                       |
+| arrays                                       | `[]T`                                                                                        |
+| structs                                      | `*S` (pointers: shared targets and cycles are the same object)                               |
+| enums                                        | `type E uint16` with constants `EMember`, `IsKnown()`, `String()`; open enums hold any value |
+| unions                                       | `*AOrB` with `Type string` and one field per variant                                         |
+| pointers                                     | the target's type; nullable scalars and strings `*T`, nullable structs and slices nil        |
+| conditional fields, optional inputs          | `*T` for scalars and strings, nil slices and pointers                                        |
+| one-way transforms (`as` without an inverse) | the transformed value `F` plus the raw value `FRaw` (written, and shown in JSON)             |
+| `@hidden` fields                             | unexported fields                                                                            |
+| extern types                                 | their value type                                                                             |
 
-Derived fields and constants stay in the struct (filled by a parse, recomputed by a write). A nil
-slice means "absent" only for conditional fields; elsewhere it is an empty slice. Every struct
+Derived, computed and constant fields stay in the struct (filled by a parse, recomputed by a write).
+A nil slice means "absent" only for conditional fields; elsewhere it is an empty slice. Every struct
 carries an unexported `yfl yaffle.Meta` (codec reuse, lazy stream pieces).
 
 ## Host interfaces
@@ -160,7 +160,7 @@ as code runs and isn't unwound by the panic, so the entry point attaches the exa
 | `layout.go`      | the layout engine (items, groups, pull-out, alignments, fixed placements, sticky mode) |
 | `codec.go`       | codec calls and codec reuse (`Meta`)                                                   |
 | `extern.go`      | host interfaces, extern types and functions, placeholders, LEB128                      |
-| `stream.go`      | virtual streams on read and write, byte stores                                         |
+| `stream.go`      | streams on read and write, byte stores                                                 |
 | `json.go`        | canonical JSON writer and reader                                                       |
 | `scan.go`        | view scans and the reader's view hooks                                                 |
 | `views.go`       | documents and nodes, getters, setters, commit, diff                                    |

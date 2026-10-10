@@ -96,10 +96,10 @@ Each struct gives an output type `X` and an input type `XInput`:
 | constants, `in (…)` literals   | literal types                                                      |
 | extern types                   | the declared value type                                            |
 
-`XInput` leaves out derived fields and constants; fields whose derive also accepts an input are
-optional. Expressions compute in `number` where interval analysis proves they stay within
-±2^53, otherwise in `bigint`; conversions to lengths and offsets are range-checked. User types
-named like a global the generated code uses (`Record`, `Map`, `Error`, …) get a `_` suffix.
+`XInput` leaves out derived and computed fields and constants; fields whose derive also accepts an
+input are optional. Expressions compute in `number` where interval analysis proves they stay within
+±2^53, otherwise in `bigint`; conversions to lengths and offsets are range-checked. User types named
+like a global the generated code uses (`Record`, `Map`, `Error`, …) get a `_` suffix.
 
 Internally each struct also gets `read_X` (and `readAsync_X`), `scan_X` (views), `write_X` (and
 `writeAsync_X`), `toJson_X`, `fromJson_X` and the view descriptor `$view_X`; these are internals
@@ -151,7 +151,7 @@ patches. `$commit({ rewrite: true })` takes this path without edits.
 - `"splice"`: nothing moves to the end; every size change shifts what follows;
 - `"error"`: any size change is a `DERIVE` error.
 
-**Lazy streams and codecs.** A virtual stream (`T x from arr[*].data`) is a byte store over its
+**Lazy streams and codecs.** A stream (`T x from arr[*].data`) is a byte store over its
 pieces: an offset maps to a piece through the pieces' decoded lengths, taken from the element's
 own fields when the schema states them (a counted `u8[n]`, or `u8[]` inside `@size(n)`), and
 otherwise learned by decoding the pieces in order. Only the touched pieces are decoded, and at
@@ -251,8 +251,8 @@ YAFFLE_TS_VIEW_REWRITE=1 node --max-old-space-size=12000 --conditions=developmen
 
 - `@split(fit)` needs element placements to know each block's capacity. After a view edit that
   changes a stream's length, the pieces' size fields from the view no longer cover it (`DERIVE`).
-- Union values inside views are snapshots: editing one materializes the parent. Derived fields
-  of an edited view node are stale until `$commit`.
+- Union values inside views are snapshots: editing one materializes the parent. Derived and
+  computed fields of an edited view node are stale until `$commit`.
 - Async ranged codecs decode their whole region in views; an async view's structural commit
   fetches the whole source first.
 - NaN payloads are not preserved (f16 NaN is written as `0x7e00`; f32/f64 depend on the engine).
