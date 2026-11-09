@@ -40,6 +40,13 @@ const found: [string, string | undefined][] = [
       "packages/runtime-csharp/src/Yaffle.Runtime/Yaffle.Runtime.csproj",
       /<Version>([^<]+)<\/Version>/
     )
+  ],
+  [
+    "Maven org.yafflelang:yaffle-runtime (pom.xml)",
+    first(
+      "packages/runtime-java/pom.xml",
+      /<artifactId>yaffle-runtime<\/artifactId>\s*<version>([^<]+)<\/version>/
+    )
   ]
 ];
 

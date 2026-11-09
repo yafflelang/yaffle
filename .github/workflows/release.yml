@@ -1,7 +1,9 @@
 name: Release
 
-# Pushing a tag vX.Y.Z publishes every registry package at version X.Y.Z with trusted publishing
-# (OIDC): no registry tokens are stored in the repository.
+# Pushing a tag vX.Y.Z publishes every registry package at version X.Y.Z. npm, crates.io, PyPI and
+# NuGet use trusted publishing (OIDC), so no tokens for them are stored anywhere. Maven Central has
+# no OIDC support: its job reads a Central Portal token and a signing key from secrets of the
+# "release" environment.
 #
 # Packages are built in jobs without id-token access; only the publish jobs, which install no
 # dependencies, can mint registry credentials. Each publish job runs in the "release" environment,
@@ -241,3 +243,51 @@ jobs:
           --api-key "${{ steps.login.outputs.NUGET_API_KEY }}"
           --source https://api.nuget.org/v3/index.json
           --skip-duplicate
+
+  # ---------------------------------------------------------------- Maven Central: org.yafflelang:yaffle-runtime
+
+  # Central has no trusted publishing, so this job uses secrets stored on the "release" environment:
+  #   MAVEN_CENTRAL_USERNAME, MAVEN_CENTRAL_PASSWORD  a user token from central.sonatype.com
+  #   MAVEN_GPG_PRIVATE_KEY                           ASCII-armored secret key that signs artifacts
+  #   MAVEN_GPG_PASSPHRASE                            its passphrase
+  # Signing uses the gpg plugin's Bouncy Castle signer, which reads the key from the environment, so
+  # no gpg keyring is set up on the runner. The pom has no dependencies; Maven only downloads its
+  # own plugins.
+  maven-publish:
+    name: Publish to Maven Central
+    needs: version
+    runs-on: ubuntu-latest
+    environment: release
+    env:
+      VERSION: ${{ needs.version.outputs.version }}
+    defaults:
+      run:
+        working-directory: packages/runtime-java
+    steps:
+      - uses: actions/checkout@v4
+
+      # Writes a settings.xml whose "central" server reads its credentials from the two env vars
+      # named here.
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+          cache: maven
+          server-id: central
+          server-username: MAVEN_CENTRAL_USERNAME
+          server-password: MAVEN_CENTRAL_PASSWORD
+
+      - id: exists
+        run: |
+          if curl -sf "https://repo1.maven.org/maven2/org/yafflelang/yaffle-runtime/$VERSION/" > /dev/null; then
+            echo "org.yafflelang:yaffle-runtime $VERSION is already on Maven Central, skipping"
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - if: steps.exists.outputs.skip != 'true'
+        run: mvn --batch-mode --no-transfer-progress -Prelease -Dgpg.signer=bc deploy
+        env:
+          MAVEN_CENTRAL_USERNAME: ${{ secrets.MAVEN_CENTRAL_USERNAME }}
+          MAVEN_CENTRAL_PASSWORD: ${{ secrets.MAVEN_CENTRAL_PASSWORD }}
+          MAVEN_GPG_KEY: ${{ secrets.MAVEN_GPG_PRIVATE_KEY }}
+          MAVEN_GPG_PASSPHRASE: ${{ secrets.MAVEN_GPG_PASSPHRASE }}
