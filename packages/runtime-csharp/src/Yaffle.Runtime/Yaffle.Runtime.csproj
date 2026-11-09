@@ -17,7 +17,7 @@
     <Authors>Noah</Authors>
     <PackageLicenseExpression>ISC</PackageLicenseExpression>
     <PackageProjectUrl>https://yafflelang.org</PackageProjectUrl>
-    <RepositoryUrl>https://github.com/noahcoolboy/yaffle</RepositoryUrl>
+    <RepositoryUrl>https://github.com/yafflelang/yaffle</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageTags>yaffle;binary;parser;serialization;file-format</PackageTags>
     <PackageReadmeFile>README.md</PackageReadmeFile>

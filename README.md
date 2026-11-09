@@ -3,7 +3,7 @@
 </p>
 <h1 align="center">yaffle</h1>
 <p align="center">
-  <a href="https://github.com/noahcoolboy/yaffle/actions/workflows/ci.yml"><img src="https://github.com/noahcoolboy/yaffle/actions/workflows/ci.yml/badge.svg" alt="CI" height="20"></a>
+  <a href="https://github.com/yafflelang/yaffle/actions/workflows/ci.yml"><img src="https://github.com/yafflelang/yaffle/actions/workflows/ci.yml/badge.svg" alt="CI" height="20"></a>
   <a href="https://yafflelang.org/"><img src="https://img.shields.io/badge/docs-mdBook-67b528" alt="Docs" height="20"></a>
 </p>
 

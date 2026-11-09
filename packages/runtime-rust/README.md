@@ -5,5 +5,5 @@ a language for binary file formats; the compiler turns a schema into readers, wr
 views. This crate, `yaffle`, is what generated crates depend on (`yaffle = "0.0.1"`); they
 import it as `use yaffle as yr;`. It has no dependencies of its own.
 
-See the [Rust target documentation](https://github.com/noahcoolboy/yaffle/blob/main/docs/targets/rust.md).
+See the [Rust target documentation](https://github.com/yafflelang/yaffle/blob/main/docs/targets/rust.md).
 License: ISC.

@@ -52,7 +52,7 @@
   "homepage": "https://yafflelang.org/",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/noahcoolboy/yaffle.git",
+    "url": "git+https://github.com/yafflelang/yaffle.git",
     "directory": "packages/compiler"
   },
   "engines": {

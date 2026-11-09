@@ -22,8 +22,8 @@ dependencies = []
 
 [project.urls]
 Homepage = "https://yafflelang.org"
-Repository = "https://github.com/noahcoolboy/yaffle"
-Documentation = "https://github.com/noahcoolboy/yaffle/blob/main/docs/targets/python.md"
+Repository = "https://github.com/yafflelang/yaffle"
+Documentation = "https://github.com/yafflelang/yaffle/blob/main/docs/targets/python.md"
 
 [tool.hatch.build.targets.wheel]
 packages = ["yaffle"]

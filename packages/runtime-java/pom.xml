@@ -35,9 +35,9 @@
   </developers>
 
   <scm>
-    <connection>scm:git:https://github.com/noahcoolboy/yaffle.git</connection>
-    <developerConnection>scm:git:ssh://git@github.com/noahcoolboy/yaffle.git</developerConnection>
-    <url>https://github.com/noahcoolboy/yaffle/tree/main/packages/runtime-java</url>
+    <connection>scm:git:https://github.com/yafflelang/yaffle.git</connection>
+    <developerConnection>scm:git:ssh://git@github.com/yafflelang/yaffle.git</developerConnection>
+    <url>https://github.com/yafflelang/yaffle/tree/main/packages/runtime-java</url>
   </scm>
 
   <properties>
