@@ -1,6 +1,6 @@
 {
   "name": "yaffle",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "A language for describing binary file formats, compiled to typed readers and writers",
   "type": "module",
   "exports": {
@@ -35,7 +35,7 @@
     "prepublishOnly": "npm run build"
   },
   "dependencies": {
-    "@yafflelang/runtime": "0.0.1"
+    "@yafflelang/runtime": "0.0.2"
   },
   "license": "ISC",
   "keywords": [

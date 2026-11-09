@@ -53,7 +53,7 @@ from .values import *
 from .view import *
 from .writer import *
 
-__version__ = "0.0.1"
+__version__ = "0.0.2"
 
 __all__ = [
     *api.__all__,
