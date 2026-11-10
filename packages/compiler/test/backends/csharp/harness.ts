@@ -79,6 +79,7 @@ export interface ProjectOptions {
 
 interface RunResult {
   code: number;
+  signal?: NodeJS.Signals | null;
   stdout: string;
   stderr: string;
 }
@@ -90,7 +91,7 @@ function exec(cmd: string, args: string[], env: NodeJS.ProcessEnv): Promise<RunR
     let stderr = "";
     child.stdout.on("data", (d: Buffer) => (stdout += d.toString()));
     child.stderr.on("data", (d: Buffer) => (stderr += d.toString()));
-    child.on("close", code => res({ code: code ?? 1, stdout, stderr }));
+    child.on("close", (code, signal) => res({ code: code ?? 1, signal, stdout, stderr }));
     child.on("error", e => res({ code: 1, stdout, stderr: String(e) }));
   });
 }
@@ -140,25 +141,40 @@ ${items.join("\n")}
 `
   );
   const out = join(dir, "bin");
-  const r = await exec(
-    dotnet,
-    [
-      "build",
-      join(dir, `${name}.csproj`),
-      "-c",
-      "Release",
-      "-o",
-      out,
-      "-nologo",
-      "-v",
-      "q",
-      "-clp:NoSummary"
-    ],
-    dotnetEnv({ YAFFLE_CSHARP_ARTIFACTS: join(dir, "artifacts") })
-  );
+  const attempt = () =>
+    exec(
+      dotnet,
+      [
+        "build",
+        join(dir, `${name}.csproj`),
+        "-c",
+        "Release",
+        "-o",
+        out,
+        "-nologo",
+        "-v",
+        "q",
+        "-clp:NoSummary"
+      ],
+      dotnetEnv({ YAFFLE_CSHARP_ARTIFACTS: join(dir, "artifacts") })
+    );
+  const diagnostics = (r: RunResult) => [
+    ...new Set((r.stdout + r.stderr).split("\n").filter(l => /error|warning/.test(l)))
+  ];
+  let r = await attempt();
+  // Builds started in parallel against a fresh cache sometimes fail without reporting any
+  // diagnostic. A real compile error always reports one, so only those failures are retried.
+  if (r.code !== 0 && diagnostics(r).length === 0) r = await attempt();
   if (r.code !== 0) {
-    const lines = (r.stdout + r.stderr).split("\n").filter(l => /error|warning/.test(l));
-    throw new Error(`dotnet build failed:\n${[...new Set(lines)].slice(0, 40).join("\n")}`);
+    const lines = diagnostics(r);
+    const detail =
+      lines.length > 0
+        ? lines.slice(0, 40)
+        : [
+            `exit code ${r.code}${r.signal ? `, signal ${r.signal}` : ""}, no diagnostics:`,
+            ...(r.stdout + r.stderr).trimEnd().split("\n").slice(-40)
+          ];
+    throw new Error(`dotnet build failed:\n${detail.join("\n")}`);
   }
   return join(out, `${name}.dll`);
 }
