@@ -20,7 +20,8 @@
     "lint:fix": "eslint packages conformance --fix",
     "format": "prettier -w -l packages conformance docs",
     "format:check": "prettier -c packages conformance",
-    "prepare": "husky"
+    "prepare": "husky",
+    "release": "node .github/scripts/release.ts"
   },
   "lint-staged": {
     "*.{js,ts}": [

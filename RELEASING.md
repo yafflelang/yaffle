@@ -13,15 +13,15 @@ Pushing a tag `vX.Y.Z` runs [`.github/workflows/release.yml`](.github/workflows/
 
 ## Cutting a release
 
-1. Set the same version in every manifest above, including the `@yafflelang/runtime` dependency in `packages/compiler/package.json`. Commit to `main` and wait for CI to pass.
-2. Tag and push:
+Once CI has passed on `main`, run:
 
-   ```sh
-   git tag v0.0.2
-   git push origin v0.0.2
-   ```
+```sh
+npm run release -- 0.0.3
+```
 
-The first job fails if any manifest doesn't match the tag. A prerelease tag (`v0.1.0-rc.1`) publishes to npm under the `next` dist-tag instead of `latest`. If a publish job fails, re-run the workflow: versions already on a registry are skipped.
+It refuses to run unless `main` is clean, in sync with `origin/main` and green in CI. Then it sets the version in every manifest above (plus the dependent `package.json` files, `yaffle/__init__.py` and `package-lock.json`), commits `chore: release 0.0.3`, and tags `v0.0.3` and `packages/runtime-go/v0.0.3`. Nothing is pushed: it prints the `git push` command that publishes the release, and the command to undo it.
+
+The manifests are listed in [`.github/scripts/release-manifests.ts`](.github/scripts/release-manifests.ts). The workflow's first job checks the same list against the tag and fails on any mismatch. A prerelease (`0.1.0-rc.1`) publishes to npm under the `next` dist-tag instead of `latest`. If a publish job fails, re-run the workflow: versions already on a registry are skipped.
 
 ## One-time setup
 
@@ -80,6 +80,6 @@ The job publishes immediately (`autoPublish`) and waits until Central reports th
 
 ## Not covered by this workflow
 
-- **Go** (`yafflelang.org/go/yaffle`): there's no registry. A release is a git tag `packages/runtime-go/vX.Y.Z`, and yafflelang.org must serve a `go-import` meta tag for the module path.
+- **Go** (`yafflelang.org/go/yaffle`): there's no registry. `npm run release` creates its `packages/runtime-go/vX.Y.Z` tag, but yafflelang.org must serve a `go-import` meta tag for the module path.
 - **VS Code Marketplace / Open VSX**: both use access tokens. CI already builds `yaffle.vsix` as an artifact.
 - **`@yafflelang/lsp`** isn't set up for publishing: it has no `publishConfig` or `repository` field.
