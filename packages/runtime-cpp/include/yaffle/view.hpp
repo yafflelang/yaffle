@@ -162,7 +162,9 @@ class Doc {
   template <class S>
   NodeScan<S>& scan(const Kid& k, const char* type,
                     void (*entry)(Reader&, ScanCtx&, NodeScan<S>&, const void* args)) {
-    std::string key = std::to_string(k.loc.space) + ":" + std::to_string(k.loc.pos) + ":" + type;
+    // The kid's key carries the struct arguments: `Blob(1)` and `Blob(2)` at one address differ.
+    std::string key =
+        std::to_string(k.loc.space) + ":" + std::to_string(k.loc.pos) + ":" + type + "|" + k.key;
     auto it = scans_.find(key);
     if (it != scans_.end()) return static_cast<NodeScan<S>&>(*it->second);
     if (k.loc.pos < 0) fail(ErrorCode::Input, "null target");

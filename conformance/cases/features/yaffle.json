@@ -1,0 +1,47 @@
+{
+  "sources": ["schema.yfl"],
+  "targets": {
+    "ts": {
+      "out": "../../.out/gen/features/ts",
+      "externs": {
+        "xor": "../../externs/ts/xor.ts"
+      }
+    },
+    "rust": {
+      "out": "../../.out/gen/features/rust",
+      "externs": {
+        "xor": "../../externs/rust/xor.rs#XOR"
+      }
+    },
+    "python": {
+      "out": "../../.out/gen/features/python",
+      "externs": {
+        "xor": "../../externs/python/xor.py"
+      }
+    },
+    "go": {
+      "out": "../../.out/gen/features/go",
+      "externs": {
+        "xor": "../../externs/go/xor.go"
+      }
+    },
+    "csharp": {
+      "out": "../../.out/gen/features/csharp",
+      "externs": {
+        "xor": "../../externs/csharp/xor.cs"
+      }
+    },
+    "java": {
+      "out": "../../.out/gen/features/java",
+      "externs": {
+        "xor": "../../externs/java/xor.java#XOR"
+      }
+    },
+    "cpp": {
+      "out": "../../.out/gen/features/cpp",
+      "externs": {
+        "xor": "../../externs/cpp/xor.hpp"
+      }
+    }
+  }
+}

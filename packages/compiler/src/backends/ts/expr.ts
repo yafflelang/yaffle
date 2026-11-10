@@ -605,7 +605,9 @@ export class ExprCompiler {
       if (e.type.kind === "float") c.float = true;
       return c;
     };
-    const oneArray = e.args.length === 1 && e.args[0]!.type.kind === "array";
+    // over one array, or one byte string (`u8` arrays)
+    const oneArray =
+      e.args.length === 1 && (e.args[0]!.type.kind === "array" || e.args[0]!.type.kind === "bytes");
     switch (name as string) {
       case "sum":
         return aggregate(this.reprOf(e.type) === "big" ? "sumBig" : "sum");

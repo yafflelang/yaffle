@@ -215,7 +215,13 @@ export class ReadGen {
     if (s.base) body.push("let __saved_base = r.base;", "r.base = r.pos;");
     body.push("let __this_o: i128 = r.pos as i128 - r.base as i128;");
     const ident = this.m.identStructs.has(s.id);
-    if (ident) body.push("let __id_at = r.pos;", `let __id = r.begin_ident(${strLit(sm.name)});`);
+    // the arguments that are part of the identity, as `follow_keyed` gets them
+    const idParts = `&[${sm.params.flatMap(p => identityPart(p, p.v) ?? []).join(", ")}]`;
+    if (ident)
+      body.push(
+        "let __id_at = r.pos;",
+        `let __id = r.begin_ident(${strLit(sm.name)}, ${idParts});`
+      );
     if (s.strict) body.push("let __saved_strict = r.strict;", "r.strict = true;");
     if (sm.hasCache) body.push("let mut __cache = yr::ViaCache::new();");
     for (const f of new Set(sm.byDecl.values())) {
@@ -248,7 +254,7 @@ export class ReadGen {
       body.push("r.base = __saved_base;");
     }
     if (s.strict) body.push("r.strict = __saved_strict;");
-    if (ident) body.push(`r.end_ident(__id_at, ${strLit(sm.name)});`);
+    if (ident) body.push(`r.end_ident(__id_at, ${strLit(sm.name)}, ${idParts});`);
     body.push(this.scan ? "let __value = Self {" : "Ok(Self {");
     body.push(...indent(this.construct(sm.members)));
     if (ident) body.push("    __id,");
@@ -1003,7 +1009,29 @@ export class ReadGen {
           targetShape.k === "struct" && this.m.identStructs.has(targetShape.id)
             ? `Some((${strLit(this.m.struct(targetShape.id).name)}, |__i: yr::Ident| ${targetTy} { __id: __i, ..Default::default() }))`
             : "None";
-        follow = `${rv}.follow::<${targetTy}>(${addr}, ${strLit(typeHash(t.target))}, ${stub}, |${p}| Ok(${this.readType(t.target, { ...env, rv: p })}))?`;
+        // Same address, same type: lengths and struct arguments are part of the type.
+        let tx: IrType = t.target;
+        while (tx.kind === "layered" || tx.kind === "transform") tx = tx.inner;
+        const ctx = this.ctx(env);
+        const parts: string[] = [];
+        if (
+          (tx.kind === "array" || tx.kind === "bytes" || tx.kind === "string") &&
+          tx.length.kind === "count"
+        )
+          parts.push(asInt(compile(ctx, tx.length.expr)));
+        if (tx.kind === "struct") {
+          const sm = this.m.struct(tx.struct);
+          const args = tx.args;
+          sm.params.forEach((pm, i) => {
+            const a = args[i];
+            const part = a && identityPart(pm, toParamValue(ctx, compile(ctx, a), pm.shape));
+            if (part) parts.push(part);
+          });
+        }
+        const read = `|${p}| Ok(${this.readType(t.target, { ...env, rv: p })})`;
+        follow = parts.length
+          ? `${rv}.follow_keyed::<${targetTy}>(${addr}, ${strLit(typeHash(t.target))}, &[${parts.join(", ")}], ${stub}, ${read})?`
+          : `${rv}.follow::<${targetTy}>(${addr}, ${strLit(typeHash(t.target))}, ${stub}, ${read})?`;
       }
     }
     const head = rawVar
@@ -1088,6 +1116,24 @@ function originUsesFields(e: IrExpr): boolean {
 /** Wraps a read value for a boxed (recursive) field. */
 function boxed(s: Shape, code: string): string {
   return s.k === "box" ? `Box::new(${code})` : code;
+}
+
+/**
+ * A struct argument as a part of a target's identity (`Blob(1)` and `Blob(2)` at one address are
+ * different values): integers, bools, enums and endianness. Other arguments are not compared.
+ */
+export function identityPart(p: ParamModel, code: string): string | undefined {
+  switch (p.shape.k) {
+    case "int":
+    case "bool":
+      return `((${code}) as i128)`;
+    case "enum":
+      return `((${code}).to_raw() as i128)`;
+    case "endian":
+      return `(matches!(${code}, yr::Endian::Be) as i128)`;
+    default:
+      return undefined;
+  }
 }
 
 /** An owned copy of a reader parameter (for a view's stored arguments). */

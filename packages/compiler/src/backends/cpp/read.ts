@@ -700,7 +700,7 @@ export class ReadEmitter extends Emitter<RCtx> {
         c.line(`[[maybe_unused]] const std::int64_t ${p} = ${r}.pos;`);
         const el = c.fresh("el");
         c.line(`${elemT} ${el}{};`);
-        this.read(t.element, el, ectx);
+        this.read(t.element, el, terminatedCtx(ectx));
         this.terminated(len, t.element, el, a, p, ctx);
       });
     }
@@ -730,7 +730,7 @@ export class ReadEmitter extends Emitter<RCtx> {
       if (term) {
         const el = c.fresh("el");
         c.line(`${elemT} ${el}{};`);
-        this.peekAt(addr, ctx, () => this.read(t.element, el, ectx));
+        this.peekAt(addr, ctx, () => this.read(t.element, el, terminatedCtx(ectx)));
         this.terminated(term, t.element, el, a, undefined, ctx);
         return;
       }
@@ -850,7 +850,11 @@ export class ReadEmitter extends Emitter<RCtx> {
         : `${r}.base + ${origin !== undefined ? `${origin} + ` : ""}${off}`;
       c.line(`const std::int64_t ${addr} = ${base};`);
       if (ctx.scanMode && ctx.fieldIndex !== undefined) {
-        if (!this.scanner.pointerTarget(t, addr, ctx)) return;
+        if (!this.scanner.pointerTarget(t, addr, ctx)) {
+          // shallow scans of pointers in arrays to non-structs don't use the address
+          c.line(`static_cast<void>(${addr});`);
+          return;
+        }
         this.emitTarget(t.target, dst, addr, { ...ctx, scanMode: undefined }, shared);
         return;
       }
@@ -1117,4 +1121,12 @@ function parenthesized(cond: string): string {
     if (depth === 0) return `(${cond})`;
   }
   return cond;
+}
+
+/**
+ * The element context of a terminated array (`until`, `before`): the terminator is evaluated on
+ * the element value, so shallow scans read each element in full (still recording its kid).
+ */
+function terminatedCtx(ectx: RCtx): RCtx {
+  return ectx.scanMode === "kids" ? { ...ectx, scanMode: "record" } : ectx;
 }

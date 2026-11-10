@@ -790,7 +790,9 @@ export class ExprCompiler {
   /** `min`/`max` of several values (or, with one array argument, of its elements). */
   private minMax(e: Extract<IrExpr, { kind: "call" }>, name: "min" | "max", ctx: ExprCtx): CExpr {
     const Ints = ctx.use("Ints");
-    if (e.args.length === 1 && e.args[0]!.type.kind === "array") {
+    // over one array, or one byte string (`u8` arrays)
+    const one = e.args.length === 1 ? e.args[0]!.type.kind : undefined;
+    if (one === "array" || one === "bytes") {
       const a = this.compile(e.args[0]!, ctx);
       if (e.type.kind === "float")
         return { code: `${Ints}.${name}OfDouble(${a.code})`, repr: "f64" };

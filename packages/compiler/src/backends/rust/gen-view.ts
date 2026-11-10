@@ -17,7 +17,7 @@
 import type { IrExpr, IrField, IrRoot, IrType } from "../../ir/index.ts";
 import { indent } from "./emit.ts";
 import { tmp } from "./expr.ts";
-import { ReadGen, argAsParam, endianCode, typeHash, type Env } from "./gen-read.ts";
+import { ReadGen, argAsParam, endianCode, identityPart, typeHash, type Env } from "./gen-read.ts";
 import { paramBinds, paramField } from "./gen-root.ts";
 import { WriteGen } from "./gen-write.ts";
 import {
@@ -355,7 +355,7 @@ export class ViewGen {
       "    let version = ctx.version();",
       `    let yr::Scan { ${cache ? "mut " : ""}value, spans, end_pos, args, .. } = s;`,
       ...(cache ? ["    value.__cache.share();"] : []),
-      `    let state = ctx.node(loc.region, loc.start, ${strLit(name)}, move || std::cell::RefCell::new(yr::ViewState { value, spans, end_pos, version, edits: Default::default() }));`,
+      `    let state = ctx.node(loc.region, loc.start, ${strLit(name)}, &[${this.sm.params.flatMap(p => identityPart(p, `args.${p.v}`) ?? []).join(", ")}], move || std::cell::RefCell::new(yr::ViewState { value, spans, end_pos, version, edits: Default::default() }));`,
       `    ${name}View { ctx: ctx.clone(), loc, args: Rc::new(args), state }`,
       "}",
       "/// Where the struct's members start, and its base and region end.",
@@ -473,6 +473,8 @@ export class ViewGen {
       }
     };
     visit(sm.members);
+    // the arguments that are part of the identity, as the reader's `begin_ident` gets them
+    const idParts = `&[${sm.params.flatMap(p => identityPart(p, `self.args.${p.v}`) ?? []).join(", ")}]`;
     // Structural edits (set_ with a size change, or fields with placeholders).
     for (const mm of sm.members) {
       if (mm.k !== "field" || !this.editable(mm)) continue;
@@ -487,7 +489,9 @@ export class ViewGen {
       `pub fn materialize(&self) -> yr::Result<${name}> {`,
       "    self.fresh()?;",
       ...(ident
-        ? [`    let __id = self.ctx.begin_ident(self.loc.region, self.loc.start, ${strLit(name)});`]
+        ? [
+            `    let __id = self.ctx.begin_ident(self.loc.region, self.loc.start, ${strLit(name)}, ${idParts});`
+          ]
         : []),
       `    let __res = (|| -> yr::Result<${name}> {`,
       "        let __edits = self.state.borrow().edits.clone();",
@@ -496,7 +500,7 @@ export class ViewGen {
       "        Ok(__v)",
       "    })();",
       ...(ident
-        ? [`    self.ctx.end_ident(self.loc.region, self.loc.start, ${strLit(name)});`]
+        ? [`    self.ctx.end_ident(self.loc.region, self.loc.start, ${strLit(name)}, ${idParts});`]
         : []),
       ...(ident
         ? ["    let mut __v = __res?;", "    __v.__id = __id;", "    Ok(__v)"]
@@ -589,7 +593,9 @@ export class ViewGen {
     const stub = this.m.identStructs.has(sid)
       ? `Some((${strLit(tsm.name)}, |__i: yr::Ident| ${tsm.name} { __id: __i, ..Default::default() }))`
       : "None";
-    return `self.ctx.follow(${v}.loc().region, ${v}.loc().start, ${strLit(typeHash(t.target))}, ${stub}, || ${v}.materialize())?`;
+    // The same identity as the reader's: integer-like arguments are part of the type.
+    const parts = tsm.params.flatMap(p => identityPart(p, `${v}.args.${p.v}`) ?? []);
+    return `self.ctx.follow(${v}.loc().region, ${v}.loc().start, ${strLit(typeHash(t.target))}, &[${parts.join(", ")}], ${stub}, || ${v}.materialize())?`;
   }
 
   /**

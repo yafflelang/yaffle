@@ -1,0 +1,69 @@
+// Features of DESIGN.md that the other areas don't exercise: `until` with a predicate over `it`,
+// `[before …]`, pointers to arrays (`T[n] *p`), `@nullable(empty)`, element-wise pointer arrays
+// (`u8[lens[$index]] *lists[n]`), `@origin`, `bytesof`, `sum`/`min`/`max` over arrays and byte
+// strings, the built-in `uleb128`/`sleb128`, a struct-level `@via`, and pointer
+// targets at one address that differ only in a length or a struct argument.
+
+extern codec xor(u8 key) @ranged
+
+// `until` with a predicate: the element that satisfies it is part of the array.
+struct Bank {
+  u8 v
+  u8 next
+}
+export struct UntilIt { Bank banks[until it.next == 0]  u8 after }
+
+// `before`: stops before an element equal to the terminator, without consuming it.
+export struct Before { str pool[before ""]  str tail }
+
+struct Pt {
+  u16 x
+  u16 y
+}
+
+// A pointer to an array: n is derived from its length.
+export struct PtrToArray { u8 n  Pt[n] *pts : u32 }
+
+// `@nullable(empty)`: an empty array writes 0, and 0 reads as empty.
+export struct PtrEmpty { u8 k  Pt[k] *steps : u32 @nullable(empty) }
+
+// Element-wise lengths: lens[i] = lists[i].length on write, for byte strings and arrays.
+export struct ElemBytes { u8 lens[3]  u8[lens[$index]] *lists[3] : u16 }
+export struct ElemU16 { u16 lens[3]  u16[lens[$index]] *lists[3] : u16 }
+
+// `@origin(k)`: target = base + k + value.
+struct Pool @base {
+  u8   hdr
+  str *name : u8 @origin(4)
+  u8   pad[2]
+  u8   marker
+  str  text
+}
+export struct Origin { Pool p }
+
+// `bytesof`: the bytes on disk, after the codec.
+struct Inner {
+  u8 a
+  u8 c
+}
+export struct BytesOf { u8 b = bytesof(body)[0]  Inner body @via(xor(0x55)) }
+
+// Aggregates over a byte string and over an array.
+export struct SumBytes { u8 n  u8 vals[n]  u16 total = sum(vals) }
+export struct SumU16 { u8 n  u16 vals[n]  u32 total = sum(vals) }
+export struct MinMax { u8 n  u8 vals[n]  u8 lo = min(vals)  u8 hi = max(vals) }
+
+// Built-in extern types.
+export struct Leb { uleb128 a  sleb128 b  u8 after }
+
+// A codec on the struct itself; the use site gives its size on disk.
+struct Masked @via(xor(0x0f)) {
+  u8 a
+  u8 b
+}
+export struct StructVia { Masked m @size(2)  u8 after }
+
+
+// Same address and type, different struct arguments: different values.
+struct Blob(u8 k) { u8 d[k] }
+export struct SameAddrArgs { Blob(1) *a : u8  Blob(2) *b : u8 }

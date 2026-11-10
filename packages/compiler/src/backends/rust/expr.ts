@@ -404,10 +404,13 @@ function call(ctx: ExprCtx, e: Extract<IrExpr, { kind: "call" }>): CExpr {
     case "max": {
       const args = e.args.map(a => compile(ctx, a));
       const first = args[0];
-      if (args.length === 1 && first && first.t.k === "ref" && first.t.shape.k === "array") {
-        // The aggregate form: min/max over an array (empty is a RANGE error).
-        const el = first.t.shape.elem;
-        const item = load("(*__e)", el);
+      if (
+        args.length === 1 &&
+        first &&
+        (first.t.k === "bytes" || (first.t.k === "ref" && first.t.shape.k === "array"))
+      ) {
+        // The aggregate form: min/max over an array or byte string (empty is a RANGE error).
+        const item = elements(first, n).elem("__e");
         if (item.t.k === "float")
           return {
             code: `yr::agg_f64(${first.code}.iter().map(|__e| ${item.code}), ${n === "max"})?`,
@@ -681,15 +684,16 @@ function extraBuiltin(ctx: ExprCtx, e: Extract<IrExpr, { kind: "call" }>): CExpr
     return { code: x.t.k === "opt" ? `${x.code}.is_none()` : "false", t: { k: "bool" } };
   }
   const a = e.args[0] ? compile(ctx, e.args[0]) : undefined;
-  if (!a || a.t.k !== "ref" || a.t.shape.k !== "array")
-    throw new BackendError(`${n} needs an array`);
-  const el = a.t.shape.elem;
-  if (n === "sum") {
-    const item = load("(*__e)", el);
+  if (n === "sum" && a) {
+    // over an array or a byte string
+    const item = elements(a, n).elem("__e");
     if (item.t.k === "float")
       return { code: `${a.code}.iter().map(|__e| ${item.code}).sum::<f64>()`, t: { k: "float" } };
     return { code: `yr::sum_int(${a.code}.iter().map(|__e| ${asInt(item)}))?`, t: { k: "int" } };
   }
+  if (!a || a.t.k !== "ref" || a.t.shape.k !== "array")
+    throw new BackendError(`${n} needs an array`);
+  const el = a.t.shape.elem;
   if (n === "lengths") {
     // Element counts of an array of arrays (pointer targets are transparent; null is empty).
     const lenOf = (s: Shape, x: string): string => {

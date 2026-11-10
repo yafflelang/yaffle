@@ -32,7 +32,12 @@ impl Fill<'_> {
 }
 
 /// A value's position and type: the region, the address and a type key.
-type IdKey = (u32, usize, &'static str);
+///
+/// The last part holds the values that are part of the type at run time: the element count of an
+/// array, byte or string target whose length is read from the data, or a struct's arguments. Two
+/// values at one address with the same static type but different lengths
+/// (`u8[lens[$index]] *lists[n]`) or arguments (`Blob(1)`, `Blob(2)`) are different values.
+type IdKey = (u32, usize, &'static str, Box<[i128]>);
 
 /// The key of a region (a codec's decoded side or a stream): the region it is in, the
 /// position it starts at, and a tag (1 for codec regions, a hash of the field for streams).
@@ -94,16 +99,17 @@ impl Shared {
     }
 
     /// Registers the struct value at `(region, pos)`; pair with [`Shared::end_ident`].
-    pub fn begin_ident(&mut self, region: u32, pos: usize, key: &'static str) -> Ident {
-        let (id, new) = self.idents.begin((region, pos, key));
+    pub fn begin_ident(&mut self, region: u32, pos: usize, key: &'static str, parts: &[i128]) -> Ident {
+        let k: IdKey = (region, pos, key, parts.into());
+        let (id, new) = self.idents.begin(k.clone());
         if new {
-            self.ident_journal.push((region, pos, key));
+            self.ident_journal.push(k);
         }
         id
     }
     /// Ends the read of the struct value at `(region, pos)`.
-    pub fn end_ident(&mut self, region: u32, pos: usize, key: &'static str) {
-        self.idents.end(&(region, pos, key));
+    pub fn end_ident(&mut self, region: u32, pos: usize, key: &'static str, parts: &[i128]) {
+        self.idents.end(&(region, pos, key, parts.into()));
     }
     /// Forgets the targets read so far (views: after an edit, targets are read again).
     pub fn forget_targets(&mut self) {
@@ -522,12 +528,12 @@ impl<'a> Reader<'a> {
 
     /// Registers the struct value starting here: every read of one address and type within a
     /// parse gets the same identity. Pair with [`Reader::end_ident`].
-    pub fn begin_ident(&mut self, key: &'static str) -> Ident {
-        self.shared.borrow_mut().begin_ident(self.region, self.pos, key)
+    pub fn begin_ident(&mut self, key: &'static str, parts: &[i128]) -> Ident {
+        self.shared.borrow_mut().begin_ident(self.region, self.pos, key, parts)
     }
     /// Ends the read of the struct value that started at `at`.
-    pub fn end_ident(&mut self, at: usize, key: &'static str) {
-        self.shared.borrow_mut().end_ident(self.region, at, key);
+    pub fn end_ident(&mut self, at: usize, key: &'static str, parts: &[i128]) {
+        self.shared.borrow_mut().end_ident(self.region, at, key, parts);
     }
 
     /// Reads a pointer target at an absolute address, preserving identity: the same address
@@ -542,11 +548,24 @@ impl<'a> Reader<'a> {
         stub: Option<Stub<T>>,
         f: impl FnOnce(&mut Self) -> Result<T>,
     ) -> Result<Rc<T>> {
+        self.follow_keyed(addr, key, &[], stub, f)
+    }
+
+    /// [`Reader::follow`] with run-time parts of the target's type in its identity: the length of
+    /// an array, byte or string target, or a struct target's arguments.
+    pub fn follow_keyed<T: 'static>(
+        &mut self,
+        addr: i128,
+        key: &'static str,
+        parts: &[i128],
+        stub: Option<Stub<T>>,
+        f: impl FnOnce(&mut Self) -> Result<T>,
+    ) -> Result<Rc<T>> {
         if addr < 0 || addr > self.end as i128 {
             return Err(YaffleError::eof(self.pos, format!("pointer target 0x{addr:x} is outside the region")));
         }
         let addr = addr as usize;
-        follow_in(self.shared, self.region, addr, key, stub, || {
+        follow_in(self.shared, self.region, addr, key, parts, stub, || {
             let saved = std::mem::replace(&mut self.pos, addr);
             let r = f(self);
             self.pos = saved;
@@ -559,36 +578,37 @@ impl<'a> Reader<'a> {
 pub type Stub<T> = (&'static str, fn(Ident) -> T);
 
 /// Reads a target with identity in `shared`: a target already read at `(region, addr)` with type
-/// key `key` is shared, a struct whose read is in progress (a cycle) gets a stub (`stub`), and
+/// key `key` and run-time type parts `parts` is shared, a struct whose read is in progress (a cycle) gets a stub (`stub`), and
 /// otherwise `f` reads it. Used by readers and by views.
 pub fn follow_in<T: 'static>(
     shared: &SharedCell,
     region: u32,
     addr: usize,
     key: &'static str,
+    parts: &[i128],
     stub: Option<Stub<T>>,
     f: impl FnOnce() -> Result<T>,
 ) -> Result<Rc<T>> {
-    let id = (region, addr, key);
+    let id: IdKey = (region, addr, key, parts.into());
     {
         let sh = shared.borrow();
         if let Some(v) = sh.targets.get(&id) {
             return v.clone().downcast::<T>().map_err(|_| YaffleError::check(addr, "pointer target type mismatch"));
         }
         if let Some((skey, mk)) = stub {
-            if let Some(i) = sh.idents.stub(&(region, addr, skey)) {
+            if let Some(i) = sh.idents.stub(&(region, addr, skey, parts.into())) {
                 return Ok(Rc::new(mk(i)));
             }
         }
     }
-    if !shared.borrow_mut().in_progress.insert(id) {
+    if !shared.borrow_mut().in_progress.insert(id.clone()) {
         return Err(YaffleError::check(addr, "cyclic pointer to a value that is not a struct"));
     }
     let r = f().map(Rc::new);
     let mut sh = shared.borrow_mut();
     sh.in_progress.remove(&id);
     if let Ok(rc) = &r {
-        sh.targets.insert(id, rc.clone() as Rc<dyn Any>);
+        sh.targets.insert(id.clone(), rc.clone() as Rc<dyn Any>);
         sh.journal.push(id);
     }
     r
@@ -716,6 +736,19 @@ mod tests {
         assert_eq!(e.code, ErrorCode::Check);
     }
 
+    #[test]
+    fn identity_includes_the_length() {
+        // `u8[lens[$index]] *lists[n]`: an empty list and the next one can share an address.
+        let sh = Shared::cell();
+        let mut r = Reader::new(&[7, 8], &sh, false);
+        let empty = r.follow_keyed(0, "bytes", &[0], None, |r| r.bytes(0)).unwrap();
+        let two = r.follow_keyed(0, "bytes", &[2], None, |r| r.bytes(2)).unwrap();
+        assert!(empty.is_empty());
+        assert_eq!(*two, vec![7, 8]);
+        let again = r.follow_keyed(0, "bytes", &[2], None, |r| r.bytes(2)).unwrap();
+        assert!(Rc::ptr_eq(&two, &again));
+    }
+
     #[derive(Default)]
     struct N {
         id: Ident,
@@ -725,7 +758,7 @@ mod tests {
 
     fn read_n(r: &mut Reader) -> Result<N> {
         let at = r.pos;
-        let id = r.begin_ident("N");
+        let id = r.begin_ident("N", &[]);
         let v = r.u8()?;
         let p = r.u8()? as i128;
         let next = if p == 0 {
@@ -733,7 +766,7 @@ mod tests {
         } else {
             Some(r.follow(p, "N", Some(("N", |i| N { id: i, ..Default::default() })), read_n)?)
         };
-        r.end_ident(at, "N");
+        r.end_ident(at, "N", &[]);
         Ok(N { id, v, next })
     }
 

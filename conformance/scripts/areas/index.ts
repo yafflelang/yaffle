@@ -9,6 +9,7 @@ import constraints from "./constraints.ts";
 import derivedArrays from "./derived-arrays.ts";
 import endianness from "./endianness.ts";
 import enums from "./enums.ts";
+import features from "./features.ts";
 import formulas from "./formulas.ts";
 import generics from "./generics.ts";
 import layoutFields from "./layout-fields.ts";
@@ -57,5 +58,6 @@ export const areas: Area[] = [
   layoutFields,
   virtualFields,
   derivedArrays,
-  slicesWrite
+  slicesWrite,
+  features
 ];

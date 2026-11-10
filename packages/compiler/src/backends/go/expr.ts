@@ -836,7 +836,9 @@ export class ExprCompiler {
         throw new BackendError(`${name}() needs a field argument`);
       return a.name;
     };
-    const oneArray = e.args.length === 1 && e.args[0]!.type.kind === "array";
+    // over one array, or one byte string (`u8` arrays)
+    const oneArray =
+      e.args.length === 1 && (e.args[0]!.type.kind === "array" || e.args[0]!.type.kind === "bytes");
     switch (name as string) {
       case "sizeof":
         return lenE(ctx.sizeof(fieldArg()));

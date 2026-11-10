@@ -769,7 +769,9 @@ export class ExprCompiler {
   /** `min`/`max` of an array, or of several numbers (exact in the narrowest type holding them). */
   private minMax(min: boolean, e: Extract<IrExpr, { kind: "call" }>, ctx: ExprCtx): CExpr {
     const fn = min ? "Min" : "Max";
-    if (e.args.length === 1 && e.args[0]!.type.kind === "array")
+    // over one array, or one byte string (`u8` arrays)
+    const one = e.args.length === 1 ? e.args[0]!.type.kind : undefined;
+    if (one === "array" || one === "bytes")
       return this.typed(`Rt.Values.${fn}Of(${this.compile(e.args[0]!, ctx).code})`, e.type);
     const xs = e.args.map(a => this.compile(a, ctx));
     if (xs.some(x => x.kind === "float")) {

@@ -1,0 +1,175 @@
+{
+  "description": "Features of DESIGN.md not exercised by the other areas",
+  "generatedBy": "conformance/scripts/areas/features.ts",
+  "cases": [
+    {
+      "name": "until predicate keeps the matching element",
+      "root": "UntilIt",
+      "bytes": "0101020009",
+      "json": {
+        "banks": [
+          { "v": 1, "next": 1 },
+          { "v": 2, "next": 0 }
+        ],
+        "after": 9
+      }
+    },
+    {
+      "name": "until predicate on the first element",
+      "root": "UntilIt",
+      "bytes": "070001",
+      "json": { "banks": [{ "v": 7, "next": 0 }], "after": 1 }
+    },
+    {
+      "name": "before does not consume the terminator",
+      "root": "Before",
+      "bytes": "6100620000",
+      "json": { "pool": ["a", "b"], "tail": "" }
+    },
+    {
+      "name": "before with an empty array",
+      "root": "Before",
+      "bytes": "00",
+      "json": { "pool": [], "tail": "" }
+    },
+    {
+      "name": "pointer to an array",
+      "root": "PtrToArray",
+      "bytes": "02050000000100020003000400",
+      "json": {
+        "n": 2,
+        "pts": [
+          { "x": 1, "y": 2 },
+          { "x": 3, "y": 4 }
+        ]
+      }
+    },
+    {
+      "name": "pointer to an array derives its count",
+      "root": "PtrToArray",
+      "input": { "pts": [{ "x": 9, "y": 8 }] },
+      "bytes": "010500000009000800"
+    },
+    {
+      "name": "nullable(empty) reads 0 as empty",
+      "root": "PtrEmpty",
+      "bytes": "0000000000",
+      "json": { "k": 0, "steps": [] }
+    },
+    {
+      "name": "nullable(empty) writes 0 for an empty array",
+      "root": "PtrEmpty",
+      "input": { "steps": [] },
+      "bytes": "0000000000"
+    },
+    {
+      "name": "nullable(empty) with elements",
+      "root": "PtrEmpty",
+      "bytes": "010500000001000200",
+      "json": { "k": 1, "steps": [{ "x": 1, "y": 2 }] }
+    },
+    {
+      "name": "element-wise byte strings",
+      "root": "ElemBytes",
+      "bytes": "01000209000a000a00aabbcc",
+      "json": { "lens": "010002", "lists": ["aa", "", "bbcc"] }
+    },
+    {
+      "name": "element-wise byte string lengths are derived",
+      "root": "ElemBytes",
+      "input": { "lists": ["", "11", "2233"] },
+      "bytes": "000102090009000a00112233"
+    },
+    {
+      "name": "element-wise arrays",
+      "root": "ElemU16",
+      "bytes": "0100000002000c000e000e00aa00bb00cc00",
+      "json": { "lens": [1, 0, 2], "lists": [[170], [], [187, 204]] }
+    },
+    {
+      "name": "element-wise array lengths are derived",
+      "root": "ElemU16",
+      "input": { "lists": [[1], [2, 3], []] },
+      "bytes": "0100020000000c000e001200010002000300"
+    },
+    {
+      "name": "origin counts from base + origin",
+      "root": "Origin",
+      "bytes": "07040000ee686900616200",
+      "json": { "p": { "hdr": 7, "name": "ab", "pad": "0000", "marker": 238, "text": "hi" } }
+    },
+    {
+      "name": "bytesof reads the bytes after the codec",
+      "root": "BytesOf",
+      "bytes": "545457",
+      "json": { "b": 84, "body": { "a": 1, "c": 2 } }
+    },
+    {
+      "name": "bytesof is computed on write",
+      "root": "BytesOf",
+      "input": { "body": { "a": 0, "c": 0 } },
+      "bytes": "555555"
+    },
+    {
+      "name": "sum of a byte string",
+      "root": "SumBytes",
+      "bytes": "030102030600",
+      "json": { "n": 3, "vals": "010203", "total": 6 }
+    },
+    {
+      "name": "sum of a byte string is computed on write",
+      "root": "SumBytes",
+      "input": { "vals": "ffff" },
+      "bytes": "02fffffe01"
+    },
+    {
+      "name": "sum of an array",
+      "root": "SumU16",
+      "bytes": "02ffff010000000100",
+      "json": { "n": 2, "vals": [65535, 1], "total": 65536 }
+    },
+    {
+      "name": "min and max of a byte string",
+      "root": "MinMax",
+      "bytes": "030501090109",
+      "json": { "n": 3, "vals": "050109", "lo": 1, "hi": 9 }
+    },
+    {
+      "name": "min and max of a byte string are computed on write",
+      "root": "MinMax",
+      "input": { "vals": "7f80" },
+      "bytes": "027f807f80"
+    },
+    {
+      "name": "uleb128 and sleb128",
+      "root": "Leb",
+      "bytes": "ac027e05",
+      "json": { "a": "300", "b": "-2", "after": 5 }
+    },
+    {
+      "name": "sleb128 over two bytes",
+      "root": "Leb",
+      "bytes": "00807f01",
+      "json": { "a": "0", "b": "-128", "after": 1 }
+    },
+    {
+      "name": "uleb128 cut short",
+      "root": "Leb",
+      "bytes": "80",
+      "error": { "phase": "parse", "code": "EOF" }
+    },
+    {
+      "name": "struct-level via",
+      "root": "StructVia",
+      "bytes": "0e0d07",
+      "json": { "m": { "a": 1, "b": 2 }, "after": 7 }
+    },
+    {
+      "name": "same address, different struct arguments",
+      "root": "SameAddrArgs",
+      "roundtrip": false,
+      "bytes": "0202aabb",
+      "json": { "a": { "d": "aa" }, "b": { "d": "aabb" } }
+    }
+  ]
+}

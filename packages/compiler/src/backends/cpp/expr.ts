@@ -605,7 +605,9 @@ export class ExprCompiler {
       if (!a || a.kind !== "field") throw new Error(`${name}() needs a field argument`);
       return a.name;
     };
-    const oneArray = e.args.length === 1 && e.args[0]!.type.kind === "array";
+    // over one array, or one byte string (`u8` arrays)
+    const oneArray =
+      e.args.length === 1 && (e.args[0]!.type.kind === "array" || e.args[0]!.type.kind === "bytes");
     const len: Range = [0n, LEN_MAX];
     switch (name) {
       case "sum": {

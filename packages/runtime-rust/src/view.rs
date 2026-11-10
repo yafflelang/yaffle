@@ -165,7 +165,7 @@ impl Guard<'_> {
     }
 }
 
-type NodeKey = (u32, usize, &'static str);
+type NodeKey = (u32, usize, &'static str, Box<[i128]>);
 
 /// Everything the views of one document share.
 pub struct ViewRoot {
@@ -221,9 +221,17 @@ impl ViewRoot {
             .map(Guard::Space)
             .ok_or_else(|| YaffleError::new(ErrorCode::Range, format!("view region {region} is gone")))
     }
-    /// The node of the struct `key` at `(region, pos)`: the cached one, or `make()`'s.
-    pub fn node<S: 'static>(&self, region: u32, pos: usize, key: &'static str, make: impl FnOnce() -> S) -> Rc<S> {
-        let k = (region, pos, key);
+    /// The node of the struct `key` at `(region, pos)` with the identity parts of its arguments
+    /// `parts` (see [`crate::read::Reader::follow_keyed`]): the cached one, or `make()`'s.
+    pub fn node<S: 'static>(
+        &self,
+        region: u32,
+        pos: usize,
+        key: &'static str,
+        parts: &[i128],
+        make: impl FnOnce() -> S,
+    ) -> Rc<S> {
+        let k: NodeKey = (region, pos, key, parts.into());
         if let Some(n) = self.nodes.borrow().get(&k) {
             if let Ok(s) = n.clone().downcast::<S>() {
                 return s;
@@ -235,24 +243,26 @@ impl ViewRoot {
     }
 
     /// Registers a struct value being materialized at `(region, pos)`.
-    pub fn begin_ident(&self, region: u32, pos: usize, key: &'static str) -> Ident {
-        self.shared.borrow_mut().begin_ident(region, pos, key)
+    pub fn begin_ident(&self, region: u32, pos: usize, key: &'static str, parts: &[i128]) -> Ident {
+        self.shared.borrow_mut().begin_ident(region, pos, key, parts)
     }
-    pub fn end_ident(&self, region: u32, pos: usize, key: &'static str) {
-        self.shared.borrow_mut().end_ident(region, pos, key)
+    pub fn end_ident(&self, region: u32, pos: usize, key: &'static str, parts: &[i128]) {
+        self.shared.borrow_mut().end_ident(region, pos, key, parts)
     }
 
     /// A target at `(region, addr)` with identity: shared with every other read of it (through
-    /// views or readers), a stub for a struct that is being read (a cycle), else `f()`.
+    /// views or readers), a stub for a struct that is being read (a cycle), else `f()`. `parts`
+    /// are the run-time parts of its type (see [`Reader::follow_keyed`]).
     pub fn follow<T: 'static>(
         &self,
         region: u32,
         addr: usize,
         key: &'static str,
+        parts: &[i128],
         stub: Option<Stub<T>>,
         f: impl FnOnce() -> Result<T>,
     ) -> Result<Rc<T>> {
-        follow_in(&self.shared, region, addr, key, stub, f)
+        follow_in(&self.shared, region, addr, key, parts, stub, f)
     }
 
     /// Whether structural edits apply (false while materializing the document's own values).
@@ -563,19 +573,19 @@ mod tests {
     #[test]
     fn nodes_and_identity() {
         let d = ViewRoot::from_bytes(vec![0; 8], false);
-        let a = d.node(0, 4, "T", || RefCell::new(5u32));
-        let b = d.node(0, 4, "T", || RefCell::new(6u32));
+        let a = d.node(0, 4, "T", &[], || RefCell::new(5u32));
+        let b = d.node(0, 4, "T", &[], || RefCell::new(6u32));
         assert!(Rc::ptr_eq(&a, &b));
         *a.borrow_mut() = 7;
         assert_eq!(*b.borrow(), 7);
         // A target read twice is one value; a struct being read gets a stub (a cycle).
-        let x = d.follow(0, 4, "k", None, || Ok(1u8)).unwrap();
-        let y = d.follow(0, 4, "k", None, || Ok(2u8)).unwrap();
+        let x = d.follow(0, 4, "k", &[], None, || Ok(1u8)).unwrap();
+        let y = d.follow(0, 4, "k", &[], None, || Ok(2u8)).unwrap();
         assert!(Rc::ptr_eq(&x, &y));
-        let id = d.begin_ident(0, 0, "S");
-        let s = d.follow(0, 0, "ks", Some(("S", |i| (i.id, i.stub))), || Ok((0, false))).unwrap();
+        let id = d.begin_ident(0, 0, "S", &[]);
+        let s = d.follow(0, 0, "ks", &[], Some(("S", |i| (i.id, i.stub))), || Ok((0, false))).unwrap();
         assert_eq!(*s, (id.id, true));
-        d.end_ident(0, 0, "S");
+        d.end_ident(0, 0, "S", &[]);
     }
 
     #[test]

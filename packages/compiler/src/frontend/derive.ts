@@ -137,7 +137,8 @@ function deriveElementwise(elementwise: Elementwise[], byName: Map<string, Field
     const x = cands[0]!;
     if (x.ir.derive || !isIrField(x.ir) || x.ir.placement || x.ir.from) continue;
     const t = coreType(x.ir.type);
-    if (t.kind !== "array" || !isIntType(valueTypeOf(t.element))) continue;
+    // `u8 lens[n]` is a byte string, the other integer element types an array
+    if (t.kind !== "bytes" && (t.kind !== "array" || !isIntType(valueTypeOf(t.element)))) continue;
     if (!isPrefix(ew.field.frames, x.sym.frames)) continue;
     setDerived(x, ew.measure, `element lengths of ${ew.field.name}`);
   }
