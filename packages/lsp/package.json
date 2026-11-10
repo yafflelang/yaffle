@@ -31,7 +31,7 @@
   "dependencies": {
     "vscode-languageserver": "^10.1.2",
     "vscode-languageserver-textdocument": "^1.0.15",
-    "yaffle": "0.0.2"
+    "yaffle": "0.0.3"
   },
   "license": "ISC",
   "devDependencies": {
